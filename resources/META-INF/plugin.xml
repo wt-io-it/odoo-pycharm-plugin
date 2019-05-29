@@ -1,0 +1,41 @@
+<idea-plugin>
+  <id>at.wtioit.intellij.plugins.odoo</id>
+  <name>Odoo Plugin for IntelliJ/PyCharm</name>
+  <version>0.1</version>
+  <vendor email="a.perhab@wtioit.at" url="http://www.wt-io-it.at">WT-IO-IT GmbH, Andreas Perhab</vendor>
+
+  <description><![CDATA[
+      This plugin adds support for Odoo module paths to PyCharm / IntelliJ
+    ]]></description>
+
+  <change-notes><![CDATA[
+      Version 0.1:
+      * add support for odoo.addons.* in .py files
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="191.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+  <depends>com.intellij.modules.python</depends>
+  <depends>PythonCore</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+  </actions>
+
+  <application-components>
+    <component>
+      <implementation-class>at.wtioit.intellij.plugins.odoo.PyImportResolverInitializer</implementation-class>
+    </component>
+  </application-components>
+
+</idea-plugin>
