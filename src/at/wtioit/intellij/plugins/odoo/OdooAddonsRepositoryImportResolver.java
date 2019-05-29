@@ -5,14 +5,14 @@ import com.jetbrains.python.psi.impl.PyImportResolver;
 import org.jetbrains.annotations.NotNull;
 
 
-public class OdooAddonsImportResolver extends AbstractOdooAddonsImportResolver {
+public class OdooAddonsRepositoryImportResolver extends AbstractOdooAddonsImportResolver {
 
-    OdooAddonsImportResolver(PyImportResolver parent) {
+    OdooAddonsRepositoryImportResolver(PyImportResolver parent) {
         super(parent);
     }
 
     @Override
     protected QualifiedName getAddonQualifiedName(QualifiedName name) {
-        return name.removeHead(1);
+        return name.removeHead(2);
     }
 }

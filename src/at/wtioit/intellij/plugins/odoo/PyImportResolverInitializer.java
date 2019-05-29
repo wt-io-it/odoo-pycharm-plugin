@@ -16,7 +16,22 @@ public class PyImportResolverInitializer extends ApplicationComponent.Adapter im
 
     private void registerImportResolver() {
         ExtensionPoint<PyImportResolver> ep = Extensions.getRootArea().getExtensionPoint(PyImportResolver.EP_NAME);
-        ep.registerExtension(new OdooAddonsImportResolver(new PyJavaImportResolver()), this);
+        PyJavaImportResolver parent = getPyJavaImportResolver();
+        //if (parent != null) {
+            ep.registerExtension(new OdooAddonsImportResolver(parent), this);
+            ep.registerExtension(new OdooAddonsRepositoryImportResolver(parent), this);
+        //}
+    }
+
+    private PyJavaImportResolver getPyJavaImportResolver() {
+        try {
+            // TODO get original java import resolver
+            return new PyJavaImportResolver();
+        } catch (NoClassDefFoundError e){
+            // TODO we cannot find the PyJavaImport resolver as a parent
+            return null;
+        }
+
     }
 
     @Override
