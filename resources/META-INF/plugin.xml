@@ -32,6 +32,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
+    <completion.contributor language="Python"
+                            implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor"/>
   </extensions>
 
   <actions>
@@ -39,7 +41,7 @@
 
   <application-components>
     <component>
-      <implementation-class>at.wtioit.intellij.plugins.odoo.PyImportResolverInitializer</implementation-class>
+      <implementation-class>at.wtioit.intellij.plugins.odoo.pycharm.PyCharmInitializer</implementation-class>
     </component>
   </application-components>
 
