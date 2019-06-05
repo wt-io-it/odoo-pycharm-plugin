@@ -5,7 +5,7 @@
   <vendor email="a.perhab@wtioit.at" url="http://www.wt-io-it.at">WT-IO-IT GmbH, Andreas Perhab</vendor>
 
   <description><![CDATA[
-      This plugin adds support for Odoo module paths to PyCharm / IntelliJ
+      This plugin adds support for Odoo Addon / Module paths to PyCharm / IntelliJ
     ]]></description>
 
   <change-notes><![CDATA[
@@ -13,9 +13,10 @@
       * add support for odoo.addons.* in .py files
 
       Known Issues:
-      * Still having problems with files (currently only recognises directories)
-      * We do not check if the resolved directory is actually an addon directory (needs to have a __manifest__.py file)
-      * Currently not working in PyCharm (Professional)
+      * yields duplicate addons in autocompletion in certain cases (mainly for test modules in odoo/addons)
+      * may link to the wrong path if more that one odoo project is loaded
+      * shown addons are not dependening on configured addon paths
+      * Not yet tested well
     ]]>
   </change-notes>
 
