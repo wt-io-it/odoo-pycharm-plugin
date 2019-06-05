@@ -14,13 +14,18 @@ public class PyCharmInitializer extends ApplicationComponent.Adapter implements 
 
     @Override
     public void initComponent() {
-        registerImportResolver();
-        registerCompletionContributor();
+        try {
+            registerImportResolver();
+            registerCompletionContributor();
+        } catch (NoClassDefFoundError e) {
+            // TODO are we running in intellij without the python plugin?
+        }
     }
 
     private void registerImportResolver() {
         ExtensionPoint<PyImportResolver> ep = Extensions.getRootArea().getExtensionPoint(PyImportResolver.EP_NAME);
         ep.registerExtension(new PyCharmOdooAddonsImportResolver(), this);
+
     }
 
     private void registerCompletionContributor() {

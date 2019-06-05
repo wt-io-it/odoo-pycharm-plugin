@@ -27,7 +27,7 @@
   <!-- uncomment to enable plugin in all products
   <depends>com.intellij.modules.lang</depends>
   -->
-  <!-- this dependency is only needed for intellij -->
+  <!-- in intellij we need the python plugin -->
   <depends optional="true" config-file="intellij.xml">com.intellij.modules.python</depends>
 
   <extensions defaultExtensionNs="com.intellij">
