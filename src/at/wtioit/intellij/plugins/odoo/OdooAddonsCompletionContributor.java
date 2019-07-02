@@ -32,7 +32,9 @@ public class OdooAddonsCompletionContributor extends CompletionContributor {
                 PsiDirectory moduleDir = file.getParent();
                 if (moduleDir != null
                         && !"base".equals(moduleDir.getName())
-                        && moduleDir.getName().startsWith(addonNameStart)) {
+                        && moduleDir.getName().startsWith(addonNameStart)
+                        // TODO probably this exclude should be done via scope
+                        && !moduleDir.toString().contains("/remote_sources/")) {
                     ItemPresentation presentation = moduleDir.getPresentation();
                     LookupElementBuilder element = LookupElementBuilder
                             .createWithSmartPointer(moduleDir.getName(), moduleDir)
