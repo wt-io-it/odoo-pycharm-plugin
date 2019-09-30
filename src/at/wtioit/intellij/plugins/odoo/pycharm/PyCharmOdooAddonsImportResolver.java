@@ -6,10 +6,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.impl.PyImportResolver;
 import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
@@ -29,11 +26,11 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
         }
 
         // resolve addons by their directory
+        OdooModuleService moduleService = ServiceManager.getService(context.getProject(), OdooModuleService.class);
         if (fqn.startsWith("odoo.addons.")) {
             if (fqn.indexOf('.', 12) == -1) {
                 // we resolve the addon directly
                 String addonName = fqn.substring(12);
-                OdooModuleService moduleService = ServiceManager.getService(context.getProject(), OdooModuleService.class);
                 for (OdooModule module : moduleService.getModules()) {
                     if (module.getName().equals(addonName)) {
                         return module.getDirectory();
@@ -42,6 +39,12 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
             } else {
                 PsiDirectory addon = (PsiDirectory) resolveImportReference(name.removeTail(name.getComponentCount() - 3), context, withRoots);
                 return resolveOdooAddonImportReference(addon, fqn.substring(fqn.indexOf('.', 12) + 1));
+            }
+        } else if (!fqn.contains(".")) {
+            for (OdooModule module : moduleService.getModules()) {
+                if (module.getName().equals(fqn)) {
+                    return module.getDirectory();
+                }
             }
         }
 
