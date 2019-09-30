@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>at.wtioit.intellij.plugins.odoo</id>
-  <name>Odoo Autocomplete Support</name>
-  <version>0.1.1</version>
+  <name>Odoo Autocompletion Support</name>
+  <version>0.2.0</version>
   <vendor email="a.perhab@wtioit.at" url="http://www.wt-io-it.at">WT-IO-IT GmbH, Andreas Perhab</vendor>
 
   <description><![CDATA[
@@ -9,6 +9,9 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      Version 0.1.2:
+      * fix name according to jetbrains review
+
       Version 0.1.1:
       * fix class loading error on start of plugin
 
