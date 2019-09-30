@@ -27,11 +27,11 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
         }
 
         // resolve addons by their directory
+        GlobalSearchScope scope = GlobalSearchScope.allScope(context.getProject());
         if (fqn.startsWith("odoo.addons.")) {
             if (fqn.indexOf('.', 12) == -1) {
                 // we resolve the addon directly
                 String addonName = fqn.substring(12);
-                GlobalSearchScope scope = GlobalSearchScope.allScope(context.getProject());
                 for (PsiFile file : FilenameIndex.getFilesByName(context.getProject(), "__manifest__.py", scope)) {
                     if (file.getParent() != null && file.getParent().getName().equals(addonName)) {
                         return file.getParent();
@@ -40,6 +40,12 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
             } else {
                 PsiDirectory addon = (PsiDirectory) resolveImportReference(name.removeTail(name.getComponentCount() - 3), context, withRoots);
                 return resolveOdooAddonImportReference(addon, fqn.substring(fqn.indexOf('.', 12) + 1));
+            }
+        } else if (!fqn.contains(".")){
+            for (PsiFile file : FilenameIndex.getFilesByName(context.getProject(), "__manifest__.py", scope)) {
+                if (file.getParent() != null && file.getParent().getName().equals(fqn)) {
+                    return file.getParent();
+                }
             }
         }
 
