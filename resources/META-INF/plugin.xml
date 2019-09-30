@@ -9,6 +9,9 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      Version 0.1.2:
+      * fix name according to jetbrains review
+
       Version 0.1.1:
       * fix class loading error on start of plugin
 
