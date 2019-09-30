@@ -29,11 +29,13 @@ public class PyCharmInitializer extends ApplicationComponent.Adapter implements 
     }
 
     private void registerCompletionContributor() {
-        ExtensionPoint<CompletionContributorEP> completionEp = Extensions.getRootArea().getExtensionPoint(CompletionContributor.EP);
+        // This is not working (and seems not to be needed since we have
+        /*ExtensionPoint<CompletionContributorEP> completionEp = Extensions.getRootArea().getExtensionPoint(CompletionContributor.EP);
         CompletionContributorEP completion = new CompletionContributorEP();
+        // TODO add plugin descriptor
         completion.language = PythonLanguage.INSTANCE.getID();
         completion.implementationClass = OdooAddonsCompletionContributor.class.getName();
-        completionEp.registerExtension(completion, this);
+        completionEp.registerExtension(completion, this);*/
     }
 
     @Override
