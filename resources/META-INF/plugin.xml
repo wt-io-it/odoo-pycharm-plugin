@@ -38,6 +38,8 @@
     <!-- Add your extensions here -->
     <completion.contributor language="Python"
                             implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor"/>
+      <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.modules.OdooModuleService"
+                          serviceImplementation="at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleServiceImpl"/>
   </extensions>
 
   <actions>
