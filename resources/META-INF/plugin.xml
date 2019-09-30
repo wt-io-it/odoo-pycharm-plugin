@@ -1,6 +1,6 @@
 <idea-plugin>
   <id>at.wtioit.intellij.plugins.odoo</id>
-  <name>Odoo Support for PyCharm</name>
+  <name>Odoo Autocompletion Support</name>
   <version>0.1.1</version>
   <vendor email="a.perhab@wtioit.at" url="http://www.wt-io-it.at">WT-IO-IT GmbH, Andreas Perhab</vendor>
 
