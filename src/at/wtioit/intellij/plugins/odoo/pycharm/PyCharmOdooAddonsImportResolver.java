@@ -1,6 +1,9 @@
 package at.wtioit.intellij.plugins.odoo.pycharm;
 
+import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
+import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.google.common.collect.Lists;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -19,7 +22,6 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
     @Override
     @Nullable
     public PsiElement resolveImportReference(QualifiedName name, PyQualifiedNameResolveContext context, boolean withRoots) {
-        // TODO add caches?
         String fqn = name.toString();
         if (fqn.equals("odoo.addons.base") || fqn.startsWith("odoo.addons.base.")) {
             // base addon is always in odoo/addons/base and resolves fine by default
@@ -31,10 +33,10 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
             if (fqn.indexOf('.', 12) == -1) {
                 // we resolve the addon directly
                 String addonName = fqn.substring(12);
-                GlobalSearchScope scope = GlobalSearchScope.allScope(context.getProject());
-                for (PsiFile file : FilenameIndex.getFilesByName(context.getProject(), "__manifest__.py", scope)) {
-                    if (file.getParent() != null && file.getParent().getName().equals(addonName)) {
-                        return file.getParent();
+                OdooModuleService moduleService = ServiceManager.getService(context.getProject(), OdooModuleService.class);
+                for (OdooModule module : moduleService.getModules()) {
+                    if (module.getName().equals(addonName)) {
+                        return module.getDirectory();
                     }
                 }
             } else {

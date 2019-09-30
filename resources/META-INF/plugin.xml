@@ -1,6 +1,6 @@
 <idea-plugin>
   <id>at.wtioit.intellij.plugins.odoo</id>
-  <name>Odoo Support for PyCharm</name>
+  <name>Odoo Autocomplete Support</name>
   <version>0.1.1</version>
   <vendor email="a.perhab@wtioit.at" url="http://www.wt-io-it.at">WT-IO-IT GmbH, Andreas Perhab</vendor>
 
@@ -19,7 +19,6 @@
       * yields duplicate addons in autocompletion in certain cases (mainly for test modules in odoo/addons)
       * may link to the wrong path if more that one odoo project is loaded
       * shown addons are not dependening on configured addon paths
-      * Not yet tested well
     ]]>
   </change-notes>
 
@@ -38,6 +37,8 @@
     <!-- Add your extensions here -->
     <completion.contributor language="Python"
                             implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor"/>
+      <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.modules.OdooModuleService"
+                          serviceImplementation="at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleServiceImpl"/>
   </extensions>
 
   <actions>
