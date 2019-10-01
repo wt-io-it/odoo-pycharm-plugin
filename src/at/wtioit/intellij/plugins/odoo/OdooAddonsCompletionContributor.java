@@ -12,9 +12,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.PyAssignmentStatement;
-import com.jetbrains.python.psi.PyStringElement;
-import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 public class OdooAddonsCompletionContributor extends CompletionContributor {
@@ -32,6 +30,19 @@ public class OdooAddonsCompletionContributor extends CompletionContributor {
             OdooModuleService moduleService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModuleService.class);
             for (OdooModule module : moduleService.getModules()) {
                 if (module.getName().startsWith(addonNameStart)) {
+                    LookupElementBuilder element = LookupElementBuilder
+                            .createWithSmartPointer(module.getName(), module.getDirectory())
+                            .withIcon(module.getIcon())
+                            .withTailText(" " + module.getRelativeLocationString(), true);
+                    // TODO add insert handler if used in code (not import statement)?
+                    result.addElement(element);
+                }
+            }
+        } else if (!fqdn.contains(".") &&
+                parameters.getPosition().getParent().getParent().getParent().getText().startsWith("from odoo.addons import ")) {
+            OdooModuleService moduleService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModuleService.class);
+            for (OdooModule module : moduleService.getModules()) {
+                if (module.getName().startsWith(fqdn)) {
                     LookupElementBuilder element = LookupElementBuilder
                             .createWithSmartPointer(module.getName(), module.getDirectory())
                             .withIcon(module.getIcon())
