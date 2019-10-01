@@ -69,4 +69,9 @@ public class OdooModelImpl implements OdooModel {
     public List<OdooModule> getModules() {
         return modules;
     }
+
+    @Override
+    public PsiElement getDefiningElement() {
+        return pyline;
+    }
 }

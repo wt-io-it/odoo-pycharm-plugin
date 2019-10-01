@@ -1,6 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.models;
 
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
+import com.intellij.psi.PsiElement;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,4 +17,6 @@ public interface OdooModel {
     String getName();
 
     List<OdooModule> getModules();
+
+    PsiElement getDefiningElement();
 }

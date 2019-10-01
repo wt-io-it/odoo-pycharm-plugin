@@ -33,6 +33,7 @@ public class OdooModelServiceImpl implements OdooModelService {
     }
 
     Collection<OdooModel> modelsCache = new CopyOnWriteArraySet<>();
+    Map<String, OdooModel> modelsCacheByName = Collections.emptyMap();
     Collection<VirtualFile> scannedFiles = new CopyOnWriteArraySet<>();
     private boolean scanFinished = false;
 
@@ -49,18 +50,21 @@ public class OdooModelServiceImpl implements OdooModelService {
                             if (!scannedFiles.contains(virtualFile)) {
                                 logger.debug("Scanning " + virtualFile);
                                 ArrayList<OdooModel> models = new ArrayList<>();
+                                HashMap<String, OdooModel> modelsByName = new HashMap<>(modelsCacheByName);
                                 for (PsiElement file : child.getChildren()) {
                                     if (file instanceof PsiFile) {
-                                        ((PsiFile) file).getName();
                                         for (PsiElement pyline : file.getChildren()) {
                                             if (isOdooModelDefinition(pyline)) {
                                                 logger.debug("Found " + pyline + " in " + ((PsiFile) file).getName());
-                                                models.add(new OdooModelImpl(pyline, module));
+                                                OdooModelImpl model = new OdooModelImpl(pyline, module);
+                                                models.add(model);
+                                                modelsByName.put(model.getName(), model);
                                             }
                                         }
                                     }
                                 }
                                 modelsCache.addAll(models);
+                                modelsCacheByName = Collections.unmodifiableMap(modelsByName);
                                 scannedFiles.add(virtualFile);
                             }
                         }
@@ -74,6 +78,17 @@ public class OdooModelServiceImpl implements OdooModelService {
         } else {
             return modelsCache;
         }
+    }
+
+    @Override
+    public OdooModel getModel(String modelName) {
+        if (!scanFinished) {
+            getModels();
+        }
+        if (modelsCacheByName.containsKey(modelName)) {
+            return modelsCacheByName.get(modelName);
+        }
+        return null;
     }
 
     private boolean isOdooModelDefinition(PsiElement pyline) {
