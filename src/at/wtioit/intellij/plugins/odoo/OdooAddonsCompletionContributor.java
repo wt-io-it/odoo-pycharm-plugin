@@ -56,10 +56,17 @@ public class OdooAddonsCompletionContributor extends CompletionContributor {
                     String value = getStringValue(parameters, expressionWithDummy);
                     suggestModelName(parameters, result, value);
                 }
+                if (parameters.getPosition().getParent().getParent().getChildren().length >= 2) {
+                    PsiElement secondChild = parameters.getPosition().getParent().getParent().getChildren()[1];
+                    if (secondChild == parameters.getPosition().getParent() && callExpressionName.equals("fields.One2many")) {
+                        String value = getStringValue(parameters, expressionWithDummy);
+                        suggestModelName(parameters, result, value);
+                    }
+                }
             }
         } else if (parameters.getPosition().getParent() instanceof PyStringLiteralExpression
                 && parameters.getPosition().getParent().getParent() instanceof PyKeywordArgument
-                && "comodel_name".equals(((PyKeywordArgument) parameters.getPosition().getParent().getParent()).getKeyword())) {
+                && OdooModel.ODOO_MODEL_NAME_FIELD_KEYWORD_ARGUMENTS.contains(((PyKeywordArgument) parameters.getPosition().getParent().getParent()).getKeyword())) {
             String callExpressionName = ((PyCallExpression) parameters.getPosition().getParent().getParent().getParent().getParent()).getCallee().getText();
             if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(callExpressionName)) {
                 String value = getStringValue(parameters, expressionWithDummy);
