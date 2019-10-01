@@ -6,6 +6,7 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -14,6 +15,7 @@ import com.jetbrains.python.psi.PyClass;
 import com.intellij.openapi.diagnostic.Logger;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class OdooModelServiceImpl implements OdooModelService {
 
@@ -21,7 +23,7 @@ public class OdooModelServiceImpl implements OdooModelService {
 
     private final Logger logger = Logger.getInstance(OdooModuleService.class);
 
-    private static final Set<String> ODOO_MODELS_DIRECTORY_NAMES = new HashSet<>(Arrays.asList("models", "model", "wizard"));
+    private static final Set<String> ODOO_MODELS_DIRECTORY_NAMES = new HashSet<>(Arrays.asList("models", "model", "wizard", "report"));
     //TODO add all base classes
     private static final Set<String> ODOO_MODEL_BASE_CLASS_NAMES = new HashSet<>(Arrays.asList("odoo.models.Model", "odoo.models.BaseModel"));
 
@@ -29,36 +31,42 @@ public class OdooModelServiceImpl implements OdooModelService {
         this.project = project;
     }
 
-    // TODO use a set?
-    Collection<OdooModel> modelsCache;
+    Collection<OdooModel> modelsCache = new CopyOnWriteArraySet<>();
+    Collection<VirtualFile> scannedFiles = new CopyOnWriteArraySet<>();
+    private boolean scanFinished = false;
 
     @Override
     public Iterable<OdooModel> getModels() {
-        if (modelsCache == null) {
+        if (!scanFinished) {
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
-            ArrayList<OdooModel> models = new ArrayList<>();
             for (OdooModule module : moduleService.getModules()) {
                 for (PsiElement child : module.getDirectory().getChildren()) {
                     if (child instanceof PsiFileSystemItem) {
                         String childName = ((PsiFileSystemItem) child).getName();
                         if (child instanceof PsiDirectory && ODOO_MODELS_DIRECTORY_NAMES.contains(childName)) {
-                            logger.warn("Scanning " + ((PsiDirectory) child).getVirtualFile());
-                            for (PsiElement file : child.getChildren()) {
-                                if (file instanceof PsiFile) {
-                                    ((PsiFile) file).getName();
-                                    for (PsiElement pyline : file.getChildren()) {
-                                        if (isOdooModelDefinition(pyline)) {
-                                            logger.warn("Found " + pyline + " in " + ((PsiFile) file).getName());
-                                            models.add(new OdooModelImpl(pyline, module));
+                            VirtualFile virtualFile = ((PsiDirectory) child).getVirtualFile();
+                            if (!scannedFiles.contains(virtualFile)) {
+                                logger.debug("Scanning " + virtualFile);
+                                ArrayList<OdooModel> models = new ArrayList<>();
+                                for (PsiElement file : child.getChildren()) {
+                                    if (file instanceof PsiFile) {
+                                        ((PsiFile) file).getName();
+                                        for (PsiElement pyline : file.getChildren()) {
+                                            if (isOdooModelDefinition(pyline)) {
+                                                logger.debug("Found " + pyline + " in " + ((PsiFile) file).getName());
+                                                models.add(new OdooModelImpl(pyline, module));
+                                            }
                                         }
                                     }
                                 }
+                                modelsCache.addAll(models);
+                                scannedFiles.add(virtualFile);
                             }
                         }
                     }
                 }
             }
-            modelsCache = models;
+            scanFinished = true;
         }
         if (modelsCache == null) {
             return Collections.emptyList();
