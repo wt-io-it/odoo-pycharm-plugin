@@ -25,6 +25,7 @@
             <li>add autocompletion support for _name and _inherit values</li>
             <li>fix resolving imports like <pre>from odoo.addons import decimal_precision as dp</pre></li>
             <li>formatted changelog and description to be readable in PyCharm (needs to be HTML)</li>
+            <li>fix autocompletion for <pre>from odoo.addons import ...</pre></li>
           </ul>
         </li>
         <li>
@@ -46,6 +47,7 @@
         <li>may link to the wrong path if more that one odoo project is loaded</li>
         <li>shown addons are not dependening on configured addon paths</li>
         <li>model names can only be detected if string literals are used</li>
+        <li>autocompletion only works as startswith (default PyCharm autocompletion also matches in other ways, e.g. "ab" in PyCharm also matches "account_balance" whereas it does not match in our plugin)</li>
       </ul>
     ]]>
   </change-notes>
