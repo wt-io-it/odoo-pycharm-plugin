@@ -5,6 +5,8 @@ import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -38,8 +40,15 @@ public class OdooModelServiceImpl implements OdooModelService {
     @Override
     public Iterable<OdooModel> getModels() {
         if (!scanFinished) {
+            ProgressIndicator progressIndicator = ProgressIndicatorProvider.getInstance().getProgressIndicator();
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
-            for (OdooModule module : moduleService.getModules()) {
+            List<OdooModule> modules = moduleService.getModules();
+            if (progressIndicator != null) {
+                progressIndicator.setIndeterminate(false);
+                progressIndicator.setText("Scanning odoo addons for models");
+            }
+            for (OdooModule module : modules) {
+                if (progressIndicator != null) progressIndicator.setFraction(modules.size() * 1.0d / modules.indexOf(module));
                 for (PsiElement child : module.getDirectory().getChildren()) {
                     if (child instanceof PsiFileSystemItem) {
                         String childName = ((PsiFileSystemItem) child).getName();
@@ -67,6 +76,8 @@ public class OdooModelServiceImpl implements OdooModelService {
                 }
             }
             scanFinished = true;
+            logger.debug("Finished scanning Odoo Modules");
+            if (progressIndicator != null) progressIndicator.setFraction(1.0d);
         }
         if (modelsCache == null) {
             return Collections.emptyList();

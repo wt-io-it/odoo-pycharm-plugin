@@ -13,7 +13,7 @@ import java.util.*;
 public class OdooModuleServiceImpl implements OdooModuleService {
 
     // TODO use a set?
-    Collection<OdooModule> moduleCache;
+    List<OdooModule> moduleCache;
     Project project;
 
     public OdooModuleServiceImpl(Project project) {
@@ -21,7 +21,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     }
 
     @Override
-    public Iterable<OdooModule> getModules() {
+    public List<OdooModule> getModules() {
         // TODO clear the cache?
         if (moduleCache == null) {
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);

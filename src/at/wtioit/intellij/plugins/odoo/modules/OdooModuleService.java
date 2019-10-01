@@ -4,10 +4,12 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public interface OdooModuleService {
     static OdooModuleService getInstance(@NotNull Project project) {
         return ServiceManager.getService(project, OdooModuleService.class);
     }
 
-    Iterable<OdooModule> getModules();
+    List<OdooModule> getModules();
 }
