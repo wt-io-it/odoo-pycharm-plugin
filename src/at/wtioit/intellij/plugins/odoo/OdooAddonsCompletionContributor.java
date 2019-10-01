@@ -12,9 +12,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.PyAssignmentStatement;
-import com.jetbrains.python.psi.PyStringElement;
-import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 public class OdooAddonsCompletionContributor extends CompletionContributor {
@@ -44,24 +42,54 @@ public class OdooAddonsCompletionContributor extends CompletionContributor {
                 && parameters.getPosition().getParent().getParent() instanceof PyAssignmentStatement) {
             String variableName = parameters.getPosition().getParent().getParent().getFirstChild().getText();
             if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
-                TextRange contentRange = ((PyStringElement) parameters.getPosition()).getContentRange();
-                String content = expressionWithDummy.substring(contentRange.getStartOffset(), contentRange.getEndOffset());
-                String value = content.replace(CompletionUtilCore.DUMMY_IDENTIFIER, "");
-                OdooModelService modelService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModelService.class);
-                for (OdooModel model : modelService.getModels()) {
-                    // TODO return models not modules
-                    if (model.getName() != null && model.getName().startsWith(value)) {
-                        for (OdooModule module : model.getModules()) {
-                            // TODO customize path for model definition
-                            LookupElementBuilder element = LookupElementBuilder
-                                    .createWithSmartPointer(model.getName(), module.getDirectory())
-                                    .withIcon(module.getIcon())
-                                    .withTailText(" " + module.getRelativeLocationString(), true);
-                            result.addElement(element);
-                        }
-                    }
+                String value = getStringValue(parameters, expressionWithDummy);
+                suggestModelName(parameters, result, value);
+            }
+        } else if (parameters.getPosition().getParent() instanceof PyStringLiteralExpression
+                && parameters.getPosition().getParent().getParent() instanceof PyArgumentList
+                && parameters.getPosition().getParent().getParent().getParent() instanceof PyCallExpression) {
+            String callExpressionName = ((PyCallExpression) parameters.getPosition().getParent().getParent().getParent()).getCallee().getText();
+            if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(callExpressionName)) {
+                //firstChild() returns the bracket
+                PsiElement firstChild = parameters.getPosition().getParent().getParent().getChildren()[0];
+                if (firstChild == parameters.getPosition().getParent()) {
+                    String value = getStringValue(parameters, expressionWithDummy);
+                    suggestModelName(parameters, result, value);
+                }
+            }
+        } else if (parameters.getPosition().getParent() instanceof PyStringLiteralExpression
+                && parameters.getPosition().getParent().getParent() instanceof PyKeywordArgument
+                && "comodel_name".equals(((PyKeywordArgument) parameters.getPosition().getParent().getParent()).getKeyword())) {
+            String callExpressionName = ((PyCallExpression) parameters.getPosition().getParent().getParent().getParent().getParent()).getCallee().getText();
+            if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(callExpressionName)) {
+                String value = getStringValue(parameters, expressionWithDummy);
+                suggestModelName(parameters, result, value);
+            }
+        }
+
+    }
+
+    private void suggestModelName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
+        OdooModelService modelService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModelService.class);
+        for (OdooModel model : modelService.getModels()) {
+            // TODO return models not modules
+            if (model.getName() != null && model.getName().startsWith(value)) {
+                for (OdooModule module : model.getModules()) {
+                    // TODO customize path for model definition
+                    LookupElementBuilder element = LookupElementBuilder
+                            .createWithSmartPointer(model.getName(), module.getDirectory())
+                            .withIcon(module.getIcon())
+                            .withTailText(" " + module.getRelativeLocationString(), true);
+                    result.addElement(element);
                 }
             }
         }
+    }
+
+    @NotNull
+    private String getStringValue(@NotNull CompletionParameters parameters, String expressionWithDummy) {
+        TextRange contentRange = ((PyStringElement) parameters.getPosition()).getContentRange();
+        String content = expressionWithDummy.substring(contentRange.getStartOffset(), contentRange.getEndOffset());
+        return content.replace(CompletionUtilCore.DUMMY_IDENTIFIER, "");
     }
 }
