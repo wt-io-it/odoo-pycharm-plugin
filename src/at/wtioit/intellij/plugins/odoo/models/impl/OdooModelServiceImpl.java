@@ -25,7 +25,8 @@ public class OdooModelServiceImpl implements OdooModelService {
 
     private static final Set<String> ODOO_MODELS_DIRECTORY_NAMES = new HashSet<>(Arrays.asList("models", "model", "wizard", "report"));
     //TODO add all base classes
-    private static final Set<String> ODOO_MODEL_BASE_CLASS_NAMES = new HashSet<>(Arrays.asList("odoo.models.Model", "odoo.models.BaseModel"));
+    private static final Set<String> ODOO_MODEL_BASE_CLASS_NAMES = new HashSet<>(Arrays.asList("odoo.models.Model",
+            "odoo.models.BaseModel", "odoo.models.TransientModel"));
 
     public OdooModelServiceImpl(Project project) {
         this.project = project;
