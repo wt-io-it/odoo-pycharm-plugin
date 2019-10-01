@@ -13,6 +13,10 @@
           <li>Resolving odoo.addons.... imports</li>
           <li>Autocompletion for _name and _inherit fields</li>
         </ul>
+        Planned Features
+        <ul>
+          <li>__manifest__.py should not be marked as no effect statement</li>
+        </ul>
       </p>
 
     ]]></description>

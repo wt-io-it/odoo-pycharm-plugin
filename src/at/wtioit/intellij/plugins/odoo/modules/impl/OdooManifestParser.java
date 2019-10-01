@@ -23,13 +23,12 @@ class OdooManifestParser {
     static OdooManifest parse(PsiFile manifestFile){
         PyListLiteralExpression dependenciesList = getDependenciesList(getManifestExpression(manifestFile));
         if (dependenciesList == null) return null;
-        OdooModuleService moduleService = ServiceManager.getService(manifestFile.getProject(), OdooModuleService.class);
-        List<OdooModule> moduleList = new ArrayList<>();
+        List<String> dependencies = new ArrayList<>();
         for (PsiElement dependency : dependenciesList.getChildren()) {
             String cleanName = ((PyStringLiteralExpression) dependency).getStringValue();
-            moduleList.add(moduleService.getModule(cleanName));
+            dependencies.add(cleanName);
         }
-        return new OdooManifestImpl(moduleList);
+        return new OdooManifestImpl(dependencies, manifestFile.getProject());
     }
 
     @Contract(value = "null -> null", pure = true)
