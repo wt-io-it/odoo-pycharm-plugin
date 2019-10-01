@@ -27,30 +27,10 @@ public class OdooAddonsCompletionContributor extends CompletionContributor {
             if (dot != null && dot.getText().equals(".")) {
                 addonNameStart = fqdn.substring(dot.getStartOffsetInParent() + 1);
             }
-            OdooModuleService moduleService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModuleService.class);
-            for (OdooModule module : moduleService.getModules()) {
-                if (module.getName().startsWith(addonNameStart)) {
-                    LookupElementBuilder element = LookupElementBuilder
-                            .createWithSmartPointer(module.getName(), module.getDirectory())
-                            .withIcon(module.getIcon())
-                            .withTailText(" " + module.getRelativeLocationString(), true);
-                    // TODO add insert handler if used in code (not import statement)?
-                    result.addElement(element);
-                }
-            }
+            suggestModuleName(parameters, result, addonNameStart);
         } else if (!fqdn.contains(".") &&
                 parameters.getPosition().getParent().getParent().getParent().getText().startsWith("from odoo.addons import ")) {
-            OdooModuleService moduleService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModuleService.class);
-            for (OdooModule module : moduleService.getModules()) {
-                if (module.getName().startsWith(fqdn)) {
-                    LookupElementBuilder element = LookupElementBuilder
-                            .createWithSmartPointer(module.getName(), module.getDirectory())
-                            .withIcon(module.getIcon())
-                            .withTailText(" " + module.getRelativeLocationString(), true);
-                    // TODO add insert handler if used in code (not import statement)?
-                    result.addElement(element);
-                }
-            }
+            suggestModuleName(parameters, result, fqdn);
         } else if(parameters.getPosition().getParent() instanceof PyStringLiteralExpression
                 && parameters.getPosition().getParent().getParent() instanceof PyAssignmentStatement) {
             String variableName = parameters.getPosition().getParent().getParent().getFirstChild().getText();
@@ -89,10 +69,23 @@ public class OdooAddonsCompletionContributor extends CompletionContributor {
 
     }
 
+    private void suggestModuleName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
+        OdooModuleService moduleService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModuleService.class);
+        for (OdooModule module : moduleService.getModules()) {
+            if (module.getName().startsWith(value)) {
+                LookupElementBuilder element = LookupElementBuilder
+                        .createWithSmartPointer(module.getName(), module.getDirectory())
+                        .withIcon(module.getIcon())
+                        .withTailText(" " + module.getRelativeLocationString(), true);
+                // TODO add insert handler if used in code (not import statement)?
+                result.addElement(element);
+            }
+        }
+    }
+
     private void suggestModelName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
         OdooModelService modelService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModelService.class);
         for (OdooModel model : modelService.getModels()) {
-            // TODO return models not modules
             if (model.getName() != null && model.getName().startsWith(value)) {
                 for (OdooModule module : model.getModules()) {
                     // TODO customize path for model definition
