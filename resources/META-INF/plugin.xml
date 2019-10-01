@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>at.wtioit.intellij.plugins.odoo</id>
   <name>Odoo Autocompletion Support</name>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <vendor email="a.perhab@wtioit.at" url="http://www.wt-io-it.at">WT-IO-IT GmbH, Andreas Perhab</vendor>
 
   <description><![CDATA[
@@ -68,11 +68,13 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
       <completion.contributor language="Python"
-                              implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor"/>
+                              implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor" />
+      <completion.contributor language="XML"
+                              implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsXmlCompletionContributor" />
       <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.modules.OdooModuleService"
-                          serviceImplementation="at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleServiceImpl"/>
+                          serviceImplementation="at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleServiceImpl" />
     <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.models.OdooModelService"
-                    serviceImplementation="at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl"/>
+                    serviceImplementation="at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl" />
   </extensions>
 
   <actions>
