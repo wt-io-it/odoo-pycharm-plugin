@@ -21,16 +21,10 @@ public class OdooAddonsXmlCompletionContributor extends AbstractOdooAddonsComple
 
     @Override
     public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
-        if (parameters.getPosition().getParent() instanceof XmlAttributeValue) {
+        if (parameters.getPosition().getParent() instanceof XmlAttributeValue
+                && "model".equals(parameters.getPosition().getParent().getParent().getFirstChild().getText())) {
             String value = parameters.getPosition().getText().replace(CompletionUtilCore.DUMMY_IDENTIFIER, "");
             suggestModelName(parameters, result, value);
         }
-    }
-
-    @NotNull
-    private String getStringValue(@NotNull CompletionParameters parameters, String expressionWithDummy) {
-        TextRange contentRange = ((PyStringElement) parameters.getPosition()).getContentRange();
-        String content = expressionWithDummy.substring(contentRange.getStartOffset(), contentRange.getEndOffset());
-        return content.replace(CompletionUtilCore.DUMMY_IDENTIFIER, "");
     }
 }
