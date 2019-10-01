@@ -58,6 +58,7 @@ public class OdooModelServiceImpl implements OdooModelService {
                                                 logger.debug("Found " + pyline + " in " + ((PsiFile) file).getName());
                                                 OdooModelImpl model = new OdooModelImpl(pyline, module);
                                                 models.add(model);
+                                                // TODO only add the model if we are actually the one initialy defining it (none of our dependencies has defined it)
                                                 modelsByName.put(model.getName(), model);
                                             }
                                         }
