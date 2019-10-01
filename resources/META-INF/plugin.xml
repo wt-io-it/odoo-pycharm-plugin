@@ -5,23 +5,48 @@
   <vendor email="a.perhab@wtioit.at" url="http://www.wt-io-it.at">WT-IO-IT GmbH, Andreas Perhab</vendor>
 
   <description><![CDATA[
-      This plugin adds support for Odoo Addon / Module paths to PyCharm / IntelliJ
+      <p>This plugin adds support for Odoo Addon / Module paths to PyCharm / IntelliJ</p>
+      <p>
+        Features
+        <ul>
+          <li>Autocompletion for odoo.addons.... imports</li>
+          <li>Resolving odoo.addons.... imports</li>
+          <li>Autocompletion for _name and _inherit fields</li>
+        </ul>
+      </p>
+
     ]]></description>
 
   <change-notes><![CDATA[
-      Version 0.1.2:
-      * fix name according to jetbrains review
-
-      Version 0.1.1:
-      * fix class loading error on start of plugin
-
-      Version 0.1:
-      * add support for odoo.addons.* in .py files
-
-      Known Issues:
-      * yields duplicate addons in autocompletion in certain cases (mainly for test modules in odoo/addons)
-      * may link to the wrong path if more that one odoo project is loaded
-      * shown addons are not dependening on configured addon paths
+      <ul>
+        <li>
+          Version 0.2:
+          <ul>
+            <li>add autocompletion support for _name and _inherit values</li>
+            <li>fix resolving imports like <pre>from odoo.addons import decimal_precision as dp</pre></li>
+            <li>formatted changelog and description to be readable in PyCharm (needs to be HTML)</li>
+          </ul>
+        </li>
+        <li>
+          Version 0.1.2:
+          <ul><li>fix name according to jetbrains review</li></ul>
+         </li>
+         <li>
+          Version 0.1.1:
+          <ul><li>fix class loading error on start of plugin</li></ul>
+         </li>
+         <li>
+          Version 0.1:
+          <ul><li>add support for odoo.addons.* in .py files</li></ul>
+         </li>
+      </ul>
+      <strong>Known Issues:</strong>
+      <ul>
+        <li>yields duplicate addons in autocompletion in certain cases (mainly for test modules in odoo/addons)</li>
+        <li>may link to the wrong path if more that one odoo project is loaded</li>
+        <li>shown addons are not dependening on configured addon paths</li>
+        <li>model names can only be detected if string literals are used</li>
+      </ul>
     ]]>
   </change-notes>
 

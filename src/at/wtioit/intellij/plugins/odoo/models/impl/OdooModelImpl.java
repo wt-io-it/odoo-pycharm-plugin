@@ -5,6 +5,7 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyListLiteralExpression;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
@@ -49,7 +50,7 @@ public class OdooModelImpl implements OdooModel {
                         } else {
                             logger.error("Unknown string value class: " + valueChild.getClass());
                         }
-                    } else if (valueChild instanceof PyCallExpression) {
+                    } else if (valueChild instanceof PyCallExpression || valueChild instanceof PyBinaryExpression) {
                         logger.debug("Cannot detect string value for class: " + valueChild.getClass());
                     } else {
                         logger.error("Unknown string value class: " + valueChild.getClass());
