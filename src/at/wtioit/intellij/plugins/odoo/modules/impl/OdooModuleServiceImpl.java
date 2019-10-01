@@ -14,6 +14,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
 
     // TODO use a set?
     Collection<OdooModule> moduleCache;
+    Map<String, OdooModule> moduleCacheByName;
     Project project;
 
     public OdooModuleServiceImpl(Project project) {
@@ -37,6 +38,11 @@ public class OdooModuleServiceImpl implements OdooModuleService {
                 }
             }
             moduleCache = modules;
+            HashMap<String, OdooModule> modulesByName = new HashMap<>();
+            for (OdooModule module : modules) {
+                modulesByName.put(module.getName(), module);
+            }
+            moduleCacheByName = modulesByName;
         }
 
         if (moduleCache == null) {
@@ -44,5 +50,16 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         } else {
             return moduleCache;
         }
+    }
+
+    @Override
+    public OdooModule getModule(String moduleName) {
+        if (moduleCacheByName == null) {
+            getModules();
+        }
+        if (moduleCacheByName.containsKey(moduleName)) {
+            return moduleCacheByName.get(moduleName);
+        }
+        return null;
     }
 }

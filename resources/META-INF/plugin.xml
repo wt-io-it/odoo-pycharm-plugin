@@ -20,6 +20,12 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.3:
+          <ul>
+            <li>add autocopletion for model name in xml records</li>
+          </ul>
+        </li>
+        <li>
           Version 0.2:
           <ul>
             <li>add autocompletion support for _name and _inherit values</li>
@@ -66,15 +72,15 @@
   <depends optional="true" config-file="intellij.xml">com.intellij.modules.python</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
+      <!-- Add your extensions here -->
       <completion.contributor language="Python"
                               implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor" />
       <completion.contributor language="XML"
                               implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsXmlCompletionContributor" />
       <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.modules.OdooModuleService"
-                          serviceImplementation="at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleServiceImpl" />
-    <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.models.OdooModelService"
-                    serviceImplementation="at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl" />
+                      serviceImplementation="at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleServiceImpl" />
+      <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.models.OdooModelService"
+                      serviceImplementation="at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl" />
   </extensions>
 
   <actions>
