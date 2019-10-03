@@ -45,12 +45,13 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
 
     void suggestModelName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
         OdooModelService modelService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModelService.class);
-        for (OdooModel model : modelService.getModels()) {
-            if (model.getName() != null && model.getName().startsWith(value)) {
-                for (OdooModule module : model.getModules()) {
+
+        for (String modelName : modelService.getModelNames()) {
+            if (modelName != null && modelName.startsWith(value)) {
+                for (OdooModule module : modelService.getModel(modelName).getModules()) {
                     // TODO customize path for model definition
                     LookupElementBuilder element = LookupElementBuilder
-                            .createWithSmartPointer(model.getName(), module.getDirectory())
+                            .createWithSmartPointer(modelName, module.getDirectory())
                             .withIcon(module.getIcon())
                             .withTailText(" " + module.getRelativeLocationString(), true);
                     result.addElement(element);

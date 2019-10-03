@@ -62,6 +62,7 @@ public class OdooModelServiceImpl implements OdooModelService {
                                                 module.setModels(Collections.unmodifiableList(moduleModels));
                                                 if (!dependencyHasModel(module, model.getName())) {
                                                     // only add the model if none of our dependencies has already defined it
+                                                    logger.debug("Adding model: " + model.getName() + " from " + module.getName());
                                                     models.add(model);
                                                     modelsByName.put(model.getName(), model);
                                                 } else {
@@ -89,10 +90,14 @@ public class OdooModelServiceImpl implements OdooModelService {
     }
 
     private boolean dependencyHasModel(OdooModule module, String modelName) {
+        if (modelName == null) {
+            return false;
+        }
         for (OdooModule dependency : module.getDependencies()) {
+            logger.debug("Checking " + dependency.getName() + "  for " + modelName);
             for (OdooModel modelInDependency : dependency.getModels()) {
                 // TODO replace by getModels() by map
-                if (modelInDependency.getName().equals(modelName)) {
+                if (modelName.equals(modelInDependency.getName())) {
                     return true;
                 }
             }
@@ -112,6 +117,14 @@ public class OdooModelServiceImpl implements OdooModelService {
             return modelsCacheByName.get(modelName);
         }
         return null;
+    }
+
+    @Override
+    public Iterable<String> getModelNames() {
+        if (!scanFinished) {
+            getModels();
+        }
+        return modelsCacheByName.keySet();
     }
 
     private boolean isOdooModelDefinition(PsiElement pyline) {

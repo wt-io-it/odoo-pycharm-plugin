@@ -14,4 +14,6 @@ public interface OdooModelService {
     Iterable<OdooModel> getModels();
 
     OdooModel getModel(String modelName);
+
+    Iterable<String> getModelNames();
 }
