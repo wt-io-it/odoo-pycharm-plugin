@@ -2,7 +2,6 @@ package at.wtioit.intellij.plugins.odoo;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
-import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandlerBase;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Editor;

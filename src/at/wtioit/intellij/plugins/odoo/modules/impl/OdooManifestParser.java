@@ -1,9 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.modules.impl;
 
 import at.wtioit.intellij.plugins.odoo.modules.OdooManifest;
-import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
-import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.PyExpressionStatement;
