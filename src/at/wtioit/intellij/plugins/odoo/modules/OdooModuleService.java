@@ -12,4 +12,6 @@ public interface OdooModuleService {
     Iterable<OdooModule> getModules();
 
     OdooModule getModule(String moduleName);
+
+    OdooModule findModule(String moduleName);
 }

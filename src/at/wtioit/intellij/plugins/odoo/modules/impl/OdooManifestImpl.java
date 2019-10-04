@@ -33,7 +33,8 @@ public class OdooManifestImpl implements OdooManifest {
                 if (module != null) {
                     dependencyModules.add(module);
                 } else {
-                    // TODO missing dependency
+                    // TODO missing dependency?
+                    dependencyModules.add(new ResolveLaterOdooModuleImpl(dependencyName, project));
                 }
             }
             dependencies = Collections.unmodifiableCollection(dependencyModules);

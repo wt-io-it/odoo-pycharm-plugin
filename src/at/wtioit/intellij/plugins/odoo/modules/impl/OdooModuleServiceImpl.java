@@ -8,6 +8,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 
+import java.io.File;
 import java.util.*;
 
 public class OdooModuleServiceImpl implements OdooModuleService {
@@ -30,7 +31,6 @@ public class OdooModuleServiceImpl implements OdooModuleService {
             for (PsiFile file : FilenameIndex.getFilesByName(project, "__manifest__.py", scope)) {
                 PsiDirectory moduleDir = file.getParent();
                 if (moduleDir != null
-                        && !"base".equals(moduleDir.getName())
                         // TODO probably this exclude should be done via scope
                         && !moduleDir.toString().contains("/remote_sources/")) {
                     OdooModuleImpl module = new OdooModuleImpl(moduleDir);
@@ -59,6 +59,31 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         }
         if (moduleCacheByName.containsKey(moduleName)) {
             return moduleCacheByName.get(moduleName);
+        }
+        return null;
+    }
+
+    @Override
+    public OdooModule findModule(String moduleName) {
+        OdooModule module = getModule(moduleName);
+        if (module != null) {
+            return module;
+        } else {
+            GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+            for (PsiFile file : FilenameIndex.getFilesByName(project, "__manifest__.py", scope)) {
+                PsiDirectory moduleDir = file.getParent();
+                if (moduleDir != null
+                        && moduleName.equals(moduleDir.getName())
+                        // TODO probably this exclude should be done via scope
+                        && !moduleDir.toString().contains("/remote_sources/")) {
+                    module = new OdooModuleImpl(moduleDir);
+                    if (moduleCache != null) {
+                        moduleCache.add(module);
+                        moduleCacheByName.put(moduleName, module);
+                    }
+                    return module;
+                }
+            }
         }
         return null;
     }
