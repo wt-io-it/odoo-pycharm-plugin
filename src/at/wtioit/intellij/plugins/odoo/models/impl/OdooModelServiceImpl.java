@@ -34,6 +34,7 @@ public class OdooModelServiceImpl implements OdooModelService {
 
     Collection<OdooModel> modelsCache = new CopyOnWriteArraySet<>();
     Map<String, OdooModel> modelsCacheByName = Collections.emptyMap();
+    Map<PsiElement, OdooModel> modelsCacheByElement = Collections.emptyMap();
     Collection<VirtualFile> scannedFiles = new CopyOnWriteArraySet<>();
     private boolean scanFinished = false;
 
@@ -51,6 +52,7 @@ public class OdooModelServiceImpl implements OdooModelService {
                                 logger.debug("Scanning " + virtualFile);
                                 ArrayList<OdooModel> models = new ArrayList<>();
                                 HashMap<String, OdooModel> modelsByName = new HashMap<>(modelsCacheByName);
+                                HashMap<PsiElement, OdooModel> modelsByElement = new HashMap<>(modelsCacheByElement);
                                 for (PsiElement file : child.getChildren()) {
                                     if (file instanceof PsiFile) {
                                         for (PsiElement pyline : file.getChildren()) {
@@ -60,13 +62,16 @@ public class OdooModelServiceImpl implements OdooModelService {
                                                 ArrayList<OdooModel> moduleModels = new ArrayList<>(module.getModels());
                                                 moduleModels.add(model);
                                                 module.setModels(Collections.unmodifiableList(moduleModels));
+                                                modelsByElement.put(pyline, model);
                                                 if (!dependencyHasModel(module, model.getName())) {
                                                     // only add the model if none of our dependencies has already defined it
                                                     logger.debug("Adding model: " + model.getName() + " from " + module.getName());
                                                     models.add(model);
                                                     modelsByName.put(model.getName(), model);
                                                 } else {
-                                                    // TODO register our model and module for inheritance
+                                                    List<OdooModule> modelModules = new ArrayList<>(model.getModules());
+                                                    modelModules.add(module);
+                                                    model.setModules(modelModules);
                                                 }
                                             }
                                         }
@@ -74,6 +79,7 @@ public class OdooModelServiceImpl implements OdooModelService {
                                 }
                                 modelsCache.addAll(models);
                                 modelsCacheByName = Collections.unmodifiableMap(modelsByName);
+                                modelsCacheByElement = Collections.unmodifiableMap(modelsByElement);
                                 scannedFiles.add(virtualFile);
                             }
                         }
@@ -125,6 +131,14 @@ public class OdooModelServiceImpl implements OdooModelService {
             getModels();
         }
         return modelsCacheByName.keySet();
+    }
+
+    @Override
+    public OdooModel getModelForElement(PsiElement psiElement) {
+        if (!scanFinished) {
+            getModels();
+        }
+        return modelsCacheByElement.get(psiElement);
     }
 
     private boolean isOdooModelDefinition(PsiElement pyline) {

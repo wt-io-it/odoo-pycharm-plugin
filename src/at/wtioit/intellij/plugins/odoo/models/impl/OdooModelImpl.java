@@ -12,6 +12,7 @@ import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import com.intellij.openapi.diagnostic.Logger;
 
@@ -20,7 +21,7 @@ public class OdooModelImpl implements OdooModel {
     private String name;
     private boolean nameDetected = false;
     private final Logger logger = Logger.getInstance(OdooModelImpl.class);
-    private final List<OdooModule> modules;
+    private List<OdooModule> modules;
 
     public OdooModelImpl(PsiElement pyline, OdooModule module) {
         this.pyline = pyline;
@@ -73,5 +74,27 @@ public class OdooModelImpl implements OdooModel {
     @Override
     public PsiElement getDefiningElement() {
         return pyline;
+    }
+
+    public void setModules(List<OdooModule> modules) {
+        this.modules = Collections.unmodifiableList(modules);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof OdooModelImpl) {
+            if (((OdooModelImpl) o).getDefiningElement().equals(getDefiningElement())) {
+                String oName = ((OdooModelImpl) o).getName();
+                if (oName != null) {
+                    return oName.equals(getName());
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDefiningElement(), getName());
     }
 }

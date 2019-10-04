@@ -81,6 +81,9 @@
                               implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor" />
       <completion.contributor language="XML"
                               implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsXmlCompletionContributor" />
+      <typeHierarchyProvider language="Python"
+                             implementationClass="at.wtioit.intellij.plugins.odoo.models.hierarchy.OdooModelHierarchyProvider"
+                             order="first" />
       <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.modules.OdooModuleService"
                       serviceImplementation="at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleServiceImpl" />
       <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.models.OdooModelService"
