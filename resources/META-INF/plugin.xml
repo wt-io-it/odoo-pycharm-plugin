@@ -61,7 +61,6 @@
         <li>shown addons are not dependening on configured addon paths</li>
         <li>model names can only be detected if string literals are used</li>
         <li>autocompletion only works as startswith (default PyCharm autocompletion also matches in other ways, e.g. "ab" in PyCharm also matches "account_balance" whereas it does not match in our plugin)</li>
-        <li>yields duplicate models in autocompletion</li>
         <li>model Classes that are defined by extending another model Class are not yet recognized</li>
       </ul>
     ]]>
