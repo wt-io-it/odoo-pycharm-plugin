@@ -46,13 +46,6 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
                             String value = getStringValue(parameters, expressionWithDummy);
                             suggestModelName(parameters, result, value);
                         }
-                        if (parameters.getPosition().getParent().getParent().getChildren().length >= 2) {
-                            PsiElement secondChild = parameters.getPosition().getParent().getParent().getChildren()[1];
-                            if (secondChild == parameters.getPosition().getParent() && callExpressionName.equals("fields.One2many")) {
-                                String value = getStringValue(parameters, expressionWithDummy);
-                                suggestModelName(parameters, result, value);
-                            }
-                        }
                     }
                 }
             } else if (parameters.getPosition().getParent() instanceof PyStringLiteralExpression

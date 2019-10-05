@@ -27,6 +27,8 @@
           Version 0.3:
           <ul>
             <li>add autocopletion for model name in xml records</li>
+            <li>add odoo model inheritance to the hierarchy views</li>
+            <li>fix do not suggest model names in inverse_name</li>
           </ul>
         </li>
         <li>

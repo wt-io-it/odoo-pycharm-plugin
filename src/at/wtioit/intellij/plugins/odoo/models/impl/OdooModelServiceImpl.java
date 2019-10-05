@@ -32,10 +32,10 @@ public class OdooModelServiceImpl implements OdooModelService {
         this.project = project;
     }
 
-    Collection<OdooModel> modelsCache = new CopyOnWriteArraySet<>();
-    Map<String, OdooModel> modelsCacheByName = Collections.emptyMap();
-    Map<PsiElement, OdooModel> modelsCacheByElement = Collections.emptyMap();
-    Collection<VirtualFile> scannedFiles = new CopyOnWriteArraySet<>();
+    private Collection<OdooModel> modelsCache = new CopyOnWriteArraySet<>();
+    private Map<String, OdooModel> modelsCacheByName = Collections.emptyMap();
+    private Map<PsiElement, OdooModel> modelsCacheByElement = Collections.emptyMap();
+    private Collection<VirtualFile> scannedFiles = new CopyOnWriteArraySet<>();
     private boolean scanFinished = false;
 
     @Override
@@ -163,8 +163,6 @@ public class OdooModelServiceImpl implements OdooModelService {
             for (PyClass superClass : ((PyClass) pyline).getSuperClasses(null)) {
                 if (ODOO_MODEL_BASE_CLASS_NAMES.contains(superClass.getQualifiedName())) {
                     return true;
-                } else {
-                    continue;
                 }
             }
         }
