@@ -8,7 +8,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 
-import java.io.File;
 import java.util.*;
 
 public class OdooModuleServiceImpl implements OdooModuleService {

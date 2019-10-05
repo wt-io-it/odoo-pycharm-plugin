@@ -1,6 +1,5 @@
 package at.wtioit.intellij.plugins.odoo.models;
 
-import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
