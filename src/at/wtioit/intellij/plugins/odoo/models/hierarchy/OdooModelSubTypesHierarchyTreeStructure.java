@@ -1,10 +1,8 @@
 package at.wtioit.intellij.plugins.odoo.models.hierarchy;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
-import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.python.hierarchy.PyHierarchyNodeDescriptor;
 import com.jetbrains.python.hierarchy.treestructures.PySubTypesHierarchyTreeStructure;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +15,7 @@ public class OdooModelSubTypesHierarchyTreeStructure extends PySubTypesHierarchy
 
     private final OdooModel model;
 
-    public OdooModelSubTypesHierarchyTreeStructure(Project project, HierarchyNodeDescriptor baseDescriptor, OdooModel model) {
+    OdooModelSubTypesHierarchyTreeStructure(Project project, HierarchyNodeDescriptor baseDescriptor, OdooModel model) {
         super(project, baseDescriptor);
         this.model = model;
     }

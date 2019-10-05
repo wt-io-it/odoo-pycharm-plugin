@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class OdooModelTypesHierarchyBrowser extends PyTypeHierarchyBrowser {
 
-    public OdooModelTypesHierarchyBrowser(PyClass pyClass) {
+    OdooModelTypesHierarchyBrowser(PyClass pyClass) {
         super(pyClass);
     }
 

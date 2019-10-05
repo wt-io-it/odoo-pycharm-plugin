@@ -10,7 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class OdooModelHierarchyNodeDescriptor extends PyHierarchyNodeDescriptor {
-    public OdooModelHierarchyNodeDescriptor(NodeDescriptor parentDescriptor, @NotNull PsiElement element, boolean isBase) {
+
+    OdooModelHierarchyNodeDescriptor(NodeDescriptor parentDescriptor, @NotNull PsiElement element, boolean isBase) {
         super(parentDescriptor, element, isBase);
     }
 
