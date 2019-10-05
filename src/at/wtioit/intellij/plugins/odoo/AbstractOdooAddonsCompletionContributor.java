@@ -47,14 +47,12 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
 
         for (String modelName : modelService.getModelNames()) {
             if (modelName != null && modelName.startsWith(value)) {
-                for (OdooModule module : modelService.getModel(modelName).getModules()) {
-                    // TODO customize path for model definition
-                    LookupElementBuilder element = LookupElementBuilder
-                            .createWithSmartPointer(modelName, module.getDirectory())
-                            .withIcon(module.getIcon())
-                            .withTailText(" " + module.getRelativeLocationString(), true);
-                    result.addElement(element);
-                }
+                OdooModule module = modelService.getModel(modelName).getBaseModule();
+                LookupElementBuilder element = LookupElementBuilder
+                        .createWithSmartPointer(modelName, module.getDirectory())
+                        .withIcon(module.getIcon())
+                        .withTailText(" " + module.getRelativeLocationString(), true);
+                result.addElement(element);
             }
         }
     }

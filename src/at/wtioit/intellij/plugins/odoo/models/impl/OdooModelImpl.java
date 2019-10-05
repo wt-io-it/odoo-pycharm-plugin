@@ -81,6 +81,22 @@ public class OdooModelImpl implements OdooModel {
     }
 
     @Override
+    public OdooModule getBaseModule() {
+        if (modules.size() == 1) {
+            return modules.get(0);
+        } else {
+            for (OdooModule module : modules) {
+                for (OdooModel moduleModel : module.getModels()) {
+                    if (moduleModel.getDefiningElement() == getDefiningElement()) {
+                        return module;
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o instanceof OdooModelImpl) {
             if (((OdooModelImpl) o).getDefiningElement().equals(getDefiningElement())) {

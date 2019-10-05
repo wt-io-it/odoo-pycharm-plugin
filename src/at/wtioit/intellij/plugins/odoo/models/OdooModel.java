@@ -21,4 +21,5 @@ public interface OdooModel {
 
     PsiElement getDefiningElement();
 
+    OdooModule getBaseModule();
 }
