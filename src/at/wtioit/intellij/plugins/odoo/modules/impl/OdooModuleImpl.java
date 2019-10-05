@@ -67,7 +67,7 @@ public class OdooModuleImpl implements OdooModule {
 
     @Override
     public boolean dependsOn(OdooModule module) {
-        for (OdooModule dependency : module.getDependencies()) {
+        for (OdooModule dependency : this.getDependencies()) {
             if (dependency.getName().equals(module.getName())) {
                 return true;
             } else if (dependency.dependsOn(module)) {

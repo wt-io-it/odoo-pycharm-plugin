@@ -23,10 +23,10 @@ public class OdooModelServiceImpl implements OdooModelService {
 
     private final Logger logger = Logger.getInstance(OdooModuleService.class);
 
-    private static final Set<String> ODOO_MODELS_DIRECTORY_NAMES = new HashSet<>(Arrays.asList("models", "model", "wizard", "report"));
-    //TODO add all base classes
+    private static final Set<String> ODOO_MODELS_DIRECTORY_NAMES = new HashSet<>(Arrays.asList("models", "model",
+            "wizard", "report"));
     private static final Set<String> ODOO_MODEL_BASE_CLASS_NAMES = new HashSet<>(Arrays.asList("odoo.models.Model",
-            "odoo.models.BaseModel", "odoo.models.TransientModel"));
+            "odoo.models.BaseModel", "odoo.models.TransientModel", "odoo.models.AsbtractModel"));
 
     public OdooModelServiceImpl(Project project) {
         this.project = project;
@@ -76,13 +76,13 @@ public class OdooModelServiceImpl implements OdooModelService {
                                                             models.remove(existingOdooModel);
                                                             models.add(model);
                                                             modelsByName.put(model.getName(), model);
-                                                            List<OdooModule> modelModules = new ArrayList<>(existingOdooModel.getModules());
+                                                            List<OdooModule> modelModules = new ArrayList<>(model.getModules());
                                                             modelModules.addAll(existingOdooModel.getModules());
                                                             model.setModules(modelModules);
                                                         } else {
                                                             List<OdooModule> modelModules = new ArrayList<>(existingOdooModel.getModules());
                                                             modelModules.add(module);
-                                                            model.setModules(modelModules);
+                                                            existingOdooModel.setModules(modelModules);
                                                         }
                                                     }
                                                 } else {

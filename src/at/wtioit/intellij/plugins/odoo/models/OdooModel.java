@@ -20,5 +20,8 @@ public interface OdooModel {
 
     List<OdooModule> getModules();
 
+    void setModules(List<OdooModule> modelModules);
+
     PsiElement getDefiningElement();
+
 }
