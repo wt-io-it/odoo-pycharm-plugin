@@ -6,6 +6,7 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import org.apache.commons.lang.NotImplementedException;
 
 import javax.swing.*;
 import java.io.FileNotFoundException;
@@ -48,17 +49,34 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
 
     @Override
     public PsiElement getDirectory() {
-        return null;
+        try {
+            tryResolveOdooModule();
+        } catch (FileNotFoundException e) {
+            // TODO NotImplementedException?
+            return null;
+        }
+        return module.getDirectory();
     }
 
     @Override
     public Icon getIcon() {
-        return null;
+        try {
+            tryResolveOdooModule();
+        } catch (FileNotFoundException e) {
+            // TODO custom icon for unresolved modules or NotImplementedException?
+            return null;
+        }
+        return module.getIcon();
     }
 
     @Override
     public String getRelativeLocationString() {
-        return null;
+        try {
+            tryResolveOdooModule();
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+        return module.getRelativeLocationString();
     }
 
     @Override
@@ -83,6 +101,21 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
 
     @Override
     public void setModels(List<OdooModel> models) {
+        try {
+            tryResolveOdooModule();
+        } catch (FileNotFoundException e) {
+            throw new NotImplementedException("Unresolved modules cannot have any models", e);
+        }
+        module.setModels(models);
+    }
 
+    @Override
+    public boolean dependsOn(OdooModule module) {
+        try {
+            tryResolveOdooModule();
+        } catch (FileNotFoundException e) {
+            throw new NotImplementedException("Dependency check cannot be performed on unresolved models", e);
+        }
+        return module.dependsOn(module);
     }
 }

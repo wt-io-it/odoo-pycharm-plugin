@@ -13,7 +13,7 @@ public interface OdooModule {
     Icon getIcon();
     String getRelativeLocationString();
     Collection<OdooModule> getDependencies();
-
     List<OdooModel> getModels();
     void setModels(List<OdooModel> models);
+    boolean dependsOn(OdooModule module);
 }

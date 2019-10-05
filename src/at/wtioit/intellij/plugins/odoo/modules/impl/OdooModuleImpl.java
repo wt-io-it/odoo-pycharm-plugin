@@ -64,4 +64,16 @@ public class OdooModuleImpl implements OdooModule {
     public List<OdooModel> getModels() {
         return models;
     }
+
+    @Override
+    public boolean dependsOn(OdooModule module) {
+        for (OdooModule dependency : module.getDependencies()) {
+            if (dependency.getName().equals(module.getName())) {
+                return true;
+            } else if (dependency.dependsOn(module)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

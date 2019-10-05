@@ -66,8 +66,25 @@ public class OdooModelServiceImpl implements OdooModelService {
                                                 if (!dependencyHasModel(module, model.getName())) {
                                                     // only add the model if none of our dependencies has already defined it
                                                     logger.debug("Adding model: " + model.getName() + " from " + module.getName());
-                                                    models.add(model);
-                                                    modelsByName.put(model.getName(), model);
+                                                    if (!modelsByName.containsKey(model.getName())) {
+                                                        models.add(model);
+                                                        modelsByName.put(model.getName(), model);
+                                                    } else {
+                                                        logger.debug("Checking inheritance for duplicate model name" + model.getName());
+                                                        OdooModel existingOdooModel = modelsByName.get(model.getName());
+                                                        if (existingOdooModel.getModules().stream().anyMatch(modelModule -> modelModule.dependsOn(module))) {
+                                                            models.remove(existingOdooModel);
+                                                            models.add(model);
+                                                            modelsByName.put(model.getName(), model);
+                                                            List<OdooModule> modelModules = new ArrayList<>(existingOdooModel.getModules());
+                                                            modelModules.addAll(existingOdooModel.getModules());
+                                                            model.setModules(modelModules);
+                                                        } else {
+                                                            List<OdooModule> modelModules = new ArrayList<>(existingOdooModel.getModules());
+                                                            modelModules.add(module);
+                                                            model.setModules(modelModules);
+                                                        }
+                                                    }
                                                 } else {
                                                     List<OdooModule> modelModules = new ArrayList<>(model.getModules());
                                                     modelModules.add(module);
