@@ -26,15 +26,8 @@ public class OdooModelSubTypesHierarchyTreeStructure extends PySubTypesHierarchy
     @Override
     protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor hierarchyNodeDescriptor) {
         List<Object> children = new ArrayList<>(Arrays.asList(super.buildChildren(hierarchyNodeDescriptor)));
-        for (OdooModule module : model.getModules()) {
-            for (OdooModel inheritsModel : module.getModels()) {
-                if (inheritsModel != model
-                        && inheritsModel.getName() != null
-                        && inheritsModel.getName().equals(model.getName())) {
-                    children.add(new PyHierarchyNodeDescriptor(hierarchyNodeDescriptor, inheritsModel.getDefiningElement(), false));
-                }
-            }
-        }
+        OdooModelTypeHierarchyTreeStructureUtil.addOdooModelChildren(model, hierarchyNodeDescriptor, children);
         return children.toArray();
     }
+
 }
