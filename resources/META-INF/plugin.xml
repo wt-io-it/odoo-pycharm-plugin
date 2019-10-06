@@ -9,9 +9,9 @@
       <p>
         Features
         <ul>
-          <li>Autocompletion for odoo.addons.... imports</li>
-          <li>Resolving odoo.addons.... imports</li>
-          <li>Autocompletion for _name and _inherit fields</li>
+          <li>Autocompletion and resolving for odoo.addons.... imports</li>
+          <li>Autocompletion for model names in _name, _inherit, One2may, Many2One and Many2many fields</li>
+          <li>Odoo model inheritance is shown in the type hierarchy view</li>
         </ul>
         Planned Features
         <ul>
