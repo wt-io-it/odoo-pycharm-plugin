@@ -4,12 +4,15 @@ import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletionContributor {
+
+    private final Logger logger = Logger.getInstance(OdooAddonsCompletionContributor.class);
 
     @Override
     public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
@@ -21,6 +24,7 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
             if (dot != null && dot.getText().equals(".")) {
                 addonNameStart = fqdn.substring(dot.getStartOffsetInParent() + 1);
             }
+            logger.warn("Addon name start: " + addonNameStart);
             suggestModuleName(parameters, result, addonNameStart);
         } else {
             PyFromImportStatement parentImportStatement = findParent(parameters.getPosition(), PyFromImportStatement.class);

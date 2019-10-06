@@ -30,6 +30,7 @@
             <li>add odoo model inheritance to the hierarchy views</li>
             <li>fix do not suggest model names in inverse_name</li>
             <li>fix showing model names more than once in autocompletion</li>
+            <li>fix showing module names more than once in autocompletion for modules in odoo/adddon/</li>
           </ul>
         </li>
         <li>
@@ -56,7 +57,6 @@
       </ul>
       <strong>Known Issues:</strong>
       <ul>
-        <li>yields duplicate addons in autocompletion in certain cases (mainly for test modules in odoo/addons)</li>
         <li>may link to the wrong path if more that one odoo project is loaded</li>
         <li>shown addons are not dependening on configured addon paths</li>
         <li>model names can only be detected if string literals are used</li>

@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.modules;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 
 public interface OdooModuleService {
@@ -14,4 +15,6 @@ public interface OdooModuleService {
     OdooModule getModule(String moduleName);
 
     OdooModule findModule(String moduleName);
+
+    PsiDirectory getOdooDirectory();
 }

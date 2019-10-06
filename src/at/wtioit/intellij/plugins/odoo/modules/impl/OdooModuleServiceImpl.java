@@ -86,4 +86,13 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         }
         return null;
     }
+
+    @Override
+    public PsiDirectory getOdooDirectory() {
+        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+        for (PsiFile file : FilenameIndex.getFilesByName(project, "odoo-bin", scope)) {
+            return file.getContainingDirectory();
+        }
+        return null;
+    }
 }
