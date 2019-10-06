@@ -24,7 +24,7 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
             if (dot != null && dot.getText().equals(".")) {
                 addonNameStart = fqdn.substring(dot.getStartOffsetInParent() + 1);
             }
-            logger.warn("Addon name start: " + addonNameStart);
+            logger.debug("Addon name start: " + addonNameStart);
             suggestModuleName(parameters, result, addonNameStart);
         } else {
             PyFromImportStatement parentImportStatement = findParent(parameters.getPosition(), PyFromImportStatement.class);

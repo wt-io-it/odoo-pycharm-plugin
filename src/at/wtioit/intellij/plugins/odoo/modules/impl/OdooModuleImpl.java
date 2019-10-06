@@ -76,4 +76,17 @@ public class OdooModuleImpl implements OdooModule {
         }
         return false;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof OdooModuleImpl) {
+            return directory.equals(((OdooModuleImpl) obj).directory);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return directory.hashCode();
+    }
 }

@@ -76,19 +76,15 @@ public class OdooModelServiceImpl implements OdooModelService {
                                                             models.remove(existingOdooModel);
                                                             models.add(model);
                                                             modelsByName.put(model.getName(), model);
-                                                            List<OdooModule> modelModules = new ArrayList<>(model.getModules());
+                                                            Set<OdooModule> modelModules = new HashSet<>(model.getModules());
                                                             modelModules.addAll(existingOdooModel.getModules());
                                                             model.setModules(modelModules);
                                                         } else {
-                                                            List<OdooModule> modelModules = new ArrayList<>(existingOdooModel.getModules());
-                                                            modelModules.add(module);
-                                                            existingOdooModel.setModules(modelModules);
+                                                            addModuleToModel(module, existingOdooModel);
                                                         }
                                                     }
                                                 } else {
-                                                    List<OdooModule> modelModules = new ArrayList<>(model.getModules());
-                                                    modelModules.add(module);
-                                                    model.setModules(modelModules);
+                                                    addModuleToModel(module, model);
                                                 }
                                             }
                                         }
@@ -110,6 +106,12 @@ public class OdooModelServiceImpl implements OdooModelService {
         } else {
             return modelsCache;
         }
+    }
+
+    private void addModuleToModel(OdooModule module, OdooModel model) {
+        HashSet<OdooModule> modelModules = new HashSet<>(model.getModules());
+        modelModules.add(module);
+        model.setModules(modelModules);
     }
 
     private boolean dependencyHasModel(OdooModule module, String modelName) {

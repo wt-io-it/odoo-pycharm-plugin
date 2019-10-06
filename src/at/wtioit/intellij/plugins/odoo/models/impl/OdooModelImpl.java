@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.models.impl;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -11,22 +12,20 @@ import com.jetbrains.python.psi.PyListLiteralExpression;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-
-import com.intellij.openapi.diagnostic.Logger;
+import java.util.Set;
 
 public class OdooModelImpl implements OdooModel {
     private final PsiElement pyline;
     private String name;
     private boolean nameDetected = false;
     private final Logger logger = Logger.getInstance(OdooModelImpl.class);
-    private List<OdooModule> modules;
+    private Set<OdooModule> modules;
 
     public OdooModelImpl(PsiElement pyline, OdooModule module) {
         this.pyline = pyline;
         // TODO link other modules inheriting the same model too
-        modules = Collections.singletonList(module);
+        modules = Collections.singleton(module);
     }
 
     @Override
@@ -67,7 +66,7 @@ public class OdooModelImpl implements OdooModel {
     }
 
     @Override
-    public List<OdooModule> getModules() {
+    public Set<OdooModule> getModules() {
         return modules;
     }
 
@@ -76,14 +75,14 @@ public class OdooModelImpl implements OdooModel {
         return pyline;
     }
 
-    public void setModules(List<OdooModule> modules) {
-        this.modules = Collections.unmodifiableList(modules);
+    public void setModules(Set<OdooModule> modules) {
+        this.modules = Collections.unmodifiableSet(modules);
     }
 
     @Override
     public OdooModule getBaseModule() {
         if (modules.size() == 1) {
-            return modules.get(0);
+            return modules.iterator().next();
         } else {
             for (OdooModule module : modules) {
                 for (OdooModel moduleModel : module.getModels()) {

@@ -15,9 +15,9 @@ public interface OdooModel {
     @Nullable
     String getName();
 
-    List<OdooModule> getModules();
+    Set<OdooModule> getModules();
 
-    void setModules(List<OdooModule> modelModules);
+    void setModules(Set<OdooModule> modelModules);
 
     PsiElement getDefiningElement();
 
