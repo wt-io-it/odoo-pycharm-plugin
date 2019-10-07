@@ -11,28 +11,34 @@ import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
+
 public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
     @Override
     public @Nullable PsiElement getGotoDeclarationTarget(@Nullable PsiElement psiElement, Editor editor) {
-        if (psiElement.getParent().getParent().getParent() instanceof PyCallExpression) {
-            String fieldType = ((PyCallExpression) psiElement.getParent().getParent().getParent()).getCallee().getText();
+        PyCallExpression pyCallExpression = findParent(psiElement, PyCallExpression.class, 3);
+        if (pyCallExpression != null) {
+            String fieldType = pyCallExpression.getCallee().getText();
             if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(fieldType)) {
                 return getOdooModel(psiElement);
             }
-        } else if (psiElement.getParent().getParent() instanceof PyKeywordArgument
-                && psiElement.getParent().getParent().getParent().getParent() instanceof PyCallExpression) {
-            String fieldType = ((PyCallExpression) psiElement.getParent().getParent().getParent().getParent()).getCallee().getText();
-            if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(fieldType)) {
-                String keyword = ((PyKeywordArgument) psiElement.getParent().getParent()).getKeyword();
-                if (OdooModel.ODOO_MODEL_NAME_FIELD_KEYWORD_ARGUMENTS.contains(keyword)) {
+        } else {
+            PyKeywordArgument pyKeywordArgument = findParent(psiElement, PyKeywordArgument.class, 2);
+            pyCallExpression = findParent(psiElement, PyCallExpression.class, 4);
+            if (pyKeywordArgument != null && pyCallExpression != null) {
+                String fieldType = pyCallExpression.getCallee().getText();
+                if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(fieldType)) {
+                    String keyword = pyKeywordArgument.getKeyword();
+                    if (OdooModel.ODOO_MODEL_NAME_FIELD_KEYWORD_ARGUMENTS.contains(keyword)) {
+                        return getOdooModel(psiElement);
+                    }
+                }
+            } else if (psiElement.getParent() instanceof PyStringLiteralExpression
+                    && psiElement.getParent().getParent() instanceof PyAssignmentStatement) {
+                String variableName = psiElement.getParent().getParent().getFirstChild().getText();
+                if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
                     return getOdooModel(psiElement);
                 }
-            }
-        } else if (psiElement.getParent() instanceof PyStringLiteralExpression
-                && psiElement.getParent().getParent() instanceof PyAssignmentStatement) {
-            String variableName = psiElement.getParent().getParent().getFirstChild().getText();
-            if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
-                return getOdooModel(psiElement);
             }
         }
         return null;

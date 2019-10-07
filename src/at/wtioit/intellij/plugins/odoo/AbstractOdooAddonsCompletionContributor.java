@@ -17,20 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 abstract class AbstractOdooAddonsCompletionContributor extends CompletionContributor {
-    @Nullable <T extends PsiElement> T findParent(PsiElement element, Class<T> parentClass) {
-        return findParent(element, parentClass, 100);
-    }
-
-    @Nullable <T extends PsiElement> T findParent(PsiElement element, Class<T> parentClass, int inspectionLimit) {
-        PsiElement parent = element.getParent();
-        for (int i = 0; parent != null && i < inspectionLimit; i++) {
-            if (parentClass.isAssignableFrom(parent.getClass())) {
-                return (T) parent;
-            }
-            parent = parent.getParent();
-        }
-        return null;
-    }
 
     void suggestModuleName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
         OdooModuleService moduleService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModuleService.class);

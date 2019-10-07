@@ -10,6 +10,8 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NotNull;
 
+import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
+
 public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletionContributor {
 
     private final Logger logger = Logger.getInstance(OdooAddonsCompletionContributor.class);
