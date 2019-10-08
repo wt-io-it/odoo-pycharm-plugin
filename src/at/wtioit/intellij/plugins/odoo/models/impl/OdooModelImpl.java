@@ -24,7 +24,6 @@ public class OdooModelImpl implements OdooModel {
 
     public OdooModelImpl(PsiElement pyline, OdooModule module) {
         this.pyline = pyline;
-        // TODO link other modules inheriting the same model too
         modules = Collections.singleton(module);
     }
 
@@ -32,21 +31,21 @@ public class OdooModelImpl implements OdooModel {
     public String getName() {
         if (!nameDetected) {
             for (PsiElement statement : pyline.getChildren()[1].getChildren()) {
-                // TODO _name can overwrite _inherit (i think)
-                if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(statement.getFirstChild().getText())) {
+                String variableName = statement.getFirstChild().getText();
+                if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
                     PsiElement valueChild = statement.getLastChild();
                     while (valueChild instanceof PsiComment || valueChild instanceof PsiWhiteSpace ) {
                         valueChild = valueChild.getPrevSibling();
                     }
                     if (valueChild instanceof PyStringLiteralExpressionImpl) {
                         name = ((PyStringLiteralExpressionImpl) valueChild).getStringValue();
-                        break;
+                        if ("_name".equals(variableName)) break;
                     } else if (valueChild instanceof PyListLiteralExpression) {
                         //firstChild() somehow returns the bracket
                         PsiElement firstChild = valueChild.getChildren()[0];
                         if (firstChild instanceof PyStringLiteralExpressionImpl) {
                             name = ((PyStringLiteralExpressionImpl) firstChild).getStringValue();
-                            break;
+                            if ("_name".equals(variableName)) break;
                         } else {
                             logger.error("Unknown string value class: " + valueChild.getClass());
                         }
