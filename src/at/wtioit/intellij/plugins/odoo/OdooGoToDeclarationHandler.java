@@ -9,15 +9,22 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlToken;
+import com.intellij.psi.xml.XmlTag;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
 
 public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
+
+    private static final List<String> ODOO_MODEL_XML_ATTRIBUTE_NAMES = Collections.singletonList("model");
+    private static final List<String> ODOO_MODEL_XML_FIELD_ATTRIBUTE_NAMES = Arrays.asList("model", "res_model", "src_model");
+
     @Override
     public @Nullable PsiElement getGotoDeclarationTarget(@Nullable PsiElement psiElement, Editor editor) {
         PyCallExpression pyCallExpression = findParent(psiElement, PyCallExpression.class, 3);
@@ -51,12 +58,17 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
                 if (pySubscriptionExpression != null && "env".equals(pySubscriptionExpression.getRootOperand().getName())) {
                     // handle self.env[...] and request.env[...]
                     return getOdooModel(psiElement);
-                } else if (psiElement instanceof XmlToken
-                        && psiElement.getParent() instanceof XmlAttributeValue
-                        && psiElement.getParent().getParent() instanceof XmlAttribute
-                        && "model".equals(((XmlAttribute) psiElement.getParent().getParent()).getName())) {
-                    // xml attribute model="..."
-                    return getOdooModel(psiElement.getProject(), psiElement.getText());
+                } else {
+                    XmlAttribute xmlAttribute = findParent(psiElement, XmlAttribute.class, 2);
+                    if (xmlAttribute != null && ODOO_MODEL_XML_ATTRIBUTE_NAMES.contains(xmlAttribute.getName())) {
+                        // xml attribute model="..."
+                        return getOdooModel(psiElement.getProject(), psiElement.getText());
+                    }
+                    XmlTag xmlTag = findParent(psiElement, XmlTag.class, 2);
+                    if (xmlTag != null && "field".equals(xmlTag.getName()) && ODOO_MODEL_XML_FIELD_ATTRIBUTE_NAMES.contains(xmlTag.getAttributeValue("name"))) {
+                        // xml <field name="model">...</field> (also res_model and src_model)
+                        return getOdooModel(psiElement.getProject(), psiElement.getText());
+                    }
                 }
             }
         }
