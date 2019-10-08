@@ -39,6 +39,12 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
                 if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
                     return getOdooModel(psiElement);
                 }
+            } else {
+                PySubscriptionExpression pySubscriptionExpression = findParent(psiElement, PySubscriptionExpression.class, 2);
+                if (pySubscriptionExpression != null && "env".equals(pySubscriptionExpression.getRootOperand().getName())) {
+                    // handle self.env[...] and request.env[...]
+                    return getOdooModel(psiElement);
+                }
             }
         }
         return null;
