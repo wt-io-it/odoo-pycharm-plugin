@@ -24,7 +24,7 @@ public class OdooModelServiceImpl implements OdooModelService {
     private final Logger logger = Logger.getInstance(OdooModuleService.class);
 
     private static final Set<String> ODOO_MODELS_DIRECTORY_NAMES = new HashSet<>(Arrays.asList("models", "model",
-            "wizard", "report"));
+            "wizard", "report", "ir", "ir_qweb", "res", "tests"));
     private static final Set<String> ODOO_MODEL_BASE_CLASS_NAMES = new HashSet<>(Arrays.asList("odoo.models.Model",
             "odoo.models.BaseModel", "odoo.models.TransientModel", "odoo.models.AsbtractModel"));
 
