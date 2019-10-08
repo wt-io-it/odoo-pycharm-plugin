@@ -32,7 +32,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
                 if (moduleDir != null
                         // TODO probably this exclude should be done via scope
                         && !moduleDir.toString().contains("/remote_sources/")) {
-                    OdooModuleImpl module = new OdooModuleImpl(moduleDir);
+                    OdooModuleImpl module = new OdooModuleImpl(moduleDir, file);
                     modules.add(module);
                 }
             }
@@ -75,7 +75,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
                         && moduleName.equals(moduleDir.getName())
                         // TODO probably this exclude should be done via scope
                         && !moduleDir.toString().contains("/remote_sources/")) {
-                    module = new OdooModuleImpl(moduleDir);
+                    module = new OdooModuleImpl(moduleDir, file);
                     if (moduleCache != null) {
                         moduleCache.add(module);
                         moduleCacheByName.put(moduleName, module);

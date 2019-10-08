@@ -19,10 +19,9 @@ public class OdooModuleImpl implements OdooModule {
     private final OdooManifest manifest;
     private List<OdooModel> models = Collections.emptyList();
 
-    OdooModuleImpl(PsiDirectory moduleDir) {
+    OdooModuleImpl(PsiDirectory moduleDir, PsiFile manifestFile) {
         directory = moduleDir;
-        PsiFile manifestFile = moduleDir.findFile("__manifest__.py");
-        manifest = manifestFile == null ? null : OdooManifestParser.parse(manifestFile);
+        manifest = OdooManifestParser.parse(manifestFile);
     }
 
     @Override
