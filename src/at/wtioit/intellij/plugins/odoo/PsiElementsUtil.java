@@ -5,12 +5,13 @@ import org.jetbrains.annotations.Nullable;
 
 public interface PsiElementsUtil {
     @Nullable
-    static <T extends PsiElement> T findParent(PsiElement element, Class<T> parentClass) {
+    static <T extends PsiElement> T findParent(@Nullable PsiElement element, Class<T> parentClass) {
         return findParent(element, parentClass, 100);
     }
 
     @Nullable
-    static <T extends PsiElement> T findParent(PsiElement element, Class<T> parentClass, int inspectionLimit) {
+    static <T extends PsiElement> T findParent(@Nullable PsiElement element, Class<T> parentClass, int inspectionLimit) {
+        if (element == null) return null;
         PsiElement parent = element.getParent();
         for (int i = 0; parent != null && i < inspectionLimit; i++) {
             if (parentClass.isAssignableFrom(parent.getClass())) {
