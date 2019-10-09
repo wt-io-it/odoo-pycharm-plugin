@@ -54,12 +54,11 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
                             // handle _name and _inherit definitions
                             return getOdooModel((PyStringElement) psiElement);
                         }
-                    } else {
-                        PySubscriptionExpression pySubscriptionExpression = findParent(psiElement, PySubscriptionExpression.class, 2);
-                        if (pySubscriptionExpression != null && "env".equals(pySubscriptionExpression.getRootOperand().getName())) {
-                            // handle self.env[...] and request.env[...]
-                            return getOdooModel((PyStringElement) psiElement);
-                        }
+                    }
+                    PySubscriptionExpression pySubscriptionExpression = findParent(psiElement, PySubscriptionExpression.class, 2);
+                    if (pySubscriptionExpression != null && "env".equals(pySubscriptionExpression.getRootOperand().getName())) {
+                        // handle self.env[...] and request.env[...]
+                        return getOdooModel((PyStringElement) psiElement);
                     }
                 }
             }
