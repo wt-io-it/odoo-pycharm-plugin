@@ -28,7 +28,7 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
     public @Nullable PsiElement getGotoDeclarationTarget(@Nullable PsiElement psiElement, Editor editor) {
         if (psiElement instanceof PyStringElement) {
             PyCallExpression pyCallExpression = findParent(psiElement, PyCallExpression.class, 3);
-            if (pyCallExpression != null) {
+            if (pyCallExpression != null && pyCallExpression.getCallee() != null) {
                 String fieldType = pyCallExpression.getCallee().getText();
                 if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(fieldType)) {
                     // handle fields.{N}2{M}(..., ) first argument
@@ -37,7 +37,7 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
             } else {
                 PyKeywordArgument pyKeywordArgument = findParent(psiElement, PyKeywordArgument.class, 2);
                 pyCallExpression = findParent(psiElement, PyCallExpression.class, 4);
-                if (pyKeywordArgument != null && pyCallExpression != null) {
+                if (pyKeywordArgument != null && pyCallExpression != null && pyCallExpression.getCallee() != null) {
                     String fieldType = pyCallExpression.getCallee().getText();
                     if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(fieldType)) {
                         String keyword = pyKeywordArgument.getKeyword();
