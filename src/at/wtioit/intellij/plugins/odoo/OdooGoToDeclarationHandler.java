@@ -46,18 +46,20 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
                             return getOdooModel((PyStringElement) psiElement);
                         }
                     }
-                } else if (psiElement.getParent() instanceof PyStringLiteralExpression
-                        && psiElement.getParent().getParent() instanceof PyAssignmentStatement) {
-                    String variableName = psiElement.getParent().getParent().getFirstChild().getText();
-                    if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
-                        // handle _name and _inherit definitions
-                        return getOdooModel((PyStringElement) psiElement);
-                    }
                 } else {
-                    PySubscriptionExpression pySubscriptionExpression = findParent(psiElement, PySubscriptionExpression.class, 2);
-                    if (pySubscriptionExpression != null && "env".equals(pySubscriptionExpression.getRootOperand().getName())) {
-                        // handle self.env[...] and request.env[...]
-                        return getOdooModel((PyStringElement) psiElement);
+                    PyAssignmentStatement assignmentStatement = findParent(psiElement, PyAssignmentStatement.class, 3);
+                    if (assignmentStatement != null && psiElement.getParent() instanceof PyStringLiteralExpression) {
+                        String variableName = assignmentStatement.getFirstChild().getText();
+                        if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
+                            // handle _name and _inherit definitions
+                            return getOdooModel((PyStringElement) psiElement);
+                        }
+                    } else {
+                        PySubscriptionExpression pySubscriptionExpression = findParent(psiElement, PySubscriptionExpression.class, 2);
+                        if (pySubscriptionExpression != null && "env".equals(pySubscriptionExpression.getRootOperand().getName())) {
+                            // handle self.env[...] and request.env[...]
+                            return getOdooModel((PyStringElement) psiElement);
+                        }
                     }
                 }
             }
