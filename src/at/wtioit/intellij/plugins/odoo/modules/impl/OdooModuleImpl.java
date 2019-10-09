@@ -3,9 +3,11 @@ package at.wtioit.intellij.plugins.odoo.modules.impl;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.OdooManifest;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.SystemIndependent;
 
 import javax.swing.*;
@@ -24,6 +26,7 @@ public class OdooModuleImpl implements OdooModule {
         manifest = OdooManifestParser.parse(manifestFile);
     }
 
+    @NotNull
     @Override
     public String getName() {
         return directory.getName();
@@ -41,12 +44,18 @@ public class OdooModuleImpl implements OdooModule {
 
     @Override
     public String getRelativeLocationString() {
-        String locationString = directory.getPresentation().getLocationString();
-        @SystemIndependent String basePath = directory.getProject().getBasePath();
-        if (locationString.startsWith(basePath)) {
-            return locationString.substring(basePath.length() + 1);
+        ItemPresentation presentation = directory.getPresentation();
+        if (presentation != null) {
+            String locationString = presentation.getLocationString();
+            if (locationString != null) {
+                @SystemIndependent String basePath = directory.getProject().getBasePath();
+                if (basePath != null && locationString.startsWith(basePath)) {
+                    return locationString.substring(basePath.length() + 1);
+                }
+                return locationString;
+            }
         }
-        return locationString;
+        return directory.getVirtualFile().getCanonicalPath();
     }
 
     @Override

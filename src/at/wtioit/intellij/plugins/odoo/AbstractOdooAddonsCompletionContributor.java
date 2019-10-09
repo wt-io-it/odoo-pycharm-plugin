@@ -22,10 +22,11 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
         OdooModuleService moduleService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModuleService.class);
         PsiDirectory odooDirectory = moduleService.getOdooDirectory();
         for (OdooModule module : moduleService.getModules()) {
-            String pythonModuleImportPath = "odoo.addons." + module.getName();
-            if (module.getName().startsWith(value) && !pythonModuleImportPath.equals(getModulePythonImportPath(odooDirectory, module))) {
+            String moduleName = module.getName();
+            String pythonModuleImportPath = "odoo.addons." + moduleName;
+            if (moduleName.startsWith(value) && !pythonModuleImportPath.equals(getModulePythonImportPath(odooDirectory, module))) {
                 LookupElementBuilder element = LookupElementBuilder
-                        .createWithSmartPointer(module.getName(), module.getDirectory())
+                        .createWithSmartPointer(moduleName, module.getDirectory())
                         .withIcon(module.getIcon())
                         .withTailText(" " + module.getRelativeLocationString(), true);
                 // TODO add insert handler if used in code (not import statement)?

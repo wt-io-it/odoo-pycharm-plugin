@@ -7,6 +7,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.NotImplementedException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.FileNotFoundException;
@@ -25,12 +26,13 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
         this.project = project;
     }
 
+    @NotNull
     @Override
     public String getName() {
         try {
             tryResolveOdooModule();
         } catch (FileNotFoundException e) {
-            return null;
+            return moduleName;
         }
         return module.getName();
     }
@@ -114,7 +116,8 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
         try {
             tryResolveOdooModule();
         } catch (FileNotFoundException e) {
-            throw new NotImplementedException("Dependency check cannot be performed on unresolved models", e);
+            // TODO give a hint to the user that we cannot find the module (and he should add it to the workspace)
+            return false;
         }
         return module.dependsOn(module);
     }
