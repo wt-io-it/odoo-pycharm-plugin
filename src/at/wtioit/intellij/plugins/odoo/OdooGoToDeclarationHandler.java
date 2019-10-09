@@ -15,14 +15,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
 
 public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
 
-    private static final List<String> ODOO_MODEL_XML_ATTRIBUTE_NAMES = Collections.singletonList("model");
+    private static final List<String> ODOO_MODEL_XML_ATTRIBUTE_NAMES = Arrays.asList("model", "data-oe-model");
     private static final List<String> ODOO_MODEL_XML_FIELD_ATTRIBUTE_NAMES = Arrays.asList("model", "res_model", "src_model");
 
     @Override
