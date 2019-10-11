@@ -21,8 +21,16 @@ dependencies {
 intellij {
     version '2019.2.3'
     type 'PC'
-    plugins 'PythonCore:2019.2.192.6262.41'
+
 }
+
+// enable this to run in IntelliJ Idea Community Edition
+/*intellij {
+    version '2019.2.3'
+    type 'IC'
+    plugins 'PythonCore:2019.2.192.6262.41'
+}*/
+
 
 patchPluginXml {
 //    changeNotes """
