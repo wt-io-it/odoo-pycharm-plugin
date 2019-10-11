@@ -1,0 +1,3 @@
+{
+    'depends': ["addon3"],
+}
