@@ -1,5 +1,6 @@
-package at.wtioit.intellij.plugins.odoo;
+package at.wtioit.intellij.plugins.odoo.modules;
 
+import at.wtioit.intellij.plugins.odoo.BaseOdooPluginTest;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.components.ServiceManager;
@@ -60,7 +61,7 @@ public class TestModuleImpl extends BaseOdooPluginTest {
         // TODO add test for other odoo directories
     }
 
-    public void testFindingModule() {
+    public void testFindingLaterAddedModule() {
         OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
         OdooModule addon1 = moduleService.getModule("addon1");
         OdooModule addon1ViaFind = moduleService.findModule("addon1");

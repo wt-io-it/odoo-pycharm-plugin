@@ -1,5 +1,6 @@
-package at.wtioit.intellij.plugins.odoo;
+package at.wtioit.intellij.plugins.odoo.models;
 
+import at.wtioit.intellij.plugins.odoo.BaseOdooPluginTest;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import com.intellij.openapi.components.ServiceManager;
 
