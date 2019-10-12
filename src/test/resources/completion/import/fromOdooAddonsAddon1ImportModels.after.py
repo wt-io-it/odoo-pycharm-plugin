@@ -1,0 +1,1 @@
+from odoo.addons.addon1 import models

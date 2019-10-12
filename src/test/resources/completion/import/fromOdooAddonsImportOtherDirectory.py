@@ -1,0 +1,1 @@
+from odoo.addons import my_other_a<caret>
