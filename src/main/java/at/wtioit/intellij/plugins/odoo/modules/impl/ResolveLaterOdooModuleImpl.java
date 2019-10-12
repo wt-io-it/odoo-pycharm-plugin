@@ -112,13 +112,13 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
     }
 
     @Override
-    public boolean dependsOn(OdooModule module) {
+    public boolean dependsOn(OdooModule possibleDependency) {
         try {
             tryResolveOdooModule();
         } catch (FileNotFoundException e) {
             // TODO give a hint to the user that we cannot find the module (and he should add it to the workspace)
             return false;
         }
-        return module.dependsOn(module);
+        return module.dependsOn(possibleDependency);
     }
 }

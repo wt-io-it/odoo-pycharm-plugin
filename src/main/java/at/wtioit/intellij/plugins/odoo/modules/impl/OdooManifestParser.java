@@ -42,8 +42,8 @@ class OdooManifestParser {
     private static PyListLiteralExpression getDependenciesList(PyExpressionStatement manifest){
         if (manifest == null) return null;
         List<PsiElement> children = Arrays.asList(manifest.getFirstChild().getChildren());
-        for (PsiElement element : children){
-            if(element.getFirstChild().getText().contains("depends")){
+        for (PsiElement element : children) {
+            if (element.getFirstChild().getText().contains("depends")){
                 return (PyListLiteralExpression) element.getLastChild();
             }
         }
