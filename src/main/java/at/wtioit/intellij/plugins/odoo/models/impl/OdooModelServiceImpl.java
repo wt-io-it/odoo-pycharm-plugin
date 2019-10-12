@@ -84,6 +84,10 @@ public class OdooModelServiceImpl implements OdooModelService {
                                                         }
                                                     }
                                                 } else {
+                                                    if (modelsByName.containsKey(model.getName())) {
+                                                        OdooModel existingOdooModel = modelsByName.get(model.getName());
+                                                        addModuleToModel(module, existingOdooModel);
+                                                    }
                                                     addModuleToModel(module, model);
                                                 }
                                             }
