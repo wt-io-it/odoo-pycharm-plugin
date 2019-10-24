@@ -1,5 +1,6 @@
 stages:
   - test
+  - build
 
 run_tests:
   stage: test
@@ -8,3 +9,11 @@ run_tests:
   artifacts:
     reports:
       junit: build/test-results/test/TEST-*.xml
+
+build:
+  stage: build
+  script:
+    - ./gradlew buildPlugin
+  artifacts:
+    paths:
+      - build/libs/odoo_plugin-*.jar
