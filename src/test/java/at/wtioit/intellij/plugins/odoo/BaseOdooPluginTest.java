@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Stack;
 
 public abstract class BaseOdooPluginTest extends BasePlatformTestCase {
@@ -78,9 +79,8 @@ public abstract class BaseOdooPluginTest extends BasePlatformTestCase {
 
             OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
             forceSetField(modelService, "scanFinished", OdooModelServiceImpl.class, false);
-            Field scanFinished = OdooModelServiceImpl.class.getDeclaredField("scanFinished");
-            scanFinished.setAccessible(true);
-            scanFinished.set(modelService, false);
+            forceSetField(modelService, "modelsCacheByName", OdooModelServiceImpl.class, Collections.emptyMap());
+            forceSetField(modelService, "modelsCacheByElement", OdooModelServiceImpl.class, Collections.emptyMap());
 
             modelService.getModels();
         } catch (IllegalAccessException | NoSuchFieldException e) {

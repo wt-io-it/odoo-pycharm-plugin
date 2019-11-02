@@ -1,7 +1,5 @@
 package at.wtioit.intellij.plugins.odoo;
 
-import org.junit.Ignore;
-
 public class ImportCompletionTest extends BaseOdooPluginTest {
 
     @Override
