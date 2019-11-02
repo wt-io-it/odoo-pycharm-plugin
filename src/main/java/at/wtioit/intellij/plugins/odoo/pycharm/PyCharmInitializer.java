@@ -15,7 +15,6 @@ public class PyCharmInitializer extends ApplicationComponent.Adapter implements 
         try {
             registerImportResolver();
             registerGoToDeclarationHandler();
-            registerCompletionContributor();
         } catch (NoClassDefFoundError e) {
             // TODO are we running in intellij without the python plugin?
         }
@@ -30,16 +29,6 @@ public class PyCharmInitializer extends ApplicationComponent.Adapter implements 
         ExtensionPoint<PyImportResolver> ep = Extensions.getRootArea().getExtensionPoint(PyImportResolver.EP_NAME);
         ep.registerExtension(new PyCharmOdooAddonsImportResolver(), this);
 
-    }
-
-    private void registerCompletionContributor() {
-        // This is not working (and seems not to be needed since we have
-        /*ExtensionPoint<CompletionContributorEP> completionEp = Extensions.getRootArea().getExtensionPoint(CompletionContributor.EP);
-        CompletionContributorEP completion = new CompletionContributorEP();
-        // TODO add plugin descriptor
-        completion.language = PythonLanguage.INSTANCE.getID();
-        completion.implementationClass = OdooAddonsCompletionContributor.class.getName();
-        completionEp.registerExtension(completion, this);*/
     }
 
     @Override
