@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="record1" model="existing">
+            <field name="src_model">in<caret>herited</field>
+        </record>
+    </data>
+</odoo>
