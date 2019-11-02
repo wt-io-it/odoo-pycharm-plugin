@@ -16,6 +16,38 @@ public class PythonModelNameCompletionTest extends BaseOdooPluginTest {
         doTest();
     }
 
+    public void testModelNameInMultipleInherit() {
+        // TODO not yet implemented
+        //doTest();
+    }
+
+    public void testModelNameInOne2manyField() {
+        doTest();
+    }
+
+    public void testModelNameInOne2manyFieldNamedArgs() {
+        doTest();
+    }
+
+    public void testModelNameInOne2manyFieldNamedArgsHelpNoAutocomplete() {
+        doTest();
+    }
+
+    public void testModelNameInOne2manyFieldSecondArgNoAutocomplete() {
+        doTest();
+    }
+
+    public void testModelNameInMany2oneField() {
+        doTest();
+    }
+
+    public void testModelNameInMany2manyField() {
+        doTest();
+    }
+
+
+
+
     private void doTest() {
         myFixture.configureByFile("completion/pythonModelName/" + getTestName(true) + ".py");
         myFixture.completeBasic();
