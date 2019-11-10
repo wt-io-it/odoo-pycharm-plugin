@@ -13,6 +13,9 @@ import com.jetbrains.python.psi.PyClass;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+import static com.intellij.ide.hierarchy.TypeHierarchyBrowserBase.SUBTYPES_HIERARCHY_TYPE;
+import static com.intellij.ide.hierarchy.TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE;
+
 public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
 
     HierarchyProvider hierarchyProvider;
@@ -51,6 +54,13 @@ public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
         });
     }
 
+    public void testInheritedModelClassSubtype() {
+        doTest(() -> {
+            PsiElement element = myFixture.configureByFile("odoo/addons/addon3/models/inherited.py");
+            return Arrays.stream(element.getChildren()).filter(child -> child instanceof PyClass).findFirst().orElseThrow(AssertionError::new);
+        }, SUBTYPES_HIERARCHY_TYPE);
+    }
+
     private void doTest() {
         doTest(() -> {
             myFixture.configureByFile("hierarchy/" + getTestName(true) + ".py");
@@ -59,6 +69,10 @@ public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
     }
 
     private void doTest(Supplier<PsiElement> psiElement) {
+        doTest(psiElement, TYPE_HIERARCHY_TYPE);
+    }
+
+    private void doTest(Supplier<PsiElement> psiElement, String hierarchyType) {
         PsiElement elementForHierarchy = psiElement.get();
         assertNotNull(elementForHierarchy);
         PyClass pyClass;
@@ -71,7 +85,7 @@ public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
         forceRescan();
         HierarchyBrowser hierarchyBrowser = hierarchyProvider.createHierarchyBrowser(pyClass);
         assertNotNull(hierarchyBrowser);
-        HierarchyTreeStructure hierarchyTreeStructure = ((OdooModelTypesHierarchyBrowser) hierarchyBrowser).createHierarchyTreeStructure("Class {0}", pyClass);
+        HierarchyTreeStructure hierarchyTreeStructure = ((OdooModelTypesHierarchyBrowser) hierarchyBrowser).createHierarchyTreeStructure(hierarchyType, pyClass);
         assertNotNull(hierarchyTreeStructure);
         String tree = computeTree(hierarchyTreeStructure, (HierarchyNodeDescriptor) hierarchyTreeStructure.getRootElement());
         String expectedTree = myFixture.configureByFile("hierarchy/" + getTestName(true) + ".tree.txt").getText();
