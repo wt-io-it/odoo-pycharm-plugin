@@ -1,0 +1,1 @@
+,PyClass: NonModelClass,PyFile:nonModelClass.py,PsiDirectory:/src/hierarchy

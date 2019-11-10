@@ -1,0 +1,3 @@
+,PyClass: Model,PyFile:models.py,PsiDirectory:/src/odoo
+,PyClass: Inherited,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/models
+,PyClass: Inherited,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon1/models

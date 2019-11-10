@@ -1,0 +1,2 @@
+,PyClass: Model,PyFile:models.py,PsiDirectory:/src/odoo
+,PyClass: ModelClass,PyFile:modelClass.py,PsiDirectory:/src/hierarchy
