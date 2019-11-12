@@ -24,6 +24,14 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.4:
+          <ul>
+            <li>technical: migrated build system to gradle</li>
+            <li><b>breaking:</b> only supports versions 2019.2 and up</li>
+            <li>fix hierarchy not correctly built for some models</li>
+          </uL>
+        </li>
+        <li>
           Version 0.3:
           <ul>
             <li>add autocopletion for model name in xml records</li>
