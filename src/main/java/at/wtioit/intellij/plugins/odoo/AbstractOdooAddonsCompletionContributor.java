@@ -36,23 +36,28 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
     }
 
     private String getModulePythonImportPath(PsiDirectory odooDirectory, OdooModule module) {
-        PsiDirectory directory = (PsiDirectory) module.getDirectory();
-        ArrayList<PsiDirectory> directories = new ArrayList<>();
-        while (directory != null && directory != odooDirectory) {
-            directories.add(directory);
-            directory = directory.getParent();
-        }
-        StringBuilder path = new StringBuilder();
-        if (directory == odooDirectory) {
-            Collections.reverse(directories);
-            for (PsiDirectory pathDirectory : directories) {
-                if (path.length() > 0) {
-                    path.append('.');
-                }
-                path.append(pathDirectory.getName());
+        try {
+            WithinProject.INSTANCE.set(odooDirectory.getProject());
+            PsiDirectory directory = (PsiDirectory) module.getDirectory();
+            ArrayList<PsiDirectory> directories = new ArrayList<>();
+            while (directory != null && directory != odooDirectory) {
+                directories.add(directory);
+                directory = directory.getParent();
             }
+            StringBuilder path = new StringBuilder();
+            if (directory == odooDirectory) {
+                Collections.reverse(directories);
+                for (PsiDirectory pathDirectory : directories) {
+                    if (path.length() > 0) {
+                        path.append('.');
+                    }
+                    path.append(pathDirectory.getName());
+                }
+            }
+            return path.toString();
+        } finally {
+            WithinProject.INSTANCE.remove();
         }
-        return path.toString();
     }
 
     void suggestModelName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {

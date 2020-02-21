@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.pycharm;
 
+import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.google.common.collect.Lists;
@@ -45,7 +46,12 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
             // this is used when using 'from odoo.addons import addonname'
             OdooModule module = moduleService.getModule(fqn);
             if (module != null) {
-                return module.getDirectory();
+                try {
+                    WithinProject.INSTANCE.set(context.getProject());
+                    return module.getDirectory();
+                } finally {
+                    WithinProject.INSTANCE.remove();
+                }
             }
         }
 

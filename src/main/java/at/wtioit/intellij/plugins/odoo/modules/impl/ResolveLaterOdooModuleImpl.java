@@ -50,6 +50,17 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
     }
 
     @Override
+    public @NotNull String getPath() {
+        try {
+            tryResolveOdooModule();
+        } catch (FileNotFoundException e) {
+            // TODO NotImplementedException?
+            throw new IllegalStateException();
+        }
+        return module.getPath();
+    }
+
+    @Override
     public PsiElement getDirectory() {
         try {
             tryResolveOdooModule();

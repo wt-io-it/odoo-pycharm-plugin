@@ -73,9 +73,9 @@ public abstract class BaseOdooPluginTest extends BasePlatformTestCase {
     protected void forceRescan() {
         try {
 
-            OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
-            forceSetField(moduleService, "moduleCache", OdooModuleServiceImpl.class, null);
-            forceSetField(moduleService, "moduleCacheByName", OdooModuleServiceImpl.class, null);
+            //OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+            //forceSetField(moduleService, "moduleCache", OdooModuleServiceImpl.class, null);
+            //forceSetField(moduleService, "moduleCacheByName", OdooModuleServiceImpl.class, null);
 
             OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
             forceSetField(modelService, "scanFinished", OdooModelServiceImpl.class, false);

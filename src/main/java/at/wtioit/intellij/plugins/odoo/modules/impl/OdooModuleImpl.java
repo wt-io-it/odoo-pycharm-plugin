@@ -8,6 +8,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.SystemIndependent;
 
 import javax.swing.*;
@@ -15,7 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class OdooModuleImpl implements OdooModule {
+public class OdooModuleImpl extends AbstractOdooModuleImpl {
 
     private final PsiDirectory directory;
     private final OdooManifest manifest;
@@ -33,7 +34,12 @@ public class OdooModuleImpl implements OdooModule {
     }
 
     @Override
-    public PsiElement getDirectory() {
+    public @NotNull String getPath() {
+        return directory.getText();
+    }
+
+    @Override
+    public @Nullable PsiElement getDirectory() {
         return directory;
     }
 
@@ -71,30 +77,5 @@ public class OdooModuleImpl implements OdooModule {
     @Override
     public List<OdooModel> getModels() {
         return models;
-    }
-
-    @Override
-    public boolean dependsOn(OdooModule module) {
-        for (OdooModule dependency : this.getDependencies()) {
-            if (dependency.getName().equals(module.getName())) {
-                return true;
-            } else if (dependency.dependsOn(module)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof OdooModuleImpl) {
-            return directory.equals(((OdooModuleImpl) obj).directory);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return directory.hashCode();
     }
 }

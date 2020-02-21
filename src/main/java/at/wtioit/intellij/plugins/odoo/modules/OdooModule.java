@@ -17,6 +17,9 @@ public interface OdooModule {
     @Nullable
     PsiElement getDirectory();
 
+    @NotNull
+    String getPath();
+
     @Nullable
     Icon getIcon();
 

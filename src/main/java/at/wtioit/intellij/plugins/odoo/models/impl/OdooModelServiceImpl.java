@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.models.impl;
 
+import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
@@ -43,64 +44,69 @@ public class OdooModelServiceImpl implements OdooModelService {
         if (!scanFinished) {
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
             for (OdooModule module : moduleService.getModules()) {
-                for (PsiElement child : module.getDirectory().getChildren()) {
-                    if (child instanceof PsiFileSystemItem) {
-                        String childName = ((PsiFileSystemItem) child).getName();
-                        if (child instanceof PsiDirectory && ODOO_MODELS_DIRECTORY_NAMES.contains(childName)) {
-                            VirtualFile virtualFile = ((PsiDirectory) child).getVirtualFile();
-                            if (!scannedFiles.contains(virtualFile)) {
-                                logger.debug("Scanning " + virtualFile);
-                                ArrayList<OdooModel> models = new ArrayList<>();
-                                HashMap<String, OdooModel> modelsByName = new HashMap<>(modelsCacheByName);
-                                HashMap<PsiElement, OdooModel> modelsByElement = new HashMap<>(modelsCacheByElement);
-                                for (PsiElement file : child.getChildren()) {
-                                    if (file instanceof PsiFile) {
-                                        for (PsiElement pyline : file.getChildren()) {
-                                            if (isOdooModelDefinition(pyline)) {
-                                                logger.debug("Found " + pyline + " in " + ((PsiFile) file).getName());
-                                                OdooModelImpl model = new OdooModelImpl(pyline, module);
-                                                ArrayList<OdooModel> moduleModels = new ArrayList<>(module.getModels());
-                                                moduleModels.add(model);
-                                                module.setModels(Collections.unmodifiableList(moduleModels));
-                                                modelsByElement.put(pyline, model);
-                                                if (!dependencyHasModel(module, model.getName())) {
-                                                    // only add the model if none of our dependencies has already defined it
-                                                    logger.debug("Adding model: " + model.getName() + " from " + module.getName());
-                                                    if (!modelsByName.containsKey(model.getName())) {
-                                                        models.add(model);
-                                                        modelsByName.put(model.getName(), model);
-                                                    } else {
-                                                        logger.debug("Checking inheritance for duplicate model name" + model.getName());
-                                                        OdooModel existingOdooModel = modelsByName.get(model.getName());
-                                                        if (existingOdooModel.getModules().stream().anyMatch(modelModule -> modelModule.dependsOn(module))) {
-                                                            models.remove(existingOdooModel);
+                try {
+                    WithinProject.INSTANCE.set(project);
+                    for (PsiElement child : module.getDirectory().getChildren()) {
+                        if (child instanceof PsiFileSystemItem) {
+                            String childName = ((PsiFileSystemItem) child).getName();
+                            if (child instanceof PsiDirectory && ODOO_MODELS_DIRECTORY_NAMES.contains(childName)) {
+                                VirtualFile virtualFile = ((PsiDirectory) child).getVirtualFile();
+                                if (!scannedFiles.contains(virtualFile)) {
+                                    logger.debug("Scanning " + virtualFile);
+                                    ArrayList<OdooModel> models = new ArrayList<>();
+                                    HashMap<String, OdooModel> modelsByName = new HashMap<>(modelsCacheByName);
+                                    HashMap<PsiElement, OdooModel> modelsByElement = new HashMap<>(modelsCacheByElement);
+                                    for (PsiElement file : child.getChildren()) {
+                                        if (file instanceof PsiFile) {
+                                            for (PsiElement pyline : file.getChildren()) {
+                                                if (isOdooModelDefinition(pyline)) {
+                                                    logger.debug("Found " + pyline + " in " + ((PsiFile) file).getName());
+                                                    OdooModelImpl model = new OdooModelImpl(pyline, module);
+                                                    ArrayList<OdooModel> moduleModels = new ArrayList<>(module.getModels());
+                                                    moduleModels.add(model);
+                                                    module.setModels(Collections.unmodifiableList(moduleModels));
+                                                    modelsByElement.put(pyline, model);
+                                                    if (!dependencyHasModel(module, model.getName())) {
+                                                        // only add the model if none of our dependencies has already defined it
+                                                        logger.debug("Adding model: " + model.getName() + " from " + module.getName());
+                                                        if (!modelsByName.containsKey(model.getName())) {
                                                             models.add(model);
                                                             modelsByName.put(model.getName(), model);
-                                                            Set<OdooModule> modelModules = new HashSet<>(model.getModules());
-                                                            modelModules.addAll(existingOdooModel.getModules());
-                                                            model.setModules(modelModules);
                                                         } else {
+                                                            logger.debug("Checking inheritance for duplicate model name" + model.getName());
+                                                            OdooModel existingOdooModel = modelsByName.get(model.getName());
+                                                            if (existingOdooModel.getModules().stream().anyMatch(modelModule -> modelModule.dependsOn(module))) {
+                                                                models.remove(existingOdooModel);
+                                                                models.add(model);
+                                                                modelsByName.put(model.getName(), model);
+                                                                Set<OdooModule> modelModules = new HashSet<>(model.getModules());
+                                                                modelModules.addAll(existingOdooModel.getModules());
+                                                                model.setModules(modelModules);
+                                                            } else {
+                                                                addModuleToModel(module, existingOdooModel);
+                                                            }
+                                                        }
+                                                    } else {
+                                                        if (modelsByName.containsKey(model.getName())) {
+                                                            OdooModel existingOdooModel = modelsByName.get(model.getName());
                                                             addModuleToModel(module, existingOdooModel);
                                                         }
+                                                        addModuleToModel(module, model);
                                                     }
-                                                } else {
-                                                    if (modelsByName.containsKey(model.getName())) {
-                                                        OdooModel existingOdooModel = modelsByName.get(model.getName());
-                                                        addModuleToModel(module, existingOdooModel);
-                                                    }
-                                                    addModuleToModel(module, model);
                                                 }
                                             }
                                         }
                                     }
+                                    modelsCache.addAll(models);
+                                    modelsCacheByName = Collections.unmodifiableMap(modelsByName);
+                                    modelsCacheByElement = Collections.unmodifiableMap(modelsByElement);
+                                    scannedFiles.add(virtualFile);
                                 }
-                                modelsCache.addAll(models);
-                                modelsCacheByName = Collections.unmodifiableMap(modelsByName);
-                                modelsCacheByElement = Collections.unmodifiableMap(modelsByElement);
-                                scannedFiles.add(virtualFile);
                             }
                         }
                     }
+                } finally {
+                    WithinProject.INSTANCE.remove();
                 }
             }
             scanFinished = true;
