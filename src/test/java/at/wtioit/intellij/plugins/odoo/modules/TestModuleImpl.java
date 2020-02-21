@@ -1,6 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.modules;
 
 import at.wtioit.intellij.plugins.odoo.BaseOdooPluginTest;
+import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.components.ServiceManager;
@@ -23,13 +24,25 @@ public class TestModuleImpl extends BaseOdooPluginTest {
     public void testDependencies() {
         OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
         OdooModule addon1 = moduleService.getModule("addon1");
-        assertContainsElements(addon1.getDependencies().stream().map(OdooModule::getName).collect(Collectors.toList()), "addon2");
+        // TODO remove WithinProject HACK
+        try {
+            WithinProject.INSTANCE.set(getProject());
+            assertContainsElements(addon1.getDependencies().stream().map(OdooModule::getName).collect(Collectors.toList()), "addon2");
+        } finally {
+            WithinProject.INSTANCE.remove();
+        }
     }
 
     public void testAddonWithNoDependencies() {
         OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
         OdooModule noDependencies = moduleService.getModule("no_dependencies");
-        assertEmpty(noDependencies.getDependencies());
+        // TODO remove WithinProject HACK
+        try {
+            WithinProject.INSTANCE.set(getProject());
+            assertEmpty(noDependencies.getDependencies());
+        } finally {
+            WithinProject.INSTANCE.remove();
+        }
     }
 
     public void testAddonPathDisplay() {
@@ -44,14 +57,20 @@ public class TestModuleImpl extends BaseOdooPluginTest {
         OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
         OdooModule addon1 = moduleService.getModule("addon1");
 
-        // test a direct dependency
-        assertTrue(addon1.dependsOn(moduleService.getModule("addon2")));
+        // TODO remove WithinProject HACK
+        try {
+            WithinProject.INSTANCE.set(getProject());
+            // test a direct dependency
+            assertTrue(addon1.dependsOn(moduleService.getModule("addon2")));
 
-        // test a non dependency
-        assertFalse(addon1.dependsOn(moduleService.getModule("no_dependencies")));
+            // test a non dependency
+            assertFalse(addon1.dependsOn(moduleService.getModule("no_dependencies")));
 
-        // test a transitive dependency
-        assertTrue(addon1.dependsOn(moduleService.getModule("addon3")));
+            // test a transitive dependency
+            assertTrue(addon1.dependsOn(moduleService.getModule("addon3")));
+        } finally {
+            WithinProject.INSTANCE.remove();
+        }
     }
 
     public void testOdooDirectory() {
@@ -79,7 +98,15 @@ public class TestModuleImpl extends BaseOdooPluginTest {
         OdooModule addon1 = moduleService.getModule("addon1");
         OdooModule addon1Again = moduleService.getModule("addon1");
         OdooModule addon2 = moduleService.getModule("addon2");
-        OdooModule addon2ViaDependency = moduleService.getModule("addon1").getDependencies().stream().filter(dependency -> "addon2".equals(dependency.getName())).findFirst().orElseThrow(AssertionError::new);
+
+        OdooModule addon2ViaDependency;
+        // TODO remove WithinProject HACK
+        try {
+            WithinProject.INSTANCE.set(getProject());
+            addon2ViaDependency = moduleService.getModule("addon1").getDependencies().stream().filter(dependency -> "addon2".equals(dependency.getName())).findFirst().orElseThrow(AssertionError::new);
+        } finally {
+            WithinProject.INSTANCE.remove();
+        }
 
         assertSame(addon1, addon1Again);
 
