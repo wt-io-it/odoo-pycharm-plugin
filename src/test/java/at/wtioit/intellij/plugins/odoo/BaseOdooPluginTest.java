@@ -2,8 +2,6 @@ package at.wtioit.intellij.plugins.odoo;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl;
-import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
-import at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleServiceImpl;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -72,11 +70,6 @@ public abstract class BaseOdooPluginTest extends BasePlatformTestCase {
      */
     protected void forceRescan() {
         try {
-
-            //OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
-            //forceSetField(moduleService, "moduleCache", OdooModuleServiceImpl.class, null);
-            //forceSetField(moduleService, "moduleCacheByName", OdooModuleServiceImpl.class, null);
-
             OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
             forceSetField(modelService, "scanFinished", OdooModelServiceImpl.class, false);
             forceSetField(modelService, "modelsCacheByName", OdooModelServiceImpl.class, Collections.emptyMap());

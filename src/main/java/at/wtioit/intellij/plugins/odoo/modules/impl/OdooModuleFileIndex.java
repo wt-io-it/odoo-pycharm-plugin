@@ -1,12 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.modules.impl;
 
-import at.wtioit.intellij.plugins.odoo.DefaultCharset;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
-import at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleImpl;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -96,15 +91,8 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
     private static class OdooModuleFileIndexer implements DataIndexer<String, OdooModule, FileContent> {
         @Override
         public @NotNull Map<String, OdooModule> map(@NotNull FileContent inputData) {
-            try {
-                PsiFile manifestFile = inputData.getPsiFile();
-                PsiDirectory directory = manifestFile.getContainingDirectory();
-                OdooModuleImpl module = new OdooModuleImpl(directory, manifestFile);
-                return Collections.singletonMap(module.getName(), module);
-            } catch (IllegalArgumentException e) {
-                OdooVirtualFileModuleImpl module = new OdooVirtualFileModuleImpl(inputData.getFile());
-                return Collections.singletonMap(module.getName(), module);
-            }
+            OdooVirtualFileModuleImpl module = new OdooVirtualFileModuleImpl(inputData.getFile());
+            return Collections.singletonMap(module.getName(), module);
         }
     }
 }
