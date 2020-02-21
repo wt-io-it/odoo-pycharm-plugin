@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.impl.PyImportResolver;
 import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -55,8 +56,9 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
         String[] path = name.split("\\.");
         PsiFileSystemItem element = addon;
         for (String segment : path) {
-            for (PsiElement child : element.getChildren()) {
-                element = null;
+            @NotNull PsiElement[] children = element.getChildren();
+            element = null;
+            for (PsiElement child : children) {
                 List<String> searchFor = Lists.asList(segment, segment + ".py", new String[0]);
                 if (child instanceof PsiFileSystemItem && searchFor.contains(((PsiFileSystemItem) child).getName())) {
                     element = (PsiFileSystemItem) child;
@@ -64,6 +66,7 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
                 }
             }
             if (element == null) {
+                // no child matches the current segment we are searching for
                 return null;
             }
         }
