@@ -332,7 +332,7 @@ public class OdooModulePsiElement implements OdooModule, PsiElement {
 
     @Override
     public Icon getIcon(int flags) {
-        return module.getDirectory().getIcon(flags);
+        return module.getIcon();
     }
 
     @Override

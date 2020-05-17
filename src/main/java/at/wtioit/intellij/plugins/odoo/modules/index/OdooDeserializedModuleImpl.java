@@ -11,6 +11,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.LayeredIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,8 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     @Override
     public @Nullable Icon getIcon() {
         if (directory != null) {
-            return directory.getIcon(0);
+            LayeredIcon icon = new LayeredIcon(directory.getIcon(0), OdooPluginIcons.ODOO_OVERLAY_ICON);
+            return icon;
         }
         return OdooPluginIcons.ODOO_TREE_ICON;
     }
