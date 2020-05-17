@@ -1,9 +1,12 @@
-package at.wtioit.intellij.plugins.odoo.modules.impl;
+package at.wtioit.intellij.plugins.odoo.modules.index;
 
 import at.wtioit.intellij.plugins.odoo.WithinProject;
+import at.wtioit.intellij.plugins.odoo.icons.OdooPluginIcons;
 import at.wtioit.intellij.plugins.odoo.modules.OdooManifest;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
+import at.wtioit.intellij.plugins.odoo.modules.impl.AbstractOdooModuleImpl;
+import at.wtioit.intellij.plugins.odoo.modules.impl.OdooManifestParser;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -49,8 +52,7 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
         if (directory != null) {
             return directory.getIcon(0);
         }
-        //TODO show fallback icon
-        return null;
+        return OdooPluginIcons.ODOO_TREE_ICON;
     }
 
     @Override

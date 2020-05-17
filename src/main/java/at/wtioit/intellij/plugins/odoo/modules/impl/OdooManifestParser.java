@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class OdooManifestParser {
+public class OdooManifestParser {
 
     @Contract(pure = true)
-    static OdooManifest parse(PsiFile manifestFile){
+    public static OdooManifest parse(PsiFile manifestFile){
         PyListLiteralExpression dependenciesList = getDependenciesList(getManifestExpression(manifestFile));
         List<String> dependencies = new ArrayList<>();
         if (dependenciesList != null) {

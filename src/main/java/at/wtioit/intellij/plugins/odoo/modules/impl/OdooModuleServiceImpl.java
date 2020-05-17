@@ -2,11 +2,10 @@ package at.wtioit.intellij.plugins.odoo.modules.impl;
 
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
+import at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.file.PsiDirectoryImpl;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;

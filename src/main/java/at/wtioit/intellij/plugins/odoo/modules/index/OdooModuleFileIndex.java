@@ -1,4 +1,4 @@
-package at.wtioit.intellij.plugins.odoo.modules.impl;
+package at.wtioit.intellij.plugins.odoo.modules.index;
 
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import com.intellij.openapi.vfs.VirtualFile;
