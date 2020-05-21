@@ -23,6 +23,7 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     private final String path;
     private PsiElement directory = null;
     private OdooManifest manifest = null;
+    private Icon icon = null;
 
     public OdooDeserializedModuleImpl(String moduleName, String modulePath) {
         name = moduleName;
@@ -51,7 +52,9 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     @Override
     public @Nullable Icon getIcon() {
         if (directory != null) {
-            LayeredIcon icon = new LayeredIcon(directory.getIcon(0), OdooPluginIcons.ODOO_OVERLAY_ICON);
+            if (icon == null) {
+                icon = new LayeredIcon(directory.getIcon(0), OdooPluginIcons.ODOO_OVERLAY_ICON);
+            }
             return icon;
         }
         return OdooPluginIcons.ODOO_TREE_ICON;
