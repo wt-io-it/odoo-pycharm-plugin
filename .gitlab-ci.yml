@@ -9,6 +9,9 @@ run_tests:
   artifacts:
     reports:
       junit: build/test-results/test/TEST-*.xml
+    paths:
+      - build/reports
+    when: always
 
 build:
   stage: build
