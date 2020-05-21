@@ -101,6 +101,7 @@
                       serviceImplementation="at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl" />
       <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex" />
       <searchEverywhereContributor implementation="at.wtioit.intellij.plugins.odoo.modules.search.OdooModuleSearchEverywhere" />
+      <searchEverywhereContributor implementation="at.wtioit.intellij.plugins.odoo.models.search.OdooModelSearchEverywhere" />
   </extensions>
 
   <actions>

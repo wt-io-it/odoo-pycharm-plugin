@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.modules.search;
 
+import at.wtioit.intellij.plugins.odoo.OdooSearchEverywhere;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereContributor;
@@ -28,7 +29,7 @@ public class OdooModuleSEContributor implements SearchEverywhereContributor<Odoo
 
     @Override
     public @NotNull String getGroupName() {
-        return "Odoo";
+        return OdooSearchEverywhere.GROUP_NAME;
     }
 
     @Override
