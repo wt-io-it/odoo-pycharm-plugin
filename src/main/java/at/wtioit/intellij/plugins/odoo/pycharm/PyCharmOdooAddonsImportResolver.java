@@ -35,7 +35,7 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
                 String addonName = fqn.substring(12);
                 OdooModule module = moduleService.getModule(addonName);
                 if (module != null) {
-                    return module.getDirectory();
+                    return WithinProject.call(context.getProject(), module::getDirectory);
                 }
             } else {
                 // import from an addons subdirs are resolved here, like 'from odoo.addons.addonname.models.modelfile import ModelClass'
@@ -46,12 +46,7 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
             // this is used when using 'from odoo.addons import addonname'
             OdooModule module = moduleService.getModule(fqn);
             if (module != null) {
-                try {
-                    WithinProject.INSTANCE.set(context.getProject());
-                    return module.getDirectory();
-                } finally {
-                    WithinProject.INSTANCE.remove();
-                }
+                return WithinProject.call(context.getProject(), module::getDirectory);
             }
         }
 

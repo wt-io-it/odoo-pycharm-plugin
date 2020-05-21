@@ -3,6 +3,7 @@ package at.wtioit.intellij.plugins.odoo.modules.search;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
+import at.wtioit.intellij.plugins.odoo.search.OdooSEResult;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
@@ -20,12 +21,12 @@ import javax.swing.*;
 import java.util.Collection;
 import java.util.List;
 
-public class OdooModulePsiElement implements OdooModule, PsiElement {
+public class OdooModulePsiElement implements OdooModule, PsiElement, OdooSEResult {
 
     private final OdooModule module;
     private final Project project;
 
-    OdooModulePsiElement(OdooModule forModule, Project forProject) {
+    public OdooModulePsiElement(OdooModule forModule, Project forProject) {
         module = forModule;
         project = forProject;
     }
@@ -33,6 +34,11 @@ public class OdooModulePsiElement implements OdooModule, PsiElement {
     @Override
     public @NotNull String getName() {
         return module.getName();
+    }
+
+    @Override
+    public String getLocationString() {
+        return getRelativeLocationString();
     }
 
     @Override

@@ -29,7 +29,7 @@
             <li>technical: migrated build system to gradle</li>
             <li><b>breaking:</b> only supports versions 2019.2 and up</li>
             <li>fix hierarchy not correctly built for some models</li>
-            <li>support modules in SearchEverywhere ([shift], [shift])</li>
+            <li>support modules and models in SearchEverywhere ([shift], [shift])</li>
           </uL>
         </li>
         <li>
@@ -100,8 +100,7 @@
       <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.models.OdooModelService"
                       serviceImplementation="at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl" />
       <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex" />
-      <searchEverywhereContributor implementation="at.wtioit.intellij.plugins.odoo.modules.search.OdooModuleSearchEverywhere" />
-      <searchEverywhereContributor implementation="at.wtioit.intellij.plugins.odoo.models.search.OdooModelSearchEverywhere" />
+      <searchEverywhereContributor implementation="at.wtioit.intellij.plugins.odoo.search.OdooSearchEverywhere" />
   </extensions>
 
   <actions>
