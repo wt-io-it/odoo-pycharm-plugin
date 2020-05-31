@@ -9,11 +9,16 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyListLiteralExpression;
+import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class OdooModelImpl implements OdooModel {
     private final PsiElement pyline;
@@ -21,6 +26,7 @@ public class OdooModelImpl implements OdooModel {
     private boolean nameDetected = false;
     private final Logger logger = Logger.getInstance(OdooModelImpl.class);
     private Set<OdooModule> modules;
+    private PyResolveContext resolveContext;
 
     public OdooModelImpl(PsiElement pyline, OdooModule module) {
         this.pyline = pyline;
@@ -37,23 +43,11 @@ public class OdooModelImpl implements OdooModel {
                     while (valueChild instanceof PsiComment || valueChild instanceof PsiWhiteSpace ) {
                         valueChild = valueChild.getPrevSibling();
                     }
-                    if (valueChild instanceof PyStringLiteralExpressionImpl) {
-                        name = ((PyStringLiteralExpressionImpl) valueChild).getStringValue();
-                        if ("_name".equals(variableName)) break;
-                    } else if (valueChild instanceof PyListLiteralExpression) {
-                        //firstChild() somehow returns the bracket
-                        PsiElement firstChild = valueChild.getChildren()[0];
-                        if (firstChild instanceof PyStringLiteralExpressionImpl) {
-                            name = ((PyStringLiteralExpressionImpl) firstChild).getStringValue();
-                            if ("_name".equals(variableName)) break;
-                        } else {
-                            logger.error("Unknown string value class: " + valueChild.getClass());
-                        }
-                    } else if (valueChild instanceof PyCallExpression || valueChild instanceof PyBinaryExpression) {
-                        logger.debug("Cannot detect string value for class: " + valueChild.getClass());
-                    } else {
-                        logger.error("Unknown string value class: " + valueChild.getClass());
+                    String stringValueForChild = getStringValueForValueChild(valueChild, this::getResolveContext);
+                    if (stringValueForChild != null) {
+                        name = stringValueForChild;
                     }
+                    if ("_name".equals(variableName)) break;
                 }
             }
             nameDetected = true;
@@ -62,6 +56,41 @@ public class OdooModelImpl implements OdooModel {
             logger.debug("Name not detected for: " + pyline + " in " + pyline.getContainingFile().getVirtualFile());
         }
         return name;
+    }
+
+    private PyResolveContext getResolveContext() {
+        if (resolveContext == null) {
+            TypeEvalContext evalContext = TypeEvalContext.codeAnalysis(pyline.getContainingFile().getProject(), pyline.getContainingFile());
+            resolveContext = PyResolveContext.defaultContext().withTypeEvalContext(evalContext);
+        }
+        return resolveContext;
+    }
+
+    private String getStringValueForValueChild(@NotNull PsiElement valueChild, Supplier<PyResolveContext> contextSupplier) {
+        if (valueChild instanceof PyStringLiteralExpressionImpl) {
+            return ((PyStringLiteralExpressionImpl) valueChild).getStringValue();
+        } else if (valueChild instanceof PyListLiteralExpression) {
+            //firstChild() somehow returns the bracket
+            PsiElement firstChild = valueChild.getChildren()[0];
+            if (firstChild instanceof PyStringLiteralExpressionImpl) {
+                return ((PyStringLiteralExpressionImpl) firstChild).getStringValue();
+            } else {
+                logger.error("Unknown string value class: " + valueChild.getClass());
+            }
+        } else if (valueChild instanceof PyReferenceExpression) {
+            PyReferenceExpression expression = (PyReferenceExpression) valueChild;
+            PsiElement resolvedElement = expression.followAssignmentsChain(contextSupplier.get()).getElement();
+            if (resolvedElement != null) {
+                return getStringValueForValueChild(resolvedElement, contextSupplier);
+            } else {
+                logger.debug("Cannot detect string value for " + valueChild.getReference());
+            }
+        } else if (valueChild instanceof PyCallExpression || valueChild instanceof PyBinaryExpression) {
+            logger.debug("Cannot detect string value for class: " + valueChild.getClass());
+        } else {
+            logger.error("Unknown string value class: " + valueChild.getClass());
+        }
+        return null;
     }
 
     @Override
