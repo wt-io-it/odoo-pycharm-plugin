@@ -40,7 +40,9 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
             } else {
                 // import from an addons subdirs are resolved here, like 'from odoo.addons.addonname.models.modelfile import ModelClass'
                 PsiDirectory addon = (PsiDirectory) resolveImportReference(name.removeTail(name.getComponentCount() - 3), context, withRoots);
-                return resolveOdooAddonImportReference(addon, fqn.substring(fqn.indexOf('.', 12) + 1));
+                if (addon != null) {
+                    return resolveOdooAddonImportReference(addon, fqn.substring(fqn.indexOf('.', 12) + 1));
+                }
             }
         } else if (!fqn.contains(".")) {
             // this is used when using 'from odoo.addons import addonname'
@@ -53,7 +55,7 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
         return null;
     }
 
-    private PsiElement resolveOdooAddonImportReference(PsiDirectory addon, String name) {
+    private PsiElement resolveOdooAddonImportReference(@NotNull PsiDirectory addon, String name) {
         String[] path = name.split("\\.");
         PsiFileSystemItem element = addon;
         for (String segment : path) {
