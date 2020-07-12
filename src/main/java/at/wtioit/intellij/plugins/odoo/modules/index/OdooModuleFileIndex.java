@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.modules.index;
 
+import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.*;
@@ -38,15 +39,11 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
 
     @Override
     public @NotNull DataExternalizer<OdooModule> getValueExternalizer() {
-        return new DataExternalizer<OdooModule>() {
+        return new AbstractDataExternalizer<OdooModule>() {
             @Override
             public void save(@NotNull DataOutput out, OdooModule module) throws IOException {
-                String name = module.getName();
-                out.writeInt(name.length());
-                out.writeBytes(name);
-                String path = module.getPath();
-                out.writeInt(path.length());
-                out.writeBytes(path);
+                saveString(module.getName(), out);
+                saveString(module.getPath(), out);
             }
 
             @Override
@@ -54,16 +51,6 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
                 String name = readString(in);
                 String path = readString(in);
                 return new OdooDeserializedModuleImpl(name, path);
-            }
-
-            @NotNull
-            private String readString(@NotNull DataInput in) throws IOException {
-                int nameLength = in.readInt();
-                byte[] nameBytes = new byte[nameLength];
-                for (int i = 0; i < nameLength; i++) {
-                    nameBytes[i] = in.readByte();
-                }
-                return new String(nameBytes);
             }
         };
     }

@@ -26,8 +26,6 @@ public class OdooModelServiceImpl implements OdooModelService {
 
     private static final Set<String> ODOO_MODELS_DIRECTORY_NAMES = new HashSet<>(Arrays.asList("models", "model",
             "wizard", "report", "ir", "ir_qweb", "res", "tests"));
-    private static final Set<String> ODOO_MODEL_BASE_CLASS_NAMES = new HashSet<>(Arrays.asList("odoo.models.Model",
-            "odoo.models.BaseModel", "odoo.models.TransientModel", "odoo.models.AbstractModel"));
 
     public OdooModelServiceImpl(Project project) {
         this.project = project;
@@ -59,7 +57,8 @@ public class OdooModelServiceImpl implements OdooModelService {
                                     for (PsiElement file : child.getChildren()) {
                                         if (file instanceof PsiFile) {
                                             for (PsiElement pyline : file.getChildren()) {
-                                                if (isOdooModelDefinition(pyline)) {
+                                                // TODO replace with OdooModelFileIndex until here
+                                                if (OdooModelService.isOdooModelDefinition(pyline)) {
                                                     logger.debug("Found " + pyline + " in " + ((PsiFile) file).getName());
                                                     OdooModelImpl model = new OdooModelImpl(pyline, module);
                                                     ArrayList<OdooModel> moduleModels = new ArrayList<>(module.getModels());
@@ -168,16 +167,5 @@ public class OdooModelServiceImpl implements OdooModelService {
             getModels();
         }
         return modelsCacheByElement.get(psiElement);
-    }
-
-    private boolean isOdooModelDefinition(PsiElement pyline) {
-        if (pyline instanceof PyClass) {
-            for (PyClass superClass : ((PyClass) pyline).getSuperClasses(null)) {
-                if (ODOO_MODEL_BASE_CLASS_NAMES.contains(superClass.getQualifiedName())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

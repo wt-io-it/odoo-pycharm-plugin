@@ -1,24 +1,16 @@
 package at.wtioit.intellij.plugins.odoo.models.impl;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
+import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.jetbrains.python.psi.PyBinaryExpression;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyListLiteralExpression;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public class OdooModelImpl implements OdooModel {
     private final PsiElement pyline;
@@ -36,20 +28,7 @@ public class OdooModelImpl implements OdooModel {
     @Override
     public String getName() {
         if (!nameDetected) {
-            for (PsiElement statement : pyline.getChildren()[1].getChildren()) {
-                String variableName = statement.getFirstChild().getText();
-                if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
-                    PsiElement valueChild = statement.getLastChild();
-                    while (valueChild instanceof PsiComment || valueChild instanceof PsiWhiteSpace ) {
-                        valueChild = valueChild.getPrevSibling();
-                    }
-                    String stringValueForChild = getStringValueForValueChild(valueChild, this::getResolveContext);
-                    if (stringValueForChild != null) {
-                        name = stringValueForChild;
-                    }
-                    if ("_name".equals(variableName)) break;
-                }
-            }
+            name = OdooModelUtil.detectName(pyline, this::getResolveContext);
             nameDetected = true;
         }
         if (name == null) {
@@ -64,33 +43,6 @@ public class OdooModelImpl implements OdooModel {
             resolveContext = PyResolveContext.defaultContext().withTypeEvalContext(evalContext);
         }
         return resolveContext;
-    }
-
-    private String getStringValueForValueChild(@NotNull PsiElement valueChild, Supplier<PyResolveContext> contextSupplier) {
-        if (valueChild instanceof PyStringLiteralExpressionImpl) {
-            return ((PyStringLiteralExpressionImpl) valueChild).getStringValue();
-        } else if (valueChild instanceof PyListLiteralExpression) {
-            //firstChild() somehow returns the bracket
-            PsiElement firstChild = valueChild.getChildren()[0];
-            if (firstChild instanceof PyStringLiteralExpressionImpl) {
-                return ((PyStringLiteralExpressionImpl) firstChild).getStringValue();
-            } else {
-                logger.error("Unknown string value class: " + valueChild.getClass());
-            }
-        } else if (valueChild instanceof PyReferenceExpression) {
-            PyReferenceExpression expression = (PyReferenceExpression) valueChild;
-            PsiElement resolvedElement = expression.followAssignmentsChain(contextSupplier.get()).getElement();
-            if (resolvedElement != null) {
-                return getStringValueForValueChild(resolvedElement, contextSupplier);
-            } else {
-                logger.debug("Cannot detect string value for " + valueChild.getReference());
-            }
-        } else if (valueChild instanceof PyCallExpression || valueChild instanceof PyBinaryExpression) {
-            logger.debug("Cannot detect string value for class: " + valueChild.getClass());
-        } else {
-            logger.error("Unknown string value class: " + valueChild.getClass());
-        }
-        return null;
     }
 
     @Override
