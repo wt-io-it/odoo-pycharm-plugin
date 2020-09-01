@@ -3,14 +3,20 @@ package at.wtioit.intellij.plugins.odoo.modules.impl;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class OdooModuleServiceImpl implements OdooModuleService {
 
@@ -38,19 +44,39 @@ public class OdooModuleServiceImpl implements OdooModuleService {
 
     @Override
     public OdooModule getModule(String moduleName) {
-        FileBasedIndex index = FileBasedIndex.getInstance();
-        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        List<OdooModule> modulesForName = index.getValues(OdooModuleFileIndex.NAME, moduleName, scope);
-        if (modulesForName.size() > 1) {
-            // TODO log an error to event log (or mark the directories as invalid)
-            throw new IllegalStateException("More than one module for name " + moduleName);
-        } else if (modulesForName.size() == 1) {
-            return modulesForName.get(0);
-        }
-        return null;
+        return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
+            FileBasedIndex index = FileBasedIndex.getInstance();
+            GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+            List<OdooModule> modulesForName = index.getValues(OdooModuleFileIndex.NAME, moduleName, scope);
+            if (modulesForName.size() > 1) {
+                // TODO log an error to event log (or mark the directories as invalid)
+                throw new IllegalStateException("More than one module for name " + moduleName);
+            } else if (modulesForName.size() == 1) {
+                return modulesForName.get(0);
+            }
+            return null;
+        });
     }
 
     @Override
+    public OdooModule getModule(PsiFile file) {
+        return getModule(file.getVirtualFile());
+    }
+
+    @Override
+    public OdooModule getModule(VirtualFile file) {
+        return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
+            PsiDirectory moduleDirectory = getModuleDirectory(file.getPath());
+            FileBasedIndex index = FileBasedIndex.getInstance();
+            Map<String, OdooModule> modules = index.getFileData(OdooModuleFileIndex.NAME, moduleDirectory.getVirtualFile().findFileByRelativePath("__manifest__.py"), project);
+            if (modules.size() == 1) {
+                return modules.values().iterator().next();
+            }
+            return null;
+        });
+    }
+
+        @Override
     public OdooModule findModule(String moduleName) {
         return getModule(moduleName);
     }
@@ -66,12 +92,14 @@ public class OdooModuleServiceImpl implements OdooModuleService {
 
     @Override
     public PsiDirectory getModuleDirectory(String location) {
-        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        for (PsiFile file : FilenameIndex.getFilesByName(project, "__manifest__.py", scope)) {
-            if (location.equals(file.getParent().getVirtualFile().getCanonicalPath())) {
-                return file.getParent();
+        return ApplicationManager.getApplication().runReadAction((Computable<PsiDirectory>) () -> {
+            GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+            for (PsiFile file : FilenameIndex.getFilesByName(project, "__manifest__.py", scope)) {
+                if (location.equals(file.getParent().getVirtualFile().getCanonicalPath()) || location.startsWith(file.getParent().getVirtualFile().getCanonicalPath() + File.separator)) {
+                    return file.getParent();
+                }
             }
-        }
-        return null;
+            return null;
+        });
     }
 }

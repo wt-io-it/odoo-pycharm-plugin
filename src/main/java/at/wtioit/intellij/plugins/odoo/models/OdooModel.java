@@ -18,8 +18,6 @@ public interface OdooModel {
 
     Set<OdooModule> getModules();
 
-    void setModules(Set<OdooModule> modelModules);
-
     @NotNull
     PsiElement getDefiningElement();
 

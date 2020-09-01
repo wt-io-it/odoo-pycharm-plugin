@@ -32,6 +32,11 @@ intellij {
     plugins 'PythonCore:2019.2.192.6262.41'
 }*/
 
+runIde {
+    // enable DebugAttachDetector
+    jvmArgs '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED'
+}
+
 
 patchPluginXml {
 //    changeNotes """

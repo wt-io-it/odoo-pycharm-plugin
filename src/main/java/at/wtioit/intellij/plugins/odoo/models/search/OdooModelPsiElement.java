@@ -57,11 +57,6 @@ public class OdooModelPsiElement implements OdooModel, PsiElement, OdooSEResult 
         return model.getModules();
     }
 
-    @Override
-    public void setModules(Set<OdooModule> modelModules) {
-        model.setModules(modelModules);
-    }
-
     @NotNull
     @Override
     public PsiElement getDefiningElement() {

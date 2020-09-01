@@ -7,6 +7,7 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.modules.impl.AbstractOdooModuleImpl;
 import at.wtioit.intellij.plugins.odoo.modules.impl.OdooManifestParser;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -63,12 +64,14 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     @Override
     public @NotNull Collection<OdooModule> getDependencies() {
         if (manifest == null) {
-            PsiDirectory directory = (PsiDirectory) getDirectory();
-            for (@NotNull PsiElement file : directory.getChildren()) {
-                if (file instanceof PsiFile && "__manifest__.py".equals(((PsiFile) file).getName())) {
-                    manifest = OdooManifestParser.parse((PsiFile) file);
+            ApplicationManager.getApplication().runReadAction(() -> {
+                PsiDirectory directory = (PsiDirectory) getDirectory();
+                for (@NotNull PsiElement file : directory.getChildren()) {
+                    if (file instanceof PsiFile && "__manifest__.py".equals(((PsiFile) file).getName())) {
+                        manifest = OdooManifestParser.parse((PsiFile) file);
+                    }
                 }
-            }
+            });
         }
         return manifest.getDependencies();
     }
