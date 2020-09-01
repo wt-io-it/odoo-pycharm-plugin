@@ -26,8 +26,6 @@ public class OdooModelImpl implements OdooModel {
     private final String name;
     private final Collection<VirtualFile> definingFiles;
     private final Project project;
-    // TODO maybe get rid of this "cache"
-    private PsiElement element;
 
     public OdooModelImpl(String modelName, Collection<VirtualFile> files, Project project) {
         name = modelName;
@@ -43,24 +41,21 @@ public class OdooModelImpl implements OdooModel {
     @NotNull
     @Override
     public PsiElement getDefiningElement() {
-        if (element == null) {
-            ApplicationManager.getApplication().runReadAction(() -> {
-                if (definingFiles.size() == 1) {
-                    PsiFile psiFile = PsiManager.getInstance(project).findFile(definingFiles.iterator().next());
-                    retrieveDefiningElementFromFile(psiFile);
-                } else {
-                    PsiManager psiManager = PsiManager.getInstance(project);
-                    OdooModuleService moduleService = OdooModuleService.getInstance(project);
-                    PsiFile psiFile = definingFiles.stream()
-                            .filter(file -> moduleService.getModule(file).equals(getBaseModule()))
-                            .map(psiManager::findFile)
-                            .findFirst()
-                            .orElse(null);
-                    retrieveDefiningElementFromFile(psiFile);
-                }
-            });
-        }
-        return element;
+        return ApplicationManager.getApplication().runReadAction((Computable<PsiElement>) () -> {
+            if (definingFiles.size() == 1) {
+                PsiFile psiFile = PsiManager.getInstance(project).findFile(definingFiles.iterator().next());
+                return retrieveDefiningElementFromFile(psiFile);
+            } else {
+                PsiManager psiManager = PsiManager.getInstance(project);
+                OdooModuleService moduleService = OdooModuleService.getInstance(project);
+                PsiFile psiFile = definingFiles.stream()
+                        .filter(file -> moduleService.getModule(file).equals(getBaseModule()))
+                        .map(psiManager::findFile)
+                        .findFirst()
+                        .orElse(null);
+                return retrieveDefiningElementFromFile(psiFile);
+            }
+        });
     }
 
     @NotNull
@@ -80,7 +75,6 @@ public class OdooModelImpl implements OdooModel {
                 if (OdooModelService.isOdooModelDefinition(pyline)) {
                     OdooModelDefinition model = new OdooModelDefinition((PyClass) pyline);
                     if (model.getName().equals(name)) {
-                        element = pyline;
                         return pyline;
                     }
                 }

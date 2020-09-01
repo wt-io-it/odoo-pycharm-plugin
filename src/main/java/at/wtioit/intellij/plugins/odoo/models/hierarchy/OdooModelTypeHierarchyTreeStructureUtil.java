@@ -19,7 +19,9 @@ class OdooModelTypeHierarchyTreeStructureUtil {
         }
         if (model instanceof OdooModelImpl) {
             for (PsiElement definingElement : ((OdooModelImpl) model).getDefiningElements()) {
-                children.add(new OdooModelHierarchyNodeDescriptor(hierarchyNodeDescriptor, definingElement, false));
+                if (definingElement != model.getDefiningElement()) {
+                    children.add(new OdooModelHierarchyNodeDescriptor(hierarchyNodeDescriptor, definingElement, false));
+                }
             }
         } else {
             WithinProject.run(hierarchyNodeDescriptor.getProject(), () -> {
