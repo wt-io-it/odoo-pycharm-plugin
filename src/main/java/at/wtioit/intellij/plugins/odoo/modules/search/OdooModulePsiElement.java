@@ -72,11 +72,6 @@ public class OdooModulePsiElement implements OdooModule, PsiElement, OdooSEResul
     }
 
     @Override
-    public void setModels(List<OdooModel> models) {
-        module.setModels(models);
-    }
-
-    @Override
     public boolean dependsOn(OdooModule module) {
         return module.dependsOn(module);
     }

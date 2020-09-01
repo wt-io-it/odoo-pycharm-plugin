@@ -2,7 +2,6 @@ package at.wtioit.intellij.plugins.odoo.modules.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -62,12 +61,7 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
 
     @Override
     public FileBasedIndex.@NotNull InputFilter getInputFilter() {
-        return new FileBasedIndex.InputFilter() {
-            @Override
-            public boolean acceptInput(@NotNull VirtualFile file) {
-                return "__manifest__.py".equals(file.getName());
-            }
-        };
+        return file -> "__manifest__.py".equals(file.getName());
     }
 
     @Override

@@ -17,4 +17,14 @@ public class WithinProject extends ThreadLocal<Project> {
             INSTANCE.remove();
         }
     }
+
+    public static void run(Project project, Runnable runnable) {
+        if (INSTANCE.get() != null) runnable.run();
+        try {
+            INSTANCE.set(project);
+            runnable.run();
+        } finally {
+            INSTANCE.remove();
+        }
+    }
 }

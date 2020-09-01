@@ -6,7 +6,6 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -110,16 +109,6 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
             return Collections.emptyList();
         }
         return module.getModels();
-    }
-
-    @Override
-    public void setModels(List<OdooModel> models) {
-        try {
-            tryResolveOdooModule();
-        } catch (FileNotFoundException e) {
-            throw new NotImplementedException("Unresolved modules cannot have any models", e);
-        }
-        module.setModels(models);
     }
 
     @Override

@@ -1,24 +1,24 @@
 package at.wtioit.intellij.plugins.odoo.modules.impl;
 
+import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
+import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
+import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public abstract class AbstractOdooModuleImpl implements OdooModule {
 
-    private List<OdooModel> models = Collections.emptyList();
-
     @Override
     public @NotNull List<OdooModel> getModels() {
-        return models;
-    }
-
-    @Override
-    public void setModels(List<OdooModel> models) {
-        this.models = models;
+        Iterable<OdooModel> models = ServiceManager.getService(WithinProject.INSTANCE.get(), OdooModelService.class).getModels();
+        return StreamSupport.stream(models.spliterator(), true)
+                .filter(model -> model.getModules().contains(this))
+                .collect(Collectors.toList());
     }
 
     @Override

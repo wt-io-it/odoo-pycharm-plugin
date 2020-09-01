@@ -8,6 +8,7 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -62,18 +63,30 @@ public class OdooModelImpl implements OdooModel {
         return element;
     }
 
-    private void retrieveDefiningElementFromFile(PsiFile psiFile) {
+    @NotNull
+    public List<PsiElement> getDefiningElements() {
+        return ApplicationManager.getApplication().runReadAction((Computable<List<PsiElement>>) () -> {
+            PsiManager psiManager = PsiManager.getInstance(project);
+            return definingFiles.stream()
+                    .map(psiManager::findFile)
+                    .map(file -> retrieveDefiningElementFromFile(file))
+                    .collect(Collectors.toList());
+        });
+    }
+
+    private PsiElement retrieveDefiningElementFromFile(PsiFile psiFile) {
         if (psiFile != null) {
             for (PsiElement pyline : psiFile.getChildren()) {
                 if (OdooModelService.isOdooModelDefinition(pyline)) {
                     OdooModelDefinition model = new OdooModelDefinition((PyClass) pyline);
                     if (model.getName().equals(name)) {
                         element = pyline;
-                        return;
+                        return pyline;
                     }
                 }
             }
         }
+        return null;
     }
 
     @Override

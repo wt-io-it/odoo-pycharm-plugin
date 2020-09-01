@@ -32,7 +32,5 @@ public interface OdooModule {
     @NotNull
     List<OdooModel> getModels();
 
-    void setModels(List<OdooModel> models);
-
     boolean dependsOn(OdooModule module);
 }
