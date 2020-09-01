@@ -6,8 +6,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyFromImportStatementImpl;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +44,6 @@ public interface OdooModelService {
                 for (@NotNull PsiElement superClassElement : pyClass.getChildren()[0].getChildren()) {
                     if (superClassElement instanceof PyReferenceExpression) {
                         if (isOdooModelName(superClassElement.getText(), pyline)) {
-                            // TODO we should check that there is an import in the file from odoo import models
                             return true;
                         }
                     }
@@ -64,11 +61,13 @@ public interface OdooModelService {
         if (file instanceof PyFile) {
             for (PyFromImportStatement fromImport : ((PyFile) pyline.getContainingFile()).getFromImports()) {
                 PyReferenceExpression importSource = fromImport.getImportSource();
-                if (importSource != null && importSource.getText().equals("odoo") && PsiElementsUtil.findChildrenByClassAndName(fromImport, PyImportElement.class, "model") != null) {
+                if (importSource != null && importSource.getText().equals("odoo")
+                        && PsiElementsUtil.findChildrenByClassAndName(fromImport, PyImportElement.class, "models") != null) {
                     if (ODOO_MODEL_BASE_CLASS_NAMES.contains("odoo." + name)) {
                         return true;
                     }
-                } else if (importSource != null && importSource.getText().equals("odoo.models") && PsiElementsUtil.findChildrenByClassAndName(fromImport, PyImportElement.class, name) != null) {
+                } else if (importSource != null && importSource.getText().equals("odoo.models")
+                        && PsiElementsUtil.findChildrenByClassAndName(fromImport, PyImportElement.class, name) != null) {
                     if (ODOO_MODEL_BASE_CLASS_NAMES.contains("odoo.models." + name)) {
                         return true;
                     }

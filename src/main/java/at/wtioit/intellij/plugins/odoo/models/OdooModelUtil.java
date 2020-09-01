@@ -39,6 +39,7 @@ public class OdooModelUtil {
                 if ("_name".equals(variableName)) break;
             }
         }
+        if (name == null) logger.warn("Cannot detect name for " + pyline + " in " + pyline.getContainingFile());
         return name;
     }
 

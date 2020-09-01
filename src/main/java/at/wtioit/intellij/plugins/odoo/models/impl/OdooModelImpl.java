@@ -1,48 +1,38 @@
 package at.wtioit.intellij.plugins.odoo.models.impl;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
-import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
+import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
+import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.jetbrains.python.psi.PyClass;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
 public class OdooModelImpl implements OdooModel {
-    private final PsiElement pyline;
-    private String name;
-    private boolean nameDetected = false;
-    private final Logger logger = Logger.getInstance(OdooModelImpl.class);
+    private final String name;
+    private final Collection<VirtualFile> definingFiles;
+    private final Project project;
     private Set<OdooModule> modules;
-    private PyResolveContext resolveContext;
+    private PsiElement element;
 
-    public OdooModelImpl(PsiElement pyline, OdooModule module) {
-        this.pyline = pyline;
-        modules = Collections.singleton(module);
+    public OdooModelImpl(String modelName, Collection<VirtualFile> files, Project project) {
+        name = modelName;
+        definingFiles = files;
+        this.project = project;
     }
 
     @Override
     public String getName() {
-        if (!nameDetected) {
-            name = OdooModelUtil.detectName(pyline, this::getResolveContext);
-            nameDetected = true;
-        }
-        if (name == null) {
-            logger.debug("Name not detected for: " + pyline + " in " + pyline.getContainingFile().getVirtualFile());
-        }
         return name;
-    }
-
-    private PyResolveContext getResolveContext() {
-        if (resolveContext == null) {
-            TypeEvalContext evalContext = TypeEvalContext.codeAnalysis(pyline.getContainingFile().getProject(), pyline.getContainingFile());
-            resolveContext = PyResolveContext.defaultContext().withTypeEvalContext(evalContext);
-        }
-        return resolveContext;
     }
 
     @Override
@@ -50,9 +40,25 @@ public class OdooModelImpl implements OdooModel {
         return modules;
     }
 
+    @NotNull
     @Override
     public PsiElement getDefiningElement() {
-        return pyline;
+        if (definingFiles.size() == 1) {
+            if (element == null) {
+                PsiFile psiFile = PsiManager.getInstance(project).findFile(definingFiles.iterator().next());
+                for (PsiElement pyline : psiFile.getChildren()) {
+                    if (OdooModelService.isOdooModelDefinition(pyline)) {
+                        OdooModelDefinition model = new OdooModelDefinition((PyClass) pyline);
+                        if (model.getName().equals(name)) {
+                            element = pyline;
+                            return pyline;
+                        }
+                    }
+                }
+            }
+            return element;
+        }
+        throw new RuntimeException("TODO");
     }
 
     public void setModules(Set<OdooModule> modules) {

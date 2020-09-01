@@ -2,15 +2,12 @@ package at.wtioit.intellij.plugins.odoo.models.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
-import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -25,7 +22,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooModelDefinition> {
 
@@ -67,17 +63,7 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
                 String modelName = readString(in);
                 for (Project project : ProjectManager.getInstance().getOpenProjects()) {
                     if (projectPresentableUrl.equals(project.getPresentableUrl())) {
-                        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-                        for (PsiFile file : FilenameIndex.getFilesByName(project, fileName, scope)) {
-                            for (PsiElement element : file.getChildren()) {
-                                if (element instanceof PyClass) {
-                                    PyClass pyClass = (PyClass) element;
-                                    if (Objects.equals(pyClass.getName(), className) && OdooModelUtil.detectName(pyClass).equals(modelName)) {
-                                        return new OdooModelDefinition(pyClass);
-                                    }
-                                }
-                            }
-                        }
+                        return new OdooModelDefinition(fileName, className, modelName, project);
                     }
                 }
                 return null;
@@ -89,7 +75,7 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
 
     @Override
     public int getVersion() {
-        return 6;
+        return 14;
     }
 
     @Override
@@ -120,7 +106,10 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
                 if (OdooModelService.isOdooModelDefinition(pyline)) {
                     logger.debug("Found " + pyline + " in " + file.getName());
                     OdooModelDefinition model = new OdooModelDefinition((PyClass) pyline);
-                    models.put(model.getName(), model);
+                    if (model.getName() != null) {
+                        // if we cannot detect a name we do not put the class in the index
+                        models.put(model.getName(), model);
+                    }
                 }
             }
             return models;

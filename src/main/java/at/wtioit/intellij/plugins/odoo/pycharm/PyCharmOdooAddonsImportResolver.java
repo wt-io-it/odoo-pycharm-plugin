@@ -45,7 +45,7 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
                 }
             }
         } else if (!fqn.contains(".")) {
-            // this is used when using 'from odoo.addons import addonname'
+            // this is used when using 'from odoo.addons import addon_name'
             OdooModule module = moduleService.getModule(fqn);
             if (module != null) {
                 return WithinProject.call(context.getProject(), module::getDirectory);

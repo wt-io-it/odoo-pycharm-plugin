@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.models;
 
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -19,6 +20,7 @@ public interface OdooModel {
 
     void setModules(Set<OdooModule> modelModules);
 
+    @NotNull
     PsiElement getDefiningElement();
 
     OdooModule getBaseModule();
