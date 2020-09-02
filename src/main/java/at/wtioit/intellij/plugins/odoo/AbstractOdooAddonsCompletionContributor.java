@@ -20,18 +20,20 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
     void suggestModuleName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
         OdooModuleService moduleService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModuleService.class);
         PsiDirectory odooDirectory = moduleService.getOdooDirectory();
-        for (OdooModule module : moduleService.getModules()) {
-            String moduleName = module.getName();
-            String pythonModuleImportPath = "odoo.addons." + moduleName;
-            if (moduleName.startsWith(value) && !pythonModuleImportPath.equals(getModulePythonImportPath(odooDirectory, module))) {
-                PsiElement directory = module.getDirectory();
-                if (directory != null) {
-                    LookupElementBuilder element = LookupElementBuilder
-                            .createWithSmartPointer(moduleName, directory)
-                            .withIcon(module.getIcon())
-                            .withTailText(" " + module.getRelativeLocationString(), true);
-                    // TODO add insert handler if used in code (not import statement)?
-                    result.addElement(element);
+        if (odooDirectory != null) {
+            for (OdooModule module : moduleService.getModules()) {
+                String moduleName = module.getName();
+                String pythonModuleImportPath = "odoo.addons." + moduleName;
+                if (moduleName.startsWith(value) && !pythonModuleImportPath.equals(getModulePythonImportPath(odooDirectory, module))) {
+                    PsiElement directory = module.getDirectory();
+                    if (directory != null) {
+                        LookupElementBuilder element = LookupElementBuilder
+                                .createWithSmartPointer(moduleName, directory)
+                                .withIcon(module.getIcon())
+                                .withTailText(" " + module.getRelativeLocationString(), true);
+                        // TODO add insert handler if used in code (not import statement)?
+                        result.addElement(element);
+                    }
                 }
             }
         }

@@ -67,12 +67,14 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     public OdooModule getModule(VirtualFile file) {
         return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
             PsiDirectory moduleDirectory = getModuleDirectory(file.getPath());
-            FileBasedIndex index = FileBasedIndex.getInstance();
-            VirtualFile manifest = moduleDirectory.getVirtualFile().findFileByRelativePath("__manifest__.py");
-            if (manifest != null) {
-                Map<String, OdooModule> modules = index.getFileData(OdooModuleFileIndex.NAME, manifest, project);
-                if (modules.size() == 1) {
-                    return modules.values().iterator().next();
+            if (moduleDirectory != null) {
+                FileBasedIndex index = FileBasedIndex.getInstance();
+                VirtualFile manifest = moduleDirectory.getVirtualFile().findFileByRelativePath("__manifest__.py");
+                if (manifest != null) {
+                    Map<String, OdooModule> modules = index.getFileData(OdooModuleFileIndex.NAME, manifest, project);
+                    if (modules.size() == 1) {
+                        return modules.values().iterator().next();
+                    }
                 }
             }
             return null;

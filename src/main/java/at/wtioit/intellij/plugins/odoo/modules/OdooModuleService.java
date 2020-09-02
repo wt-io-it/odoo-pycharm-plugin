@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface OdooModuleService {
     static OdooModuleService getInstance(@NotNull Project project) {
@@ -22,7 +23,9 @@ public interface OdooModuleService {
 
     OdooModule findModule(String moduleName);
 
+    @Nullable
     PsiDirectory getOdooDirectory();
 
+    @Nullable
     PsiDirectory getModuleDirectory(String path);
 }
