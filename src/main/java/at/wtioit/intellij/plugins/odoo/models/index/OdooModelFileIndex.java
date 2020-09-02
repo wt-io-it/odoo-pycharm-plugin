@@ -80,12 +80,9 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
 
     @Override
     public FileBasedIndex.@NotNull InputFilter getInputFilter() {
-        return new FileBasedIndex.InputFilter() {
-            @Override
-            public boolean acceptInput(@NotNull VirtualFile file) {
-                // TODO maybe check that we are inside of a possible module
-                return file.getFileType() == PythonFileType.INSTANCE;
-            }
+        return file -> {
+            // TODO maybe check that we are inside of a possible module
+            return file.getFileType() == PythonFileType.INSTANCE;
         };
     }
 

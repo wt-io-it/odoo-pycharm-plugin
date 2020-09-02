@@ -8,10 +8,10 @@ import java.util.Objects;
 
 public class OdooModelDefinition {
 
-    private String className;
-    private String name;
-    private String project;
-    private String fileName;
+    private final String className;
+    private final String name;
+    private final String project;
+    private final String fileName;
 
     public OdooModelDefinition(PyClass pyClass) {
         name = OdooModelUtil.detectName(pyClass);

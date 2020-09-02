@@ -66,11 +66,13 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
         if (manifest == null) {
             ApplicationManager.getApplication().runReadAction(() -> {
                 PsiDirectory directory = (PsiDirectory) getDirectory();
-                for (@NotNull PsiElement file : directory.getChildren()) {
-                    if (file instanceof PsiFile && "__manifest__.py".equals(((PsiFile) file).getName())) {
-                        manifest = OdooManifestParser.parse((PsiFile) file);
+                if (directory != null) {
+                    for (@NotNull PsiElement file : directory.getChildren()) {
+                        if (file instanceof PsiFile && "__manifest__.py".equals(((PsiFile) file).getName())) {
+                            manifest = OdooManifestParser.parse((PsiFile) file);
+                        }
                     }
-                }
+                } // TODO else log error
             });
         }
         return manifest.getDependencies();

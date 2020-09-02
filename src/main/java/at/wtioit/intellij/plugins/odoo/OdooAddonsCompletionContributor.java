@@ -44,13 +44,16 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
                     && parameters.getPosition().getParent().getParent() instanceof PyArgumentList) {
                 PyCallExpression pyCallExpression = findParent(parameters.getPosition(), PyCallExpression.class, 3);
                 if (pyCallExpression != null) {
-                    String callExpressionName = pyCallExpression.getCallee().getText();
-                    if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(callExpressionName)) {
-                        //firstChild() returns the bracket
-                        PsiElement firstChild = parameters.getPosition().getParent().getParent().getChildren()[0];
-                        if (firstChild == parameters.getPosition().getParent()) {
-                            String value = getStringValue(parameters, expressionWithDummy);
-                            suggestModelName(parameters, result, value);
+                    PyExpression callee = pyCallExpression.getCallee();
+                    if (callee != null) {
+                        String callExpressionName = callee.getText();
+                        if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(callExpressionName)) {
+                            //firstChild() returns the bracket
+                            PsiElement firstChild = parameters.getPosition().getParent().getParent().getChildren()[0];
+                            if (firstChild == parameters.getPosition().getParent()) {
+                                String value = getStringValue(parameters, expressionWithDummy);
+                                suggestModelName(parameters, result, value);
+                            }
                         }
                     }
                 }
@@ -59,9 +62,12 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
                     && OdooModel.ODOO_MODEL_NAME_FIELD_KEYWORD_ARGUMENTS.contains(((PyKeywordArgument) parameters.getPosition().getParent().getParent()).getKeyword())) {
                 PyCallExpression callExpression = findParent(parameters.getPosition(), PyCallExpression.class);
                 if (callExpression != null) {
-                    String callExpressionName = callExpression.getCallee().getText();
-                    if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(callExpressionName)) {
-                        suggestModelName(parameters, result, getStringValue(parameters, expressionWithDummy));
+                    PyExpression callee = callExpression.getCallee();
+                    if (callee != null) {
+                        String callExpressionName = callee.getText();
+                        if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(callExpressionName)) {
+                            suggestModelName(parameters, result, getStringValue(parameters, expressionWithDummy));
+                        }
                     }
                 }
             }

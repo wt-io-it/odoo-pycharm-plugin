@@ -64,7 +64,7 @@ public class OdooModelImpl implements OdooModel {
             PsiManager psiManager = PsiManager.getInstance(project);
             return definingFiles.stream()
                     .map(psiManager::findFile)
-                    .map(file -> retrieveDefiningElementFromFile(file))
+                    .map(this::retrieveDefiningElementFromFile)
                     .collect(Collectors.toList());
         });
     }

@@ -1,10 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.search;
 
-import at.wtioit.intellij.plugins.odoo.modules.search.OdooModulePsiElement;
 import com.intellij.ide.util.PsiElementListCellRenderer;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.PyClass;
 import org.jetbrains.annotations.Nullable;
 
 public class OdooSERenderer extends PsiElementListCellRenderer<OdooSEResult> {

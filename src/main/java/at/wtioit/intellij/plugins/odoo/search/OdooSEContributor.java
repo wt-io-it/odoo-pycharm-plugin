@@ -77,8 +77,11 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
     public boolean processSelectedItem(@NotNull OdooSEResult selected, int modifiers, @NotNull String searchText) {
         if (selected instanceof OdooModule) {
             OdooModule module = (OdooModule) selected;
-            ((PsiDirectory) module.getDirectory()).navigate(true);
-            return true;
+            PsiDirectory moduleDirectory = (PsiDirectory) module.getDirectory();
+            if (moduleDirectory != null) {
+                moduleDirectory.navigate(true);
+                return true;
+            }
         } else if (selected instanceof OdooModel) {
             OdooModel model = (OdooModel) selected;
             PsiElement definingElement = model.getDefiningElement();

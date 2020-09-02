@@ -5,9 +5,9 @@ import com.intellij.ide.actions.searcheverywhere.SearchEverywhereContributorFact
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class OdooSearchEverywhere implements SearchEverywhereContributorFactory {
+public class OdooSearchEverywhere implements SearchEverywhereContributorFactory<OdooSEResult> {
     @Override
-    public @NotNull SearchEverywhereContributor createContributor(@NotNull AnActionEvent initEvent) {
+    public @NotNull SearchEverywhereContributor<OdooSEResult> createContributor(@NotNull AnActionEvent initEvent) {
         return new OdooSEContributor(initEvent.getProject());
     }
 }

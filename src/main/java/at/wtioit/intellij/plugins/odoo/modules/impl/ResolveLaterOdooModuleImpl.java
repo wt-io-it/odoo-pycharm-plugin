@@ -91,6 +91,7 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
         return module.getRelativeLocationString();
     }
 
+    @NotNull
     @Override
     public Collection<OdooModule> getDependencies() {
         try {
@@ -101,6 +102,7 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
         return module.getDependencies();
     }
 
+    @NotNull
     @Override
     public List<OdooModel> getModels() {
         try {

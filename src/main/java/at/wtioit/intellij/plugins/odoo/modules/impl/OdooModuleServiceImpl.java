@@ -28,7 +28,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
 
     @Override
     public Iterable<OdooModule> getModules() {
-        List<OdooModule> modules = new ArrayList<OdooModule>();
+        List<OdooModule> modules = new ArrayList<>();
         FileBasedIndex index = FileBasedIndex.getInstance();
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         for (String moduleName : index.getAllKeys(OdooModuleFileIndex.NAME, project)) {
@@ -68,9 +68,12 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
             PsiDirectory moduleDirectory = getModuleDirectory(file.getPath());
             FileBasedIndex index = FileBasedIndex.getInstance();
-            Map<String, OdooModule> modules = index.getFileData(OdooModuleFileIndex.NAME, moduleDirectory.getVirtualFile().findFileByRelativePath("__manifest__.py"), project);
-            if (modules.size() == 1) {
-                return modules.values().iterator().next();
+            VirtualFile manifest = moduleDirectory.getVirtualFile().findFileByRelativePath("__manifest__.py");
+            if (manifest != null) {
+                Map<String, OdooModule> modules = index.getFileData(OdooModuleFileIndex.NAME, manifest, project);
+                if (modules.size() == 1) {
+                    return modules.values().iterator().next();
+                }
             }
             return null;
         });
@@ -95,8 +98,12 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         return ApplicationManager.getApplication().runReadAction((Computable<PsiDirectory>) () -> {
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             for (PsiFile file : FilenameIndex.getFilesByName(project, "__manifest__.py", scope)) {
-                if (location.equals(file.getParent().getVirtualFile().getCanonicalPath()) || location.startsWith(file.getParent().getVirtualFile().getCanonicalPath() + File.separator)) {
-                    return file.getParent();
+                PsiDirectory directory = file.getParent();
+                if (directory != null) {
+                    String directoryPath = directory.getVirtualFile().getCanonicalPath();
+                    if (location.equals(directoryPath) || location.startsWith(directoryPath + File.separator)) {
+                        return directory;
+                    }
                 }
             }
             return null;

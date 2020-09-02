@@ -9,7 +9,6 @@ import com.jetbrains.python.psi.PyStringLiteralExpression;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class OdooManifestParser {
@@ -41,7 +40,7 @@ public class OdooManifestParser {
     @Contract("null -> null")
     private static PyListLiteralExpression getDependenciesList(PyExpressionStatement manifest){
         if (manifest == null) return null;
-        List<PsiElement> children = Arrays.asList(manifest.getFirstChild().getChildren());
+        PsiElement[] children = manifest.getFirstChild().getChildren();
         for (PsiElement element : children) {
             if (element.getFirstChild().getText().contains("depends")){
                 return (PyListLiteralExpression) element.getLastChild();

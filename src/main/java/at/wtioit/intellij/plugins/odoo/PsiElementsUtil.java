@@ -3,7 +3,6 @@ package at.wtioit.intellij.plugins.odoo;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyFromImportStatement;
-import com.jetbrains.python.psi.PyImportElement;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -21,7 +20,7 @@ public interface PsiElementsUtil {
         PsiElement parent = element.getParent();
         for (int i = 0; parent != null && i < inspectionLimit; i++) {
             if (parentClass.isAssignableFrom(parent.getClass())) {
-                return (T) parent;
+                return parentClass.cast(parent);
             }
             parent = parent.getParent();
         }

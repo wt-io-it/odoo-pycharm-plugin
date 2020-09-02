@@ -11,7 +11,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,12 +24,15 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
             String moduleName = module.getName();
             String pythonModuleImportPath = "odoo.addons." + moduleName;
             if (moduleName.startsWith(value) && !pythonModuleImportPath.equals(getModulePythonImportPath(odooDirectory, module))) {
-                LookupElementBuilder element = LookupElementBuilder
-                        .createWithSmartPointer(moduleName, module.getDirectory())
-                        .withIcon(module.getIcon())
-                        .withTailText(" " + module.getRelativeLocationString(), true);
-                // TODO add insert handler if used in code (not import statement)?
-                result.addElement(element);
+                PsiElement directory = module.getDirectory();
+                if (directory != null) {
+                    LookupElementBuilder element = LookupElementBuilder
+                            .createWithSmartPointer(moduleName, directory)
+                            .withIcon(module.getIcon())
+                            .withTailText(" " + module.getRelativeLocationString(), true);
+                    // TODO add insert handler if used in code (not import statement)?
+                    result.addElement(element);
+                }
             }
         }
     }
@@ -66,11 +68,14 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
         for (String modelName : modelService.getModelNames()) {
             if (modelName != null && modelName.startsWith(value)) {
                 OdooModule module = modelService.getModel(modelName).getBaseModule();
-                LookupElementBuilder element = LookupElementBuilder
-                        .createWithSmartPointer(modelName, module.getDirectory())
-                        .withIcon(module.getIcon())
-                        .withTailText(" " + module.getRelativeLocationString(), true);
-                result.addElement(element);
+                PsiElement directory = module.getDirectory();
+                if (directory != null) {
+                    LookupElementBuilder element = LookupElementBuilder
+                            .createWithSmartPointer(modelName, directory)
+                            .withIcon(module.getIcon())
+                            .withTailText(" " + module.getRelativeLocationString(), true);
+                    result.addElement(element);
+                }
             }
         }
     }

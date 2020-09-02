@@ -12,7 +12,7 @@ import java.util.Collections;
 
 public class OdooManifestImpl implements OdooManifest {
 
-    private Collection<String> dependencyNames;
+    private final Collection<String> dependencyNames;
     private Collection<OdooModule> dependencies;
     private final Project project;
 

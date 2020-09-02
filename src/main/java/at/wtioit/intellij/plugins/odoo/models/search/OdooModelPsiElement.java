@@ -44,10 +44,11 @@ public class OdooModelPsiElement implements OdooModel, PsiElement, OdooSEResult 
         ItemPresentation presentation = getContainingFile().getPresentation();
         if (presentation != null) {
             PsiElement definingElement = getDefiningElement();
-            if (definingElement instanceof PyClass) {
-                return presentation.getLocationString().replace("(", "(" + ((PyClass) definingElement).getName() + " in ");
+            String locationString = presentation.getLocationString();
+            if (definingElement instanceof PyClass && locationString != null) {
+                return locationString.replace("(", "(" + ((PyClass) definingElement).getName() + " in ");
             }
-            return presentation.getLocationString();
+            return locationString;
         }
         return null;
     }
