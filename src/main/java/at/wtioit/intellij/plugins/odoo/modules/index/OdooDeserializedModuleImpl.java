@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     private final String name;
@@ -26,9 +27,23 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     private OdooManifest manifest = null;
     private Icon icon = null;
 
-    public OdooDeserializedModuleImpl(String moduleName, String modulePath) {
+    private static final ConcurrentHashMap<String, OdooDeserializedModuleImpl> modules = new ConcurrentHashMap<>();
+
+    protected OdooDeserializedModuleImpl(String moduleName, String modulePath) {
         name = moduleName;
         path = modulePath;
+        String key = name + ":" + path;
+        if (!modules.containsKey(key)) {
+            modules.put(key, this);
+        }
+    }
+
+    public static OdooModule getInstance(String name, String path) {
+        String key = name + ":" + path;
+        if (!modules.containsKey(key)) {
+            new OdooDeserializedModuleImpl(name, path);
+        }
+        return modules.get(key);
     }
 
     @Override
@@ -57,7 +72,7 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
                 icon = new LayeredIcon(directory.getIcon(0), OdooPluginIcons.ODOO_OVERLAY_ICON);
             }
             return icon;
-        }
+        } // TODO else check if we can get a directory
         return OdooPluginIcons.ODOO_TREE_ICON;
     }
 

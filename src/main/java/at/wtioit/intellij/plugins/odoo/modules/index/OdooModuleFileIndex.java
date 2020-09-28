@@ -51,7 +51,7 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
             public OdooModule read(@NotNull DataInput in) throws IOException {
                 String name = readString(in);
                 String path = readString(in);
-                return new OdooDeserializedModuleImpl(name, path);
+                return OdooDeserializedModuleImpl.getInstance(name, path);
             }
         };
     }

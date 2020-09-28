@@ -29,8 +29,8 @@ public interface OdooModuleService {
     @Nullable
     PsiDirectory getModuleDirectory(String path);
 
-    static boolean isValidOdooModuleDirectory(String path) {
+    static boolean isValidOdooModuleDirectory(@Nullable String path) {
         // /setup/.. modules are just a copy/symlink of the ones not in /setup/
-        return !path.contains(File.separator + "setup" + File.separator);
+        return path != null && !path.contains(File.separator + "setup" + File.separator);
     }
 }

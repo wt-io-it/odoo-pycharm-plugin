@@ -52,6 +52,7 @@ public interface OdooModelService {
                 // when we cannot resolve super classes we resort to string matching
                 for (@NotNull PsiElement superClassElement : pyClass.getChildren()[0].getChildren()) {
                     if (superClassElement instanceof PyReferenceExpression) {
+                        // TODO check classes defined in same file (make website.published.multi.mixin work)
                         if (isOdooModelName(superClassElement.getText(), pyline)) {
                             return true;
                         }

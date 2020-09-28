@@ -27,6 +27,7 @@ public class OdooModelImpl implements OdooModel {
     private final String name;
     private final Collection<VirtualFile> definingFiles;
     private final Project project;
+    private OdooModule baseModule = null;
 
     public OdooModelImpl(String modelName, Collection<VirtualFile> files, Project project) {
         name = modelName;
@@ -54,8 +55,8 @@ public class OdooModelImpl implements OdooModel {
                         .filter(pair -> pair.first != null && pair.second != null)
                         .filter(pair -> pair.second.equals(getBaseModule()))
                         .map(pair -> pair.first)
-                        .map(psiManager::findFile)
                         .findFirst()
+                        .map(psiManager::findFile)
                         .orElse(null);
                 return retrieveDefiningElementFromFile(psiFile);
             }
@@ -89,14 +90,25 @@ public class OdooModelImpl implements OdooModel {
 
     @Override
     public OdooModule getBaseModule() {
-        OdooModuleService moduleService = OdooModuleService.getInstance(project);
-        List<OdooModule> modules = definingFiles.stream().map(moduleService::getModule)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        return WithinProject.call(project, () -> modules.stream()
-                .filter(module -> modules.stream().noneMatch(module::dependsOn))
-                .findFirst()
-                .orElse(null));
+        if (baseModule == null) {
+            OdooModuleService moduleService = OdooModuleService.getInstance(project);
+            List<OdooModule> modules = definingFiles.stream().map(moduleService::getModule)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            baseModule = WithinProject.call(project, () ->
+                    modules.stream()
+                            // if base module defines the model its the base module
+                            .filter(module -> "base".equals(module.getName()))
+                            .findFirst()
+                            .orElse(
+                                    modules.stream()
+                                            .filter(module -> modules.stream().noneMatch(module::dependsOn))
+                                            .findFirst()
+                                            .orElse(null)
+                            )
+                    );
+        }
+        return baseModule;
     }
 
     @Override

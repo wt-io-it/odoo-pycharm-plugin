@@ -1,7 +1,9 @@
 package at.wtioit.intellij.plugins.odoo.modules.impl;
 
+import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
+import at.wtioit.intellij.plugins.odoo.modules.index.OdooDeserializedModuleImpl;
 import at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -95,13 +97,37 @@ public class OdooModuleServiceImpl implements OdooModuleService {
 
     @Override
     public PsiDirectory getModuleDirectory(String location) {
+        // guess a module first (fast path)
+        String[] path = location.split(File.separator);
+        String moduleName = null;
+        if ("addons".equals(path[path.length - 2])) {
+            moduleName = path[path.length - 1];
+        } else if ("models".equals(path[path.length - 2])) {
+            moduleName = path[path.length - 3];
+        }
+        if (moduleName != null) {
+            OdooModule module = getModule(moduleName);
+            if (module instanceof OdooDeserializedModuleImpl && location.equals(module.getPath())) {
+                // skip fast path for deserialized modules direct module path
+                // slow path, search all __manifest__.py files
+                return getModuleDirectorySlow(location);
+            } else if (location.equals(module.getPath()) || location.startsWith(module.getPath() + File.separator)) {
+                return WithinProject.call(project, ()  -> (PsiDirectory) module.getDirectory());
+            }
+        }
+
+        // slow path, search all __manifest__.py files
+        return getModuleDirectorySlow(location);
+    }
+
+    private PsiDirectory getModuleDirectorySlow(String location) {
         return ApplicationManager.getApplication().runReadAction((Computable<PsiDirectory>) () -> {
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             for (PsiFile file : FilenameIndex.getFilesByName(project, "__manifest__.py", scope)) {
                 PsiDirectory directory = file.getParent();
-                if (directory != null && OdooModuleService.isValidOdooModuleDirectory(directory.getVirtualFile().getPath())) {
-                    String directoryPath = directory.getVirtualFile().getCanonicalPath();
-                    if (location.equals(directoryPath) || location.startsWith(directoryPath + File.separator)) {
+                if (directory != null) {
+                    String directoryPath = directory.getVirtualFile().getPath();
+                    if (OdooModuleService.isValidOdooModuleDirectory(directoryPath) && location.equals(directoryPath) || location.startsWith(directoryPath + File.separator)) {
                         return directory;
                     }
                 }
