@@ -3,6 +3,9 @@ package at.wtioit.intellij.plugins.odoo.modules.impl;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
@@ -12,12 +15,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class OdooModuleServiceImpl implements OdooModuleService {
 
@@ -35,8 +37,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         for (String moduleName : index.getAllKeys(OdooModuleFileIndex.NAME, project)) {
             List<OdooModule> modulesForName = index.getValues(OdooModuleFileIndex.NAME, moduleName, scope);
             if (modulesForName.size() > 1) {
-                // TODO log an error to event log (or mark the directories as invalid)
-                throw new IllegalStateException("More than one module for name " + moduleName);
+                showDuplicateModuleWarning(moduleName);
             }
             modules.addAll(modulesForName);
         }
@@ -50,8 +51,8 @@ public class OdooModuleServiceImpl implements OdooModuleService {
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             List<OdooModule> modulesForName = index.getValues(OdooModuleFileIndex.NAME, moduleName, scope);
             if (modulesForName.size() > 1) {
-                // TODO log an error to event log (or mark the directories as invalid)
-                throw new IllegalStateException("More than one module for name " + moduleName);
+                showDuplicateModuleWarning(moduleName);
+                return modulesForName.get(0);
             } else if (modulesForName.size() == 1) {
                 return modulesForName.get(0);
             }
@@ -107,5 +108,27 @@ public class OdooModuleServiceImpl implements OdooModuleService {
             }
             return null;
         });
+    }
+
+    static final Set<String> warningsForModules = new HashSet<>();
+
+    private void showDuplicateModuleWarning(String moduleName) {
+        if (!warningsForModules.contains(moduleName)) {
+            warningsForModules.add(moduleName);
+            Notifications.Bus.notify(new DuplicateModulesWarning(moduleName), project);
+        }
+    }
+
+    private class DuplicateModulesWarning extends Notification {
+
+        static final String GROUP_DISPLAY_ID = "Odoo Module Notifications";
+
+        public DuplicateModulesWarning(@NotNull String title, @NotNull String content, @NotNull NotificationType type) {
+            super(GROUP_DISPLAY_ID, title, content, type);
+        }
+
+        public DuplicateModulesWarning(String moduleName) {
+            super(GROUP_DISPLAY_ID,"Duplicate Module", "multiple modules with name " + moduleName + " detected.", NotificationType.WARNING);
+        }
     }
 }
