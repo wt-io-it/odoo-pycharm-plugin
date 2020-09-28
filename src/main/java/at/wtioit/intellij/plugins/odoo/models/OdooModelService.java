@@ -2,6 +2,8 @@ package at.wtioit.intellij.plugins.odoo.models;
 
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -33,10 +35,17 @@ public interface OdooModelService {
         if (pyline instanceof PyClass) {
             TypeEvalContext typeEvalContext = TypeEvalContext.codeAnalysis(pyline.getContainingFile().getProject(), pyline.getContainingFile());
             PyClass pyClass = (PyClass) pyline;
-            @NotNull PyClass[] superClasses = pyClass.getSuperClasses(typeEvalContext);
-            for (PyClass superClass : superClasses) {
-                if (isOdooModelName(superClass.getQualifiedName(), pyline)) {
-                    return true;
+            @NotNull PyClass[] superClasses = new PyClass[0];
+            if (!DumbService.isDumb(pyline.getProject())) {
+                try {
+                    superClasses = pyClass.getSuperClasses(typeEvalContext);
+                    for (PyClass superClass : superClasses) {
+                        if (isOdooModelName(superClass.getQualifiedName(), pyline)) {
+                            return true;
+                        }
+                    }
+                } catch (IndexNotReadyException e) {
+                    superClasses = new PyClass[0];
                 }
             }
             if (superClasses.length == 0) {
