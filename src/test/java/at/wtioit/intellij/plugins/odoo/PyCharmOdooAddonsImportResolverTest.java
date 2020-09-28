@@ -15,7 +15,6 @@ public class PyCharmOdooAddonsImportResolverTest extends BaseOdooPluginTest {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        forceRescan();
         importResolver = getImportResolver();
     }
 

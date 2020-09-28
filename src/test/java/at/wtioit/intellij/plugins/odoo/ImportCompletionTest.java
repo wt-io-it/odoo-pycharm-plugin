@@ -2,11 +2,6 @@ package at.wtioit.intellij.plugins.odoo;
 
 public class ImportCompletionTest extends BaseOdooPluginTest {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        forceRescan();
-    }
 
     public void testFromOdooAddonsImport() {
         doTest();

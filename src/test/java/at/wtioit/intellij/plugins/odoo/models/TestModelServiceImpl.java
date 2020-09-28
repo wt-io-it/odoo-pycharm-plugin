@@ -41,7 +41,6 @@ public class TestModelServiceImpl extends BaseOdooPluginTest {
                 "\n" +
                 "class ModelForElement(models.Model):" +
                 "   _name = 'model_for_element'");
-        forceRescan();
         PsiElement pyClass = Arrays.stream(psiFile.getChildren()).filter(psiElement -> psiElement instanceof PyClass).findFirst().orElseThrow(AssertionError::new);
 
         OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);

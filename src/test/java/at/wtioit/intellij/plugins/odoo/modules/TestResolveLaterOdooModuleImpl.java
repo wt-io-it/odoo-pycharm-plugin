@@ -1,18 +1,12 @@
 package at.wtioit.intellij.plugins.odoo.modules;
 
 import at.wtioit.intellij.plugins.odoo.BaseOdooPluginTest;
+import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.impl.ResolveLaterOdooModuleImpl;
 import com.intellij.openapi.components.ServiceManager;
-import org.apache.commons.lang.NotImplementedException;
-import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertNotEquals;
 
 public class TestResolveLaterOdooModuleImpl extends BaseOdooPluginTest {
 
@@ -42,16 +36,17 @@ public class TestResolveLaterOdooModuleImpl extends BaseOdooPluginTest {
                 "\n" +
                 "class MyModel(models.Model):\n" +
                 "   _name = 'my.model'\n");
-        forceRescan();
 
         assertEquals("resolve_me_later_too", resolveLater.getName());
         assertEquals("/src/repo2/resolve_me_later_too", resolveLater.getRelativeLocationString());
         assertSame(moduleService.getModule("resolve_me_later_too").getIcon(), resolveLater.getIcon());
-        assertSame(moduleService.getModule("resolve_me_later_too").getDirectory(), resolveLater.getDirectory());
+        WithinProject.run(myFixture.getProject(), () -> {
+            assertSame(moduleService.getModule("resolve_me_later_too").getDirectory(), resolveLater.getDirectory());
+            assertContainsElements(resolveLater.getModels().stream().map(OdooModel::getName).collect(Collectors.toList()), "my.model");
+            assertFalse(resolveLater.dependsOn(new ResolveLaterOdooModuleImpl("not_resolving", getProject())));
+        });
         assertContainsElements(resolveLater.getDependencies().stream().map(OdooModule::getName).collect(Collectors.toList()), "addon1");
-        assertContainsElements(resolveLater.getModels().stream().map(OdooModel::getName).collect(Collectors.toList()), "my.model");
 
-        assertFalse(resolveLater.dependsOn(new ResolveLaterOdooModuleImpl("not_resolving", getProject())));
 
         assertTrue(resolveLater.dependsOn(moduleService.getModule("addon1")));
     }

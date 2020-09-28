@@ -1,20 +1,15 @@
 package at.wtioit.intellij.plugins.odoo;
 
-import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
-import at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Stack;
 
 public abstract class BaseOdooPluginTest extends BasePlatformTestCase {
@@ -63,27 +58,4 @@ public abstract class BaseOdooPluginTest extends BasePlatformTestCase {
         }
     }
 
-    /**
-     * Force model and module service to rescan their contents.
-     * TODO this should be removed once we implemented proper indexing:
-     * http://www.jetbrains.org/intellij/sdk/docs/basics/indexing_and_psi_stubs.html
-     */
-    protected void forceRescan() {
-        /*try {
-            OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
-            forceSetField(modelService, "scanFinished", OdooModelServiceImpl.class, false);
-            forceSetField(modelService, "modelsCacheByName", OdooModelServiceImpl.class, Collections.emptyMap());
-            forceSetField(modelService, "modelsCacheByElement", OdooModelServiceImpl.class, Collections.emptyMap());
-
-            modelService.getModels();
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new AssertionError("Cannot force model rescan", e);
-        }*/
-    }
-
-    private <T, R extends T> void forceSetField(T moduleService, String fieldName, Class<R> clazz, Object value) throws NoSuchFieldException, IllegalAccessException {
-        Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(moduleService, value);
-    }
 }

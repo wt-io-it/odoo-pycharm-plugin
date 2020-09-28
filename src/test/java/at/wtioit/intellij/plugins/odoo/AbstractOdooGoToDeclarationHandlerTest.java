@@ -11,7 +11,6 @@ public abstract class AbstractOdooGoToDeclarationHandlerTest extends BaseOdooPlu
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        forceRescan();
         handler =  new OdooGoToDeclarationHandler();
     }
 

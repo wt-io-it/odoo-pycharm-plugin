@@ -2,12 +2,6 @@ package at.wtioit.intellij.plugins.odoo;
 
 public class PythonModelNameCompletionTest extends BaseOdooPluginTest {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        forceRescan();
-    }
-
     public void testModelNameInName() {
         doTest();
     }

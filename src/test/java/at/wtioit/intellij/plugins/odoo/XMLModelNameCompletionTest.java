@@ -2,12 +2,6 @@ package at.wtioit.intellij.plugins.odoo;
 
 public class XMLModelNameCompletionTest extends BaseOdooPluginTest {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        forceRescan();
-    }
-
     public void testModelNameInModelAttribute() {
         doTest();
     }
@@ -17,6 +11,5 @@ public class XMLModelNameCompletionTest extends BaseOdooPluginTest {
         myFixture.completeBasic();
         myFixture.checkResultByFile("completion/xmlModelName/" + getTestName(true) + ".after.xml");
     }
-
 
 }

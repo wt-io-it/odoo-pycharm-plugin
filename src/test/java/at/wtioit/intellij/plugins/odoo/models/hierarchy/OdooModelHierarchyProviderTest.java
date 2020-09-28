@@ -82,7 +82,6 @@ public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
             pyClass = PsiElementsUtil.findParent(elementForHierarchy, PyClass.class);
         }
         assertNotNull(pyClass);
-        forceRescan();
         HierarchyBrowser hierarchyBrowser = hierarchyProvider.createHierarchyBrowser(pyClass);
         assertNotNull(hierarchyBrowser);
         HierarchyTreeStructure hierarchyTreeStructure = ((OdooModelTypesHierarchyBrowser) hierarchyBrowser).createHierarchyTreeStructure(hierarchyType, pyClass);
