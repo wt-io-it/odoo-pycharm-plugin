@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.modules.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
+import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -57,14 +58,16 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
 
     @Override
     public int getVersion() {
-        return 3;
+        return 4;
     }
 
     @Override
     public FileBasedIndex.@NotNull InputFilter getInputFilter() {
-        // * an odoo module has __manifest__.py as a definition file
-        // * /setup/.. modules are just a copy of the ones not in /setup/
-        return file -> "__manifest__.py".equals(file.getName()) && !file.getPath().contains(File.separator + "setup" + File.separator);
+        // an odoo module has __manifest__.py as a definition file
+        return file -> "__manifest__.py".equals(file.getName())
+                && OdooModuleService.isValidOdooModuleDirectory(file.getPath())
+                // /posbox/overwrite_after_init/ may overwrite addons so we do not detect them as addons
+                && !file.getPath().contains(File.separator + "posbox" + File.separator + "overwrite_after_init" + File.separator);
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,14 +75,15 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
 
     @Override
     public int getVersion() {
-        return 14;
+        return 15;
     }
 
     @Override
     public FileBasedIndex.@NotNull InputFilter getInputFilter() {
         return file -> {
             // TODO maybe check that we are inside of a possible module
-            return file.getFileType() == PythonFileType.INSTANCE;
+            return file.getFileType() == PythonFileType.INSTANCE
+                    && !file.getPath().contains(File.separator + "setup" + File.separator);
         };
     }
 

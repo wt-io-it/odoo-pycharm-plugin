@@ -2,10 +2,10 @@ package at.wtioit.intellij.plugins.odoo.modules;
 
 import at.wtioit.intellij.plugins.odoo.BaseOdooPluginTest;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
-import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
-import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.psi.PsiDirectory;
 
+import java.io.File;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertNotEquals;
@@ -21,28 +21,28 @@ public class TestModuleImpl extends BaseOdooPluginTest {
         assertEquals("addon1", addon1.getName());
     }
 
+    public void testFindingOcaModules() {
+        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModule ocaAddon = moduleService.getModule("oca_addon");
+        WithinProject.run(getProject(), () -> {
+            assertFalse(((PsiDirectory) ocaAddon.getDirectory()).getVirtualFile().getPath().contains(File.separator + "setup" + File.separator));
+        });
+    }
+
     public void testDependencies() {
         OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
         OdooModule addon1 = moduleService.getModule("addon1");
-        // TODO remove WithinProject HACK
-        try {
-            WithinProject.INSTANCE.set(getProject());
+        WithinProject.run(getProject(), () -> {
             assertContainsElements(addon1.getDependencies().stream().map(OdooModule::getName).collect(Collectors.toList()), "addon2");
-        } finally {
-            WithinProject.INSTANCE.remove();
-        }
+        });
     }
 
     public void testAddonWithNoDependencies() {
         OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
         OdooModule noDependencies = moduleService.getModule("no_dependencies");
-        // TODO remove WithinProject HACK
-        try {
-            WithinProject.INSTANCE.set(getProject());
+        WithinProject.run(getProject(), () -> {
             assertEmpty(noDependencies.getDependencies());
-        } finally {
-            WithinProject.INSTANCE.remove();
-        }
+        });
     }
 
     public void testAddonPathDisplay() {
@@ -118,6 +118,7 @@ public class TestModuleImpl extends BaseOdooPluginTest {
         assertNotEquals(addon2.hashCode(), addon1.hashCode());
     }
 
+    // TODO add test for /posbox/
 
 
 }

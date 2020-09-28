@@ -99,7 +99,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             for (PsiFile file : FilenameIndex.getFilesByName(project, "__manifest__.py", scope)) {
                 PsiDirectory directory = file.getParent();
-                if (directory != null) {
+                if (directory != null && OdooModuleService.isValidOdooModuleDirectory(directory.getVirtualFile().getPath())) {
                     String directoryPath = directory.getVirtualFile().getCanonicalPath();
                     if (location.equals(directoryPath) || location.startsWith(directoryPath + File.separator)) {
                         return directory;

@@ -4,9 +4,10 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
 
 public interface OdooModuleService {
     static OdooModuleService getInstance(@NotNull Project project) {
@@ -27,4 +28,9 @@ public interface OdooModuleService {
 
     @Nullable
     PsiDirectory getModuleDirectory(String path);
+
+    static boolean isValidOdooModuleDirectory(String path) {
+        // /setup/.. modules are just a copy/symlink of the ones not in /setup/
+        return !path.contains(File.separator + "setup" + File.separator);
+    }
 }
