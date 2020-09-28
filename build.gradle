@@ -40,6 +40,8 @@ runIde {
 
 
 patchPluginXml {
+    sinceBuild = 192.5728
+    untilBuild = null
 //    changeNotes """
 //      Add change notes here.<br>
 //      <em>most HTML tags may be used</em>"""
