@@ -17,8 +17,7 @@ public interface OdooModuleService {
 
     OdooModule getModule(String moduleName);
 
-    OdooModule getModule(PsiFile file);
-
+    @Nullable
     OdooModule getModule(VirtualFile file);
 
     OdooModule findModule(String moduleName);

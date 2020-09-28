@@ -26,6 +26,7 @@ public class OdooModelServiceImpl implements OdooModelService {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         return index.getAllKeys(OdooModelFileIndex.NAME, project).stream()
                 .map(modelName -> Pair.create(modelName, index.getContainingFiles(OdooModelFileIndex.NAME, modelName, scope)))
+                .filter(pair -> pair.second.size() > 0)
                 .map(pair -> (OdooModel) new OdooModelImpl(pair.first, pair.second, project))
                 ::iterator;
     }

@@ -12,6 +12,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,11 +59,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         });
     }
 
-    @Override
-    public OdooModule getModule(PsiFile file) {
-        return getModule(file.getVirtualFile());
-    }
-
+    @Nullable
     @Override
     public OdooModule getModule(VirtualFile file) {
         return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {

@@ -70,13 +70,15 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
         for (String modelName : modelService.getModelNames()) {
             if (modelName != null && modelName.startsWith(value)) {
                 OdooModule module = modelService.getModel(modelName).getBaseModule();
-                PsiElement directory = module.getDirectory();
-                if (directory != null) {
-                    LookupElementBuilder element = LookupElementBuilder
-                            .createWithSmartPointer(modelName, directory)
-                            .withIcon(module.getIcon())
-                            .withTailText(" " + module.getRelativeLocationString(), true);
-                    result.addElement(element);
+                if (module != null) {
+                    PsiElement directory = module.getDirectory();
+                    if (directory != null) {
+                        LookupElementBuilder element = LookupElementBuilder
+                                .createWithSmartPointer(modelName, directory)
+                                .withIcon(module.getIcon())
+                                .withTailText(" " + module.getRelativeLocationString(), true);
+                        result.addElement(element);
+                    }
                 }
             }
         }

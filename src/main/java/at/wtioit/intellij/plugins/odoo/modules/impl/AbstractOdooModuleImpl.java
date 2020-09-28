@@ -34,7 +34,7 @@ public abstract class AbstractOdooModuleImpl implements OdooModule {
     }
 
     @Override
-    public boolean dependsOn(OdooModule module) {
+    public boolean dependsOn(@NotNull OdooModule module) {
         for (OdooModule dependency : this.getDependencies()) {
             if (dependency.getName().equals(module.getName())) {
                 return true;

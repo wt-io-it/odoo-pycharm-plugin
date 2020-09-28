@@ -9,6 +9,7 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -49,7 +50,10 @@ public class OdooModelImpl implements OdooModel {
                 PsiManager psiManager = PsiManager.getInstance(project);
                 OdooModuleService moduleService = OdooModuleService.getInstance(project);
                 PsiFile psiFile = definingFiles.stream()
-                        .filter(file -> moduleService.getModule(file).equals(getBaseModule()))
+                        .map(file -> Pair.create(file, moduleService.getModule(file)))
+                        .filter(pair -> pair.first != null && pair.second != null)
+                        .filter(pair -> pair.second.equals(getBaseModule()))
+                        .map(pair -> pair.first)
                         .map(psiManager::findFile)
                         .findFirst()
                         .orElse(null);
@@ -87,6 +91,7 @@ public class OdooModelImpl implements OdooModel {
     public OdooModule getBaseModule() {
         OdooModuleService moduleService = OdooModuleService.getInstance(project);
         List<OdooModule> modules = definingFiles.stream().map(moduleService::getModule)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         return WithinProject.call(project, () -> modules.stream()
                 .filter(module -> modules.stream().noneMatch(module::dependsOn))
