@@ -52,7 +52,7 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
                         String variableName = assignmentStatement.getFirstChild().getText();
                         if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
                             // handle _name and _inherit definitions
-                            return getOdooModel((PyStringElement) psiElement);
+                            return getOdooModelNotItself((PyStringElement) psiElement);
                         }
                     }
                     PySubscriptionExpression pySubscriptionExpression = findParent(psiElement, PySubscriptionExpression.class, 2);
@@ -81,15 +81,31 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
     private PsiElement getOdooModel(@NotNull PyStringElement pyString) {
         TextRange range = pyString.getContentRange();
         String value = pyString.getText().substring(range.getStartOffset(), range.getEndOffset());
-        return getOdooModel(pyString.getContainingFile().getProject(), value);
+        return getOdooModel(pyString.getContainingFile().getProject(), value, null);
+    }
+
+    @Nullable
+    private PsiElement getOdooModelNotItself(@NotNull PyStringElement pyString) {
+        TextRange range = pyString.getContentRange();
+        String value = pyString.getText().substring(range.getStartOffset(), range.getEndOffset());
+        return getOdooModel(pyString.getContainingFile().getProject(), value, pyString);
     }
 
     @Nullable
     private  PsiElement getOdooModel(@NotNull Project project, @NotNull String value) {
+        return getOdooModel(project, value, null);
+    }
+
+    @Nullable
+    private  PsiElement getOdooModel(@NotNull Project project, @NotNull String value, @Nullable PsiElement self) {
         OdooModelService modelService = ServiceManager.getService(project, OdooModelService.class);
         OdooModel model = modelService.getModel(value);
         if (model != null) {
-            return model.getDefiningElement();
+            PsiElement definingElement = model.getDefiningElement();
+            // Prevent resolving to the class that the element itself is contained in
+            if (definingElement != PsiElementsUtil.findParent(self, PyClass.class)) {
+                return definingElement;
+            }
         }
         return null;
     }
