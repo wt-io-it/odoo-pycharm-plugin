@@ -6,6 +6,8 @@ run_tests:
   stage: test
   script:
     - ./gradlew test
+  after_script:
+    - java -version
   artifacts:
     reports:
       junit: build/test-results/test/TEST-*.xml
