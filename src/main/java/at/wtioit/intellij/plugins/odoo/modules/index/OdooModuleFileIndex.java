@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -56,12 +57,14 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
 
     @Override
     public int getVersion() {
-        return 1;
+        return 3;
     }
 
     @Override
     public FileBasedIndex.@NotNull InputFilter getInputFilter() {
-        return file -> "__manifest__.py".equals(file.getName());
+        // * an odoo module has __manifest__.py as a definition file
+        // * /setup/.. modules are just a copy of the ones not in /setup/
+        return file -> "__manifest__.py".equals(file.getName()) && !file.getPath().contains(File.separator + "setup" + File.separator);
     }
 
     @Override
