@@ -25,7 +25,6 @@ public class TestResolveLaterOdooModuleImpl extends BaseOdooPluginTest {
         assertNull(resolveLater.getDirectory());
         assertEmpty(resolveLater.getDependencies());
         assertEmpty(resolveLater.getModels());
-        assertThrows(NotImplementedException.class, "Unresolved modules cannot have any models", () -> resolveLater.setModels(Collections.emptyList()));
         assertFalse(resolveLater.dependsOn(new ResolveLaterOdooModuleImpl("not_resolving", getProject())));
     }
 
@@ -56,23 +55,5 @@ public class TestResolveLaterOdooModuleImpl extends BaseOdooPluginTest {
 
         assertTrue(resolveLater.dependsOn(moduleService.getModule("addon1")));
     }
-
-    public void testResolvingSetModels() {
-        ResolveLaterOdooModuleImpl resolveLaterAddon1 = new ResolveLaterOdooModuleImpl("addon1", getProject());
-
-        // make sure my.model is not yet in the list
-        assertDoesntContain(resolveLaterAddon1.getModels().stream().map(OdooModel::getName).collect(Collectors.toList()), "my.model");
-
-        // add a model for my.model to the models
-        List<OdooModel> models = new ArrayList<>(resolveLaterAddon1.getModels());
-        OdooModel model = Mockito.mock(OdooModel.class);
-        Mockito.when(model.getName()).thenReturn("my.model");
-        models.add(model);
-        resolveLaterAddon1.setModels(Collections.unmodifiableList(models));
-
-        assertContainsElements(resolveLaterAddon1.getModels().stream().map(OdooModel::getName).collect(Collectors.toList()), "my.model");
-    }
-
-
 
 }

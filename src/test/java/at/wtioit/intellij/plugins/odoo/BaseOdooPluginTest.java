@@ -69,7 +69,7 @@ public abstract class BaseOdooPluginTest extends BasePlatformTestCase {
      * http://www.jetbrains.org/intellij/sdk/docs/basics/indexing_and_psi_stubs.html
      */
     protected void forceRescan() {
-        try {
+        /*try {
             OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
             forceSetField(modelService, "scanFinished", OdooModelServiceImpl.class, false);
             forceSetField(modelService, "modelsCacheByName", OdooModelServiceImpl.class, Collections.emptyMap());
@@ -78,7 +78,7 @@ public abstract class BaseOdooPluginTest extends BasePlatformTestCase {
             modelService.getModels();
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new AssertionError("Cannot force model rescan", e);
-        }
+        }*/
     }
 
     private <T, R extends T> void forceSetField(T moduleService, String fieldName, Class<R> clazz, Object value) throws NoSuchFieldException, IllegalAccessException {
