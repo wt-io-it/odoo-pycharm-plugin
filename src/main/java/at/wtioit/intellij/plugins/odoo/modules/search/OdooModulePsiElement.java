@@ -123,12 +123,7 @@ public class OdooModulePsiElement implements OdooModule, PsiElement, OdooSEResul
 
     @Override
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
-        try {
-            WithinProject.INSTANCE.set(project);
-            return module.getDirectory().getContainingFile();
-        } finally {
-            WithinProject.INSTANCE.remove();
-        }
+        return WithinProject.call(project, () -> module.getDirectory().getContainingFile());
     }
 
     @Override
