@@ -27,6 +27,13 @@ public class OdooModelDefinition {
         this.project = project.getPresentableUrl();
     }
 
+    public OdooModelDefinition(String fileName, String className, String modelName, String projectPresentableUrl) {
+        this.fileName = fileName;
+        this.className = className;
+        name = modelName;
+        this.project = projectPresentableUrl;
+    }
+
     public String getClassName() {
         return className;
     }

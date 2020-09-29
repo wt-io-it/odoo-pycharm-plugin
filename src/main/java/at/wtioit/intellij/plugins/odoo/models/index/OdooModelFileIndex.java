@@ -49,10 +49,12 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
         return new AbstractDataExternalizer<OdooModelDefinition>() {
             @Override
             public void save(@NotNull DataOutput out, OdooModelDefinition model) throws IOException {
-                saveString(model.getProject(), out);
-                saveString(model.getFileName(), out);
-                saveString(model.getClassName(), out);
-                saveString(model.getName(), out);
+                if (model != null) {
+                    saveString(model.getProject(), out);
+                    saveString(model.getFileName(), out);
+                    saveString(model.getClassName(), out);
+                    saveString(model.getName(), out);
+                }
             }
 
             @Override
@@ -66,7 +68,8 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
                         return new OdooModelDefinition(fileName, className, modelName, project);
                     }
                 }
-                return null;
+                // this happens when we get index results from projects no longer open
+                return new OdooModelDefinition(fileName, className, modelName, projectPresentableUrl);
             }
 
 
@@ -75,7 +78,7 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
 
     @Override
     public int getVersion() {
-        return 15;
+        return 18;
     }
 
     @Override
@@ -83,7 +86,10 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
         return file -> {
             // TODO maybe check that we are inside of a possible module
             return file.getFileType() == PythonFileType.INSTANCE
-                    && !file.getPath().contains(File.separator + "setup" + File.separator);
+                    // OCA modules use symlinked setup directories that we should ignore
+                    && !file.getPath().contains(File.separator + "setup" + File.separator)
+                    // when using remote debugging (e.g. with docker) pycharm may have remote sources that duplicate our modules
+                    && !file.getPath().contains(File.separator + "remote_sources" + File.separator);
         };
     }
 
