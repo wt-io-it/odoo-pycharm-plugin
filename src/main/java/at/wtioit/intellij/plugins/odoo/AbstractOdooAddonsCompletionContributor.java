@@ -8,6 +8,7 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -65,20 +66,23 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
     }
 
     void suggestModelName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
-        OdooModelService modelService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModelService.class);
+        Project project = parameters.getOriginalFile().getProject();
+        OdooModelService modelService = ServiceManager.getService(project, OdooModelService.class);
 
         for (String modelName : modelService.getModelNames()) {
             if (modelName != null && modelName.startsWith(value)) {
                 OdooModule module = modelService.getModel(modelName).getBaseModule();
                 if (module != null) {
-                    PsiElement directory = module.getDirectory();
-                    if (directory != null) {
-                        LookupElementBuilder element = LookupElementBuilder
-                                .createWithSmartPointer(modelName, directory)
-                                .withIcon(module.getIcon())
-                                .withTailText(" " + module.getRelativeLocationString(), true);
-                        result.addElement(element);
-                    }
+                    WithinProject.run(project, () -> {
+                        PsiElement directory = module.getDirectory();
+                        if (directory != null) {
+                            LookupElementBuilder element = LookupElementBuilder
+                                    .createWithSmartPointer(modelName, directory)
+                                    .withIcon(module.getIcon())
+                                    .withTailText(" " + module.getRelativeLocationString(), true);
+                            result.addElement(element);
+                        }
+                    });
                 }
             }
         }
