@@ -6,19 +6,26 @@
 
   <description><![CDATA[
       <p>This plugin adds support for Odoo Addon / Module paths to PyCharm / IntelliJ</p>
-      <p>
-        Features
+      <div>
+        <div style="height: 6em; margin-bottom: 1em;">
+          <img src="https://plugins.jetbrains.com/files/13083/299-page/image146.png" style="height: 100%;" />
+          <img src="https://plugins.jetbrains.com/files/13083/299-page/image147.png" style="height: 100%;" />
+          <img src="https://plugins.jetbrains.com/files/13083/299-page/image148.png" style="height: 100%;" />
+        </div>
+        <p><strong>Features</strong></p>
         <ul>
+          <li>Search Everywhere supports odoo modules and models</li>
+          <li>Odoo model inheritance is shown in the type hierarchy view</li>
           <li>Autocompletion and resolving for odoo.addons.... imports</li>
           <li>Autocompletion for model names in _name, _inherit, One2may, Many2One and Many2many fields</li>
-          <li>Odoo model inheritance is shown in the type hierarchy view</li>
+          <li>Navigate to ... support for Odoo models</li>
         </ul>
-        Planned Features
+        <p><strong>Planned Features</strong></p>
         <ul>
           <li>__manifest__.py should not be marked as no effect statement</li>
+          <li>Navigate to ... support for xml and csv records</li>
         </ul>
-      </p>
-
+      </div>
     ]]></description>
 
   <change-notes><![CDATA[
