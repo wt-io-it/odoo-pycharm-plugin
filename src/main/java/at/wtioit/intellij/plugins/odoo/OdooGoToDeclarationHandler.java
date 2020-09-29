@@ -47,11 +47,14 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
                         }
                     }
                 } else {
-                    PyAssignmentStatement assignmentStatement = findParent(psiElement, PyAssignmentStatement.class, 3);
+                    PyAssignmentStatement assignmentStatement = findParent(psiElement, PyAssignmentStatement.class, 4);
                     if (assignmentStatement != null && psiElement.getParent() instanceof PyStringLiteralExpression) {
                         String variableName = assignmentStatement.getFirstChild().getText();
                         if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
                             // handle _name and _inherit definitions
+                            return getOdooModelNotItself((PyStringElement) psiElement);
+                        } else if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME_IN_DICT_KEY.contains(variableName) && findParent(psiElement, PyKeyValueExpression.class, 2) != null) {
+                            // handle keys for _inherits definitions
                             return getOdooModelNotItself((PyStringElement) psiElement);
                         }
                     }

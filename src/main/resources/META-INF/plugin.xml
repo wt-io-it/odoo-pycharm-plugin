@@ -31,6 +31,12 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.5:
+          <ul>
+            <li>implement goto handler for _inherits</li>
+          </ul>
+        </li>
+        <li>
           Version 0.4.1:
           <ul>
             <li>fix NullPointerException when module cannot be found</li>
