@@ -2,7 +2,7 @@
   <id>at.wtioit.intellij.plugins.odoo</id>
   <name>Odoo Autocompletion Support</name>
   <version>0.5.0</version>
-  <vendor email="a.perhab@wtioit.at" url="http://www.wt-io-it.at">WT-IO-IT GmbH, Andreas Perhab</vendor>
+  <vendor email="admin.jetbrains-plugins@service.wt-io-it.at" url="http://www.wt-io-it.at">WT-IO-IT</vendor>
 
   <description><![CDATA[
       <p>This plugin adds support for Odoo Addon / Module paths to PyCharm / IntelliJ</p>
