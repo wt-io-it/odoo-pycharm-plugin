@@ -16,6 +16,7 @@ public interface OdooModuleService {
 
     Iterable<OdooModule> getModules();
 
+    @Nullable
     OdooModule getModule(String moduleName);
 
     @Nullable

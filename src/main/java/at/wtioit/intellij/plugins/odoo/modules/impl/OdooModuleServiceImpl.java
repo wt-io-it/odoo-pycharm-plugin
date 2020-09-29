@@ -46,6 +46,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         return modules;
     }
 
+    @Nullable
     @Override
     public OdooModule getModule(String moduleName) {
         return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
@@ -107,12 +108,14 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         }
         if (moduleName != null) {
             OdooModule module = getModule(moduleName);
-            if (module instanceof OdooDeserializedModuleImpl && location.equals(module.getPath())) {
-                // skip fast path for deserialized modules direct module path
-                // slow path, search all __manifest__.py files
-                return getModuleDirectorySlow(location);
-            } else if (location.equals(module.getPath()) || location.startsWith(module.getPath() + File.separator)) {
-                return WithinProject.call(project, ()  -> (PsiDirectory) module.getDirectory());
+            if (module != null) {
+                if (module instanceof OdooDeserializedModuleImpl && location.equals(module.getPath())) {
+                    // skip fast path for deserialized modules direct module path
+                    // slow path, search all __manifest__.py files
+                    return getModuleDirectorySlow(location);
+                } else if (location.equals(module.getPath()) || location.startsWith(module.getPath() + File.separator)) {
+                    return WithinProject.call(project, () -> (PsiDirectory) module.getDirectory());
+                }
             }
         }
 

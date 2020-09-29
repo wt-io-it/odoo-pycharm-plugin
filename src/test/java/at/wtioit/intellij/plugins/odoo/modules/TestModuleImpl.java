@@ -118,7 +118,19 @@ public class TestModuleImpl extends BaseOdooPluginTest {
         assertNotEquals(addon2.hashCode(), addon1.hashCode());
     }
 
+    public void testStrangeAddonDirs() {
+        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModule addonWithWeirdSubdirs = moduleService.getModule("addon_with_weird_subdirs");
+        assertNotNull(addonWithWeirdSubdirs);
+        WithinProject.run(getProject(), () -> {
+            assertTrue(addonWithWeirdSubdirs.getModels().stream().anyMatch(model -> "addon_with_weird_subdirs.my_model".equals(model.getName())));
+            assertTrue(addonWithWeirdSubdirs.getModels().stream().anyMatch(model -> "addon_with_weird_subdirs.my_test_only_model".equals(model.getName())));
+        });
+    }
+
+
     // TODO add test for /posbox/
+    // TODO add test for /remote_sources/
 
 
 }

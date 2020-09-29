@@ -1,0 +1,1 @@
+from .models import my_test_only_model
