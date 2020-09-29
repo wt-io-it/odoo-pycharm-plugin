@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>at.wtioit.intellij.plugins.odoo</id>
   <name>Odoo Autocompletion Support</name>
-  <version>0.4.1</version>
+  <version>0.5.0</version>
   <vendor email="a.perhab@wtioit.at" url="http://www.wt-io-it.at">WT-IO-IT GmbH, Andreas Perhab</vendor>
 
   <description><![CDATA[
