@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>at.wtioit.intellij.plugins.odoo</id>
   <name>Odoo Autocompletion Support</name>
-  <version>0.4.0</version>
+  <version>0.4.1</version>
   <vendor email="a.perhab@wtioit.at" url="http://www.wt-io-it.at">WT-IO-IT GmbH, Andreas Perhab</vendor>
 
   <description><![CDATA[
@@ -31,6 +31,11 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          <ul>
+            <li>fix NullPointerException when module cannot be found</li>
+          </ul>
+        </li>
+        <li>
           Version 0.4:
           <ul>
             <li>technical: migrated build system to gradle</li>
@@ -42,7 +47,7 @@
         <li>
           Version 0.3:
           <ul>
-            <li>add autocopletion for model name in xml records</li>
+            <li>add autocompletion for model name in xml records</li>
             <li>add odoo model inheritance to the hierarchy views</li>
             <li>fix do not suggest model names in inverse_name</li>
             <li>fix showing model names more than once in autocompletion</li>
