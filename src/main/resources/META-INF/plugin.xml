@@ -8,9 +8,9 @@
       <p>This plugin adds support for Odoo Addon / Module paths to PyCharm / IntelliJ</p>
       <div>
         <div style="height: 6em; margin-bottom: 1em;">
-          <img src="https://plugins.jetbrains.com/files/13083/299-page/image146.png" style="height: 100%;" />
-          <img src="https://plugins.jetbrains.com/files/13083/299-page/image147.png" style="height: 100%;" />
-          <img src="https://plugins.jetbrains.com/files/13083/299-page/image148.png" style="height: 100%;" />
+          <img src="https://plugins.jetbrains.com/files/13083/299-page/image146.png" style="height: 100%;" height="300" />
+          <img src="https://plugins.jetbrains.com/files/13083/299-page/image147.png" style="height: 100%;" height="300" />
+          <img src="https://plugins.jetbrains.com/files/13083/299-page/image148.png" style="height: 100%;" height="300" />
         </div>
         <p><strong>Features</strong></p>
         <ul>
