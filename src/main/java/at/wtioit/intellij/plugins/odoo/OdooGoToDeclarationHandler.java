@@ -27,43 +27,9 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
     @Override
     public @Nullable PsiElement getGotoDeclarationTarget(@Nullable PsiElement psiElement, Editor editor) {
         if (psiElement instanceof PyStringElement) {
-            PyCallExpression pyCallExpression = findParent(psiElement, PyCallExpression.class, 3);
-            if (pyCallExpression != null && pyCallExpression.getCallee() != null) {
-                String fieldType = pyCallExpression.getCallee().getText();
-                if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(fieldType)) {
-                    // handle fields.{N}2{M}(..., ) first argument
-                    return getOdooModel((PyStringElement) psiElement);
-                }
-            } else {
-                PyKeywordArgument pyKeywordArgument = findParent(psiElement, PyKeywordArgument.class, 2);
-                pyCallExpression = findParent(psiElement, PyCallExpression.class, 4);
-                if (pyKeywordArgument != null && pyCallExpression != null && pyCallExpression.getCallee() != null) {
-                    String fieldType = pyCallExpression.getCallee().getText();
-                    if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(fieldType)) {
-                        String keyword = pyKeywordArgument.getKeyword();
-                        if (OdooModel.ODOO_MODEL_NAME_FIELD_KEYWORD_ARGUMENTS.contains(keyword)) {
-                            // handle fields.{N}2{M}(comodel_name=..., )
-                            return getOdooModel((PyStringElement) psiElement);
-                        }
-                    }
-                } else {
-                    PyAssignmentStatement assignmentStatement = findParent(psiElement, PyAssignmentStatement.class, 4);
-                    if (assignmentStatement != null && psiElement.getParent() instanceof PyStringLiteralExpression) {
-                        String variableName = assignmentStatement.getFirstChild().getText();
-                        if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
-                            // handle _name and _inherit definitions
-                            return getOdooModelNotItself((PyStringElement) psiElement);
-                        } else if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME_IN_DICT_KEY.contains(variableName) && findParent(psiElement, PyKeyValueExpression.class, 2) != null) {
-                            // handle keys for _inherits definitions
-                            return getOdooModelNotItself((PyStringElement) psiElement);
-                        }
-                    }
-                    PySubscriptionExpression pySubscriptionExpression = findParent(psiElement, PySubscriptionExpression.class, 2);
-                    if (pySubscriptionExpression != null && "env".equals(pySubscriptionExpression.getRootOperand().getName())) {
-                        // handle self.env[...] and request.env[...]
-                        return getOdooModel((PyStringElement) psiElement);
-                    }
-                }
+            PyStringElement pyStringElement = (PyStringElement) psiElement;
+            if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(pyStringElement)) {
+                return getOdooModel(pyStringElement);
             }
         } else {
             XmlAttribute xmlAttribute = findParent(psiElement, XmlAttribute.class, 2);

@@ -33,43 +33,9 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
             if (!fqdn.contains(".") && parentImportStatement != null
                     && parentImportStatement.getText().startsWith("from odoo.addons import ")) {
                 suggestModuleName(parameters, result, fqdn);
-            } else if(parameters.getPosition().getParent() instanceof PyStringLiteralExpression
-                    && parameters.getPosition().getParent().getParent() instanceof PyAssignmentStatement) {
-                String variableName = parameters.getPosition().getParent().getParent().getFirstChild().getText();
-                if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
-                    String value = getStringValue(parameters, expressionWithDummy);
-                    suggestModelName(parameters, result, value);
-                }
-            } else if (parameters.getPosition().getParent() instanceof PyStringLiteralExpression
-                    && parameters.getPosition().getParent().getParent() instanceof PyArgumentList) {
-                PyCallExpression pyCallExpression = findParent(parameters.getPosition(), PyCallExpression.class, 3);
-                if (pyCallExpression != null) {
-                    PyExpression callee = pyCallExpression.getCallee();
-                    if (callee != null) {
-                        String callExpressionName = callee.getText();
-                        if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(callExpressionName)) {
-                            //firstChild() returns the bracket
-                            PsiElement firstChild = parameters.getPosition().getParent().getParent().getChildren()[0];
-                            if (firstChild == parameters.getPosition().getParent()) {
-                                String value = getStringValue(parameters, expressionWithDummy);
-                                suggestModelName(parameters, result, value);
-                            }
-                        }
-                    }
-                }
-            } else if (parameters.getPosition().getParent() instanceof PyStringLiteralExpression
-                    && parameters.getPosition().getParent().getParent() instanceof PyKeywordArgument
-                    && OdooModel.ODOO_MODEL_NAME_FIELD_KEYWORD_ARGUMENTS.contains(((PyKeywordArgument) parameters.getPosition().getParent().getParent()).getKeyword())) {
-                PyCallExpression callExpression = findParent(parameters.getPosition(), PyCallExpression.class);
-                if (callExpression != null) {
-                    PyExpression callee = callExpression.getCallee();
-                    if (callee != null) {
-                        String callExpressionName = callee.getText();
-                        if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(callExpressionName)) {
-                            suggestModelName(parameters, result, getStringValue(parameters, expressionWithDummy));
-                        }
-                    }
-                }
+            } else if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(parameters.getPosition())) {
+                String value = getStringValue(parameters, expressionWithDummy);
+                suggestModelName(parameters, result, value);
             }
         }
 
