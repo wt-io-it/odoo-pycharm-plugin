@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'at.wtioit.intellij.plugins'
-version '0.4.0-SNAPSHOT'
+version '0.4.0'
 
 sourceCompatibility = 1.8
 
@@ -39,11 +39,14 @@ runIde {
 
 }
 
-
 patchPluginXml {
     sinceBuild = 192.5728
     untilBuild = null
 //    changeNotes """
 //      Add change notes here.<br>
 //      <em>most HTML tags may be used</em>"""
+}
+
+publishPlugin {
+    token = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_intellijPublishToken")
 }
