@@ -15,7 +15,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
 
         ArrayList<String> resultsModel = new ArrayList<>();
         contributor.fetchElements("model", new MockProgressIndicator(), (result) -> resultsModel.add(result.getName() + ":" + result.getLocationString()));
-        assertOrderedEquals(resultsModel,
+        assertSameElements(resultsModel,
                 "model_names:/src/odoo/addons/model_names",
                 "model_d:(ModelD in odoo.addons.model_names.models)",
                 "model_b:(ModelB in odoo.addons.model_names.models)",

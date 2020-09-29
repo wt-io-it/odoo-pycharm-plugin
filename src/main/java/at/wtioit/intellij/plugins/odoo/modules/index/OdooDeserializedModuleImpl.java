@@ -25,6 +25,7 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     private final String path;
     private PsiElement directory = null;
     private OdooManifest manifest = null;
+    private PsiFile manifestFile = null;
     private Icon icon = null;
 
     private static final ConcurrentHashMap<String, OdooDeserializedModuleImpl> modules = new ConcurrentHashMap<>();
@@ -79,17 +80,25 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     @Override
     public @NotNull Collection<OdooModule> getDependencies() {
         if (manifest == null) {
+            manifest = OdooManifestParser.parse(getManifestFile());
+        }
+        return manifest.getDependencies();
+    }
+
+    @Override
+    public PsiFile getManifestFile() {
+        if (manifestFile == null || !manifestFile.isValid()) {
             ApplicationManager.getApplication().runReadAction(() -> {
                 PsiDirectory directory = (PsiDirectory) getDirectory();
                 if (directory != null) {
                     for (@NotNull PsiElement file : directory.getChildren()) {
                         if (file instanceof PsiFile && "__manifest__.py".equals(((PsiFile) file).getName())) {
-                            manifest = OdooManifestParser.parse((PsiFile) file);
+                            manifestFile = (PsiFile) file;
                         }
                     }
                 } // TODO else log error
             });
         }
-        return manifest.getDependencies();
+        return manifestFile;
     }
 }

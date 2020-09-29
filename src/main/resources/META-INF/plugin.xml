@@ -31,8 +31,10 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.4.1:
           <ul>
             <li>fix NullPointerException when module cannot be found</li>
+            <li>make search everywhere module results compatible with autoscroll from source</li>
           </ul>
         </li>
         <li>

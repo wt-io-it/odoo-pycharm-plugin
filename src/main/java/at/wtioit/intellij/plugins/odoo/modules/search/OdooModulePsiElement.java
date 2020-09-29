@@ -77,6 +77,11 @@ public class OdooModulePsiElement implements OdooModule, PsiElement, OdooSEResul
     }
 
     @Override
+    public PsiFile getManifestFile() {
+        return module.getManifestFile();
+    }
+
+    @Override
     public @NotNull Project getProject() throws PsiInvalidElementAccessException {
         return module.getDirectory().getProject();
     }

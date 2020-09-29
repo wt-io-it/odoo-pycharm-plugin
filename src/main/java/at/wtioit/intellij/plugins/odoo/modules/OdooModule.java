@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.modules;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,4 +34,6 @@ public interface OdooModule {
     List<OdooModel> getModels();
 
     boolean dependsOn(OdooModule module);
+
+    PsiFile getManifestFile();
 }

@@ -6,6 +6,7 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -122,5 +123,16 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
             return false;
         }
         return module.dependsOn(possibleDependency);
+    }
+
+    @Override
+    public PsiFile getManifestFile() {
+        try {
+            tryResolveOdooModule();
+        } catch (FileNotFoundException e) {
+            // TODO give a hint to the user that we cannot find the module (and he should add it to the workspace)
+            return null;
+        }
+        return module.getManifestFile();
     }
 }

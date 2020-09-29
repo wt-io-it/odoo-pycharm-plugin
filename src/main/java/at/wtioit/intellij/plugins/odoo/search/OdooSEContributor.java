@@ -7,6 +7,7 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.modules.search.OdooModulePsiElement;
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereContributor;
+import com.intellij.ide.projectView.impl.ProjectViewSharedSettings;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -15,6 +16,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,10 +79,20 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
     public boolean processSelectedItem(@NotNull OdooSEResult selected, int modifiers, @NotNull String searchText) {
         if (selected instanceof OdooModule) {
             OdooModule module = (OdooModule) selected;
-            PsiDirectory moduleDirectory = (PsiDirectory) module.getDirectory();
-            if (moduleDirectory != null) {
-                moduleDirectory.navigate(true);
-                return true;
+            if (ProjectViewSharedSettings.Companion.getInstance().getAutoscrollFromSource()) {
+                // autoscroll from source scrolls to last opened file if we open a directory
+                // so we open the manifest file instead
+                PsiFile file = module.getManifestFile();
+                if (file != null) {
+                    file.navigate(true);
+                    return true;
+                }
+            } else {
+                PsiDirectory moduleDirectory = (PsiDirectory) module.getDirectory();
+                if (moduleDirectory != null) {
+                    moduleDirectory.navigate(true);
+                    return true;
+                }
             }
         } else if (selected instanceof OdooModel) {
             OdooModel model = (OdooModel) selected;
