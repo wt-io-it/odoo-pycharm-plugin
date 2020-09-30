@@ -18,8 +18,14 @@ public interface OdooModelPsiElementMatcherUtil {
         if (pyCallExpression != null && pyCallExpression.getCallee() != null) {
             String fieldType = pyCallExpression.getCallee().getText();
             if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(fieldType)) {
-                // fields.{N}2{M}(..., ) first argument
-                return true;
+                PyArgumentList arguments = findParent(element, PyArgumentList.class, 2);
+                if (arguments != null) {
+                    PsiElement firstArgument = arguments.getChildren()[0];
+                    if (firstArgument == element.getParent()) {
+                        // fields.{N}2{M}(..., ) first argument
+                        return true;
+                    }
+                }
             }
         }
 
