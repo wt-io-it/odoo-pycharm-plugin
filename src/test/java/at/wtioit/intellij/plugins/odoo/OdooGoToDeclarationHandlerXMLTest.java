@@ -10,9 +10,15 @@ public class OdooGoToDeclarationHandlerXMLTest extends AbstractOdooGoToDeclarati
         doTest("odoo.addons.addon1.models.existing.Existing");
     }
 
+    public void testModelNameInDataOeModelAttribute() {
+        doTest("odoo.addons.addon1.models.existing.Existing");
+    }
+
     public void testModelNameInRecordField() {
         doTest("odoo.addons.addon3.models.inherited.Inherited");
     }
+
+
 
     @Override
     String getFileExtension() {

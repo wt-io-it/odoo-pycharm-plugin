@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="record2" inherit_id="record1">
+            <xpath expr="." position="inside">
+                <span data-oe-model="exi<caret>sting"></span>
+            </xpath>
+        </template>
+    </data>
+</odoo>

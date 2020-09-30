@@ -2,11 +2,20 @@ package at.wtioit.intellij.plugins.odoo;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.XmlTag;
 import com.jetbrains.python.psi.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
 
 public interface OdooModelPsiElementMatcherUtil {
+
+    static List<String> ODOO_MODEL_XML_ATTRIBUTE_NAMES = Arrays.asList("model", "data-oe-model");
+    static List<String> ODOO_MODEL_XML_FIELD_ATTRIBUTE_NAMES = Arrays.asList("model", "res_model", "src_model");
 
     /**
      * Checks if {@link PsiElement} is supposed to contain an Odoo model name e.g. `_name = 'ir.ui.view'`
@@ -58,6 +67,17 @@ public interface OdooModelPsiElementMatcherUtil {
         PySubscriptionExpression pySubscriptionExpression = findParent(element, PySubscriptionExpression.class, 2);
         if (pySubscriptionExpression != null && "env".equals(pySubscriptionExpression.getRootOperand().getName())) {
             // handle self.env[...] and request.env[...]
+            return true;
+        }
+
+        XmlAttribute xmlAttribute = findParent(element, XmlAttribute.class, 2);
+        if (xmlAttribute != null && ODOO_MODEL_XML_ATTRIBUTE_NAMES.contains(xmlAttribute.getName())) {
+            // xml attributes model="...", data-oe-model="..."
+            return true;
+        }
+        XmlTag xmlTag = findParent(element, XmlTag.class, 2);
+        if (xmlTag != null && "field".equals(xmlTag.getName()) && ODOO_MODEL_XML_FIELD_ATTRIBUTE_NAMES.contains(xmlTag.getAttributeValue("name"))) {
+            // xml <field name="model">...</field> (also res_model and src_model)
             return true;
         }
 

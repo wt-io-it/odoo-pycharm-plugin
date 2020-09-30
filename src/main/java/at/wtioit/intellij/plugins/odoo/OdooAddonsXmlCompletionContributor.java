@@ -10,9 +10,10 @@ public class OdooAddonsXmlCompletionContributor extends AbstractOdooAddonsComple
 
     @Override
     public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
-        if (parameters.getPosition().getParent() instanceof XmlAttributeValue
-                && "model".equals(parameters.getPosition().getParent().getParent().getFirstChild().getText())) {
-            String value = parameters.getPosition().getText().replace(CompletionUtilCore.DUMMY_IDENTIFIER, "");
+        if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(parameters.getPosition())) {
+            String value = parameters.getPosition().getText()
+                    .replace(CompletionUtilCore.DUMMY_IDENTIFIER, "")
+                    .replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "");
             suggestModelName(parameters, result, value);
         }
     }

@@ -26,7 +26,6 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
             if (dot != null && dot.getText().equals(".")) {
                 addonNameStart = fqdn.substring(dot.getStartOffsetInParent() + 1);
             }
-            logger.debug("Addon name start: " + addonNameStart);
             suggestModuleName(parameters, result, addonNameStart);
         } else {
             PyFromImportStatement parentImportStatement = findParent(parameters.getPosition(), PyFromImportStatement.class);
@@ -34,6 +33,7 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
                     && parentImportStatement.getText().startsWith("from odoo.addons import ")) {
                 suggestModuleName(parameters, result, fqdn);
             } else if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(parameters.getPosition())) {
+                // suggest model names
                 String value = getStringValue(parameters, expressionWithDummy);
                 suggestModelName(parameters, result, value);
             }
@@ -45,6 +45,7 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
     private String getStringValue(@NotNull CompletionParameters parameters, String expressionWithDummy) {
         TextRange contentRange = ((PyStringElement) parameters.getPosition()).getContentRange();
         String content = expressionWithDummy.substring(contentRange.getStartOffset(), contentRange.getEndOffset());
-        return content.replace(CompletionUtilCore.DUMMY_IDENTIFIER, "");
+        return content.replace(CompletionUtilCore.DUMMY_IDENTIFIER, "")
+                .replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "");
     }
 }
