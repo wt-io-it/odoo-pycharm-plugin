@@ -29,7 +29,19 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
         if (psiElement instanceof PyStringElement) {
             PyStringElement pyStringElement = (PyStringElement) psiElement;
             if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(pyStringElement)) {
-                return getOdooModel(pyStringElement);
+                PyClass inClass = PsiElementsUtil.findParent(pyStringElement, PyClass.class);
+                PsiElement odooModelElement = getOdooModel(pyStringElement);
+                if (inClass == odooModelElement) {
+                    PyAssignmentStatement assignmentStatement = findParent(pyStringElement, PyAssignmentStatement.class, 4);
+                    if (assignmentStatement != null) {
+                        String variableName = assignmentStatement.getFirstChild().getText();
+                        if ("_name".equals(variableName)) {
+                            // avoid resolving itself for _name
+                            return null;
+                        }
+                    }
+                }
+                return odooModelElement;
             }
         } else {
             XmlAttribute xmlAttribute = findParent(psiElement, XmlAttribute.class, 2);
