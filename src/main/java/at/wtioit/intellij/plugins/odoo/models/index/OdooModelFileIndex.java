@@ -1,6 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.models.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
+import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -107,7 +108,7 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
             HashMap<String, OdooModelDefinition> models = new HashMap<>();
             @NotNull PsiFile file = inputData.getPsiFile();
             for (PsiElement pyline : file.getChildren()) {
-                if (OdooModelService.isOdooModelDefinition(pyline)) {
+                if (OdooModelPsiElementMatcherUtil.isOdooModelDefinition(pyline)) {
                     logger.debug("Found " + pyline + " in " + file.getName());
                     OdooModelDefinition model = new OdooModelDefinition((PyClass) pyline);
                     if (model.getName() != null) {

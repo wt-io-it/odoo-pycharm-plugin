@@ -51,4 +51,10 @@ public class OdooModelServiceImpl implements OdooModelService {
                 .findFirst()
                 .orElse(null);
     }
+
+    @Override
+    public boolean hasModel(String name) {
+        FileBasedIndex index = FileBasedIndex.getInstance();
+        return index.getAllKeys(OdooModelFileIndex.NAME, project).contains(name);
+    }
 }

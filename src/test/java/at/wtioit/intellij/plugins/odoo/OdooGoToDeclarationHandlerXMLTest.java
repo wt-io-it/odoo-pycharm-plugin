@@ -18,8 +18,6 @@ public class OdooGoToDeclarationHandlerXMLTest extends AbstractOdooGoToDeclarati
         doTest("odoo.addons.addon3.models.inherited.Inherited");
     }
 
-
-
     @Override
     String getFileExtension() {
         return ".xml";

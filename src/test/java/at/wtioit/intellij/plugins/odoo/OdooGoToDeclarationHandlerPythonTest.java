@@ -15,6 +15,30 @@ public class OdooGoToDeclarationHandlerPythonTest extends AbstractOdooGoToDeclar
         doTest("odoo.addons.addon1.models.existing.Existing");
     }
 
+    public void testModelNameEnvInTest() {
+        doTest("odoo.addons.addon1.models.existing.Existing");
+    }
+
+    public void testModelNameEnvInTest2() {
+        doTest("odoo.addons.addon1.models.existing.Existing");
+    }
+
+    public void testModelNameEnvInTest3() {
+        doTest("odoo.addons.addon1.models.existing.Existing");
+    }
+
+    public void testModelNameEnvInController() {
+        doTest("odoo.addons.addon1.models.existing.Existing");
+    }
+
+    public void testModelNameEnvInSelectionFunction() {
+        doTest("odoo.addons.addon1.models.existing.Existing");
+    }
+
+    public void testModelNameEnvInNormalFunctionNoResult() {
+        doTestExpectNoResult();
+    }
+
     public void testModelNameInherit() {
         doTest("odoo.addons.addon1.models.existing.Existing");
     }
@@ -27,7 +51,13 @@ public class OdooGoToDeclarationHandlerPythonTest extends AbstractOdooGoToDeclar
         doTest("odoo.addons.addon1.models.existing.Existing");
     }
 
+    public void testModelNameM2NFieldKeywordArgsRelatedNoResult() {
+        doTestExpectNoResult();
+    }
+
     public void testModelNameNotFound() {
         doTestExpectNoResult();
     }
+
+    // TODO test class names in dumb mode
 }

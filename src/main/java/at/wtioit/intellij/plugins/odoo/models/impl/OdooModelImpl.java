@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.models.impl;
 
+import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
@@ -77,7 +78,7 @@ public class OdooModelImpl implements OdooModel {
     private PsiElement retrieveDefiningElementFromFile(PsiFile psiFile) {
         if (psiFile != null) {
             for (PsiElement pyline : psiFile.getChildren()) {
-                if (OdooModelService.isOdooModelDefinition(pyline)) {
+                if (OdooModelPsiElementMatcherUtil.isOdooModelDefinition(pyline)) {
                     OdooModelDefinition model = new OdooModelDefinition((PyClass) pyline);
                     if (model.getName().equals(name)) {
                         return pyline;
