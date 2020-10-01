@@ -2,11 +2,10 @@ package at.wtioit.intellij.plugins.odoo.models.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
-import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
+import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
@@ -107,16 +106,18 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
         public @NotNull Map<String, OdooModelDefinition> map(@NotNull FileContent inputData) {
             HashMap<String, OdooModelDefinition> models = new HashMap<>();
             @NotNull PsiFile file = inputData.getPsiFile();
-            for (PsiElement pyline : file.getChildren()) {
-                if (OdooModelPsiElementMatcherUtil.isOdooModelDefinition(pyline)) {
-                    logger.debug("Found " + pyline + " in " + file.getName());
-                    OdooModelDefinition model = new OdooModelDefinition((PyClass) pyline);
+            PsiElementsUtil.walkTree(file, (child) -> {
+                if (OdooModelPsiElementMatcherUtil.isOdooModelDefinition(child)) {
+                    logger.debug("Found " + child + " in " + file.getName());
+                    OdooModelDefinition model = new OdooModelDefinition((PyClass) child);
                     if (model.getName() != null) {
                         // if we cannot detect a name we do not put the class in the index
                         models.put(model.getName(), model);
                     }
+                    return true;
                 }
-            }
+                return false;
+            });
             return models;
         }
     }

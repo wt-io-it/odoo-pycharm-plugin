@@ -4,20 +4,22 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
-import com.jetbrains.python.psi.PyBinaryExpression;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyListLiteralExpression;
-import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 public class OdooModelUtil {
 
     private static final Logger logger = Logger.getInstance(OdooModelUtil.class);
+    public static final String NAME_WILDCARD_MARKER = ":ANYTHING:";
+    private static final Map<String, Pattern> regexCache = new ConcurrentHashMap<>();
 
     public static String detectName(PsiElement pyline) {
         return detectName(pyline, () -> PyResolveContext.defaultContext().withTypeEvalContext(TypeEvalContext.codeAnalysis(pyline.getContainingFile().getProject(), pyline.getContainingFile())));
@@ -62,11 +64,38 @@ public class OdooModelUtil {
             } else {
                 logger.debug("Cannot detect string value for " + valueChild.getReference());
             }
-        } else if (valueChild instanceof PyCallExpression || valueChild instanceof PyBinaryExpression) {
+        } else if (valueChild instanceof PyBinaryExpression) {
+            PyElementType operator = ((PyBinaryExpression) valueChild).getOperator();
+            if (operator != null) {
+                if ("__mod__".equals(operator.getSpecialMethodName())) {
+                    String formattedName = getStringValueForValueChild(valueChild.getFirstChild(), contextSupplier);
+                    if (formattedName != null) {
+                        return formattedName.replaceAll("%s", NAME_WILDCARD_MARKER);
+                    }
+                }
+            }
+        } else if (valueChild instanceof PyCallExpression) {
             logger.debug("Cannot detect string value for class: " + valueChild.getClass());
+
         } else {
             logger.error("Unknown string value class: " + valueChild.getClass());
         }
         return null;
+    }
+
+    public static boolean wildcardNameMatches(String nameWithWildcard, String name) {
+        if (!nameWithWildcard.contains(NAME_WILDCARD_MARKER))  {
+            return false;
+        }
+        if (!regexCache.containsKey(nameWithWildcard)) {
+            String rePattern = nameWithWildcard.replaceAll("\\.", "\\\\.").replace(NAME_WILDCARD_MARKER, ".*");
+            regexCache.put(nameWithWildcard, Pattern.compile(rePattern));
+        }
+        Pattern pattern = regexCache.get(nameWithWildcard);
+        return pattern.matcher(name).matches();
+    }
+
+    public static String removeWildcards(String modelName) {
+        return modelName.replaceAll(NAME_WILDCARD_MARKER, "");
     }
 }

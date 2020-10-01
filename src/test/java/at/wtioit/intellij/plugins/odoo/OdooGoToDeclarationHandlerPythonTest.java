@@ -39,6 +39,18 @@ public class OdooGoToDeclarationHandlerPythonTest extends AbstractOdooGoToDeclar
         doTestExpectNoResult();
     }
 
+    public void testModelNameEnvWildcard() {
+        doTest("odoo.addons.addon1.models.existing.Wildcard");
+    }
+
+    public void testModelNameEnvWildcardFallback() {
+        doTest("odoo.addons.addon1.models.existing.WildcardDefault");
+    }
+
+    public void testModelNameEnvWildcardPreferExplicit() {
+        doTest("odoo.addons.addon1.models.existing.NonWildcard");
+    }
+
     public void testModelNameInherit() {
         doTest("odoo.addons.addon1.models.existing.Existing");
     }

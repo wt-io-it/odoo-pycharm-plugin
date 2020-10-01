@@ -2,12 +2,14 @@ package at.wtioit.intellij.plugins.odoo.models.impl;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
+import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
 import at.wtioit.intellij.plugins.odoo.models.index.OdooModelFileIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.stream.StreamSupport;
@@ -22,6 +24,7 @@ public class OdooModelServiceImpl implements OdooModelService {
 
     @Override
     public Iterable<OdooModel> getModels() {
+        // TODO check usages for wildcard scenarios
         FileBasedIndex index = FileBasedIndex.getInstance();
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         return index.getAllKeys(OdooModelFileIndex.NAME, project).stream()
@@ -36,11 +39,16 @@ public class OdooModelServiceImpl implements OdooModelService {
         return StreamSupport.stream(getModels().spliterator(), true)
                 .filter(m -> Objects.equals(m.getName(), modelName))
                 .findFirst()
-                .orElse(null);
+                .orElse(StreamSupport.stream(getModels().spliterator(), true)
+                        .filter(m -> !Objects.isNull(m.getName()))
+                        .filter(m -> OdooModelUtil.wildcardNameMatches(m.getName(), modelName))
+                        .findFirst()
+                        .orElse(null));
     }
 
     @Override
     public Iterable<String> getModelNames() {
+        // TODO check usages for wildcard scenarios
         return StreamSupport.stream(getModels().spliterator(), true).map(OdooModel::getName)::iterator;
     }
 
@@ -55,6 +63,19 @@ public class OdooModelServiceImpl implements OdooModelService {
     @Override
     public boolean hasModel(String name) {
         FileBasedIndex index = FileBasedIndex.getInstance();
-        return index.getAllKeys(OdooModelFileIndex.NAME, project).contains(name);
+        if (index.getAllKeys(OdooModelFileIndex.NAME, project).contains(name)) {
+            return true;
+        }
+        return matchedByWildcardName(name) != null;
+    }
+
+    @Nullable
+    private String matchedByWildcardName(@Nullable  String name) {
+        if (name == null) return null;
+        FileBasedIndex index = FileBasedIndex.getInstance();
+        return index.getAllKeys(OdooModelFileIndex.NAME, project).parallelStream()
+                .filter(modelName -> OdooModelUtil.wildcardNameMatches(modelName, name))
+                .findFirst()
+                .orElse(null);
     }
 }

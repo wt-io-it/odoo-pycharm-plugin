@@ -15,6 +15,10 @@ public class PythonModelNameCompletionTest extends BaseOdooPluginTest {
         //doTest();
     }
 
+    public void testModelNameInInheritWildcard() {
+        doTest();
+    }
+
     public void testModelNameInOne2manyField() {
         doTest();
     }

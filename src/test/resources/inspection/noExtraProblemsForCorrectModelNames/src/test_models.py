@@ -25,7 +25,7 @@ class MyModel(models.Model):
         return True
 
 for name in ['one', 'two', 'three']:
-    class MyModelDefinition(models.Model):
+    class MyGenericModelDefinition(models.Model):
         _name = 'package.%s' % name
 
 class MyModelReferencesPackages(models.Model):

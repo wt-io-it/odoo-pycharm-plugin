@@ -1,6 +1,7 @@
 package at.wtioit.intellij.plugins.odoo;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
+import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.codeInsight.completion.CompletionContributor;
@@ -77,7 +78,7 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
                         PsiElement directory = module.getDirectory();
                         if (directory != null) {
                             LookupElementBuilder element = LookupElementBuilder
-                                    .createWithSmartPointer(modelName, directory)
+                                    .createWithSmartPointer(OdooModelUtil.removeWildcards(modelName), directory)
                                     .withIcon(module.getIcon())
                                     .withTailText(" " + module.getRelativeLocationString(), true);
                             result.addElement(element);

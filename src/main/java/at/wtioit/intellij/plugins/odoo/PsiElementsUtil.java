@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Function;
 
 public interface PsiElementsUtil {
     @Nullable
@@ -34,5 +35,19 @@ public interface PsiElementsUtil {
                 .filter(c -> Objects.equals(c.getName(), name))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * walk the PsiElement tree (downwards)
+     * @param element element to walk into
+     * @param function function to investigate children, should return `true` if element is complete (does not need
+     *                walking into) and return `false` if element is not complete (needs walking into)
+     */
+    static void walkTree(PsiElement element, Function<PsiElement, Boolean> function) {
+        for (PsiElement child : element.getChildren()) {
+            if (!function.apply(child)) {
+                walkTree(child, function);
+            }
+        }
     }
 }
