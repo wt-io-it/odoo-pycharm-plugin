@@ -21,7 +21,6 @@
         </ul>
         <p><strong>Planned Features</strong></p>
         <ul>
-          <li>__manifest__.py should not be marked as no effect statement</li>
           <li>Navigate to ... support for xml and csv records</li>
         </ul>
       </div>
@@ -34,6 +33,7 @@
           <ul>
             <li>implement goto handler for _inherits</li>
             <li>add inspection for missing odoo models</li>
+            <li>suppress the warning about statement having no effect for the main dict in __manifest__.py (thanks christian for the feature request)</li>
           </ul>
         </li>
         <li>
@@ -87,7 +87,7 @@
       <strong>Known Issues:</strong>
       <ul>
         <li>may link to the wrong path if more that one odoo project is loaded</li>
-        <li>shown addons are not dependening on configured addon paths</li>
+        <li>shown addons are not depending on configured addon paths</li>
         <li>model names can only be detected if string literals are used</li>
         <li>autocompletion only works as startswith (default PyCharm autocompletion also matches in other ways, e.g. "ab" in PyCharm also matches "account_balance" whereas it does not match in our plugin)</li>
         <li>model Classes that are defined by extending another model Class are not yet recognized</li>
@@ -126,6 +126,8 @@
                        key="INSP.NAME.missing.model.definition"
                        enabledByDefault="true"
                        language="Python" />
+      <lang.inspectionSuppressor implementationClass="at.wtioit.intellij.plugins.odoo.modules.inspection.ManifestInspectionSuppressor"
+                                 language="Python" />
   </extensions>
 
   <actions>
