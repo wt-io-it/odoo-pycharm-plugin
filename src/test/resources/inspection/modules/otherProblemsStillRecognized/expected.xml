@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+    <problem>
+        <file>__init__.py</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/addon_with_problems_in_manifest/__init__.py" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement has no effect</problem_class>
+        <description>Statement seems to have no effect and can be replaced with function call to have effect</description>
+    </problem>
+    <problem>
+        <file>__manifest__.py</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/addon_with_problems_in_manifest/__manifest__.py" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement has no effect</problem_class>
+        <description>Statement seems to have no effect and can be replaced with function call to have effect</description>
+    </problem>
+</problems>

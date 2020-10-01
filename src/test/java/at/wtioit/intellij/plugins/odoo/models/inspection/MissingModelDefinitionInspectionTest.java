@@ -19,6 +19,6 @@ public class MissingModelDefinitionInspectionTest extends BaseOdooPluginTest {
 
     private void doTest() {
         LocalInspectionToolWrapper toolWrapper = new LocalInspectionToolWrapper(new MissingModelDefinitionInspection());
-        myFixture.testInspection("inspection/" + getTestName(true), toolWrapper);
+        myFixture.testInspection("inspection/models/" + getTestName(true), toolWrapper);
     }
 }
