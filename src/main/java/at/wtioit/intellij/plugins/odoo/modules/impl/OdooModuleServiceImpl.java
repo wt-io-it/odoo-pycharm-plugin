@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.modules.impl;
 
+import at.wtioit.intellij.plugins.odoo.OdooBundle;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
@@ -17,7 +18,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -150,14 +150,11 @@ public class OdooModuleServiceImpl implements OdooModuleService {
 
     private class DuplicateModulesWarning extends Notification {
 
-        static final String GROUP_DISPLAY_ID = "Odoo Module Notifications";
-
-        public DuplicateModulesWarning(@NotNull String title, @NotNull String content, @NotNull NotificationType type) {
-            super(GROUP_DISPLAY_ID, title, content, type);
-        }
-
         public DuplicateModulesWarning(String moduleName) {
-            super(GROUP_DISPLAY_ID,"Duplicate Module", "multiple modules with name " + moduleName + " detected.", NotificationType.WARNING);
+            super(OdooBundle.message("NOTIFICATION.GROUP.odoo"),
+                    OdooBundle.message("NOTIFICATION.duplicate.module.title"),
+                    OdooBundle.message("NOTIFICATION.duplicate.module.content", moduleName),
+                    NotificationType.WARNING);
         }
     }
 }

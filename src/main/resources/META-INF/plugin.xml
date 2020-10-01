@@ -96,8 +96,7 @@
     ]]>
   </change-notes>
 
-  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="192.5728.98" />
+  <resource-bundle>at.wtioit.intellij.plugins.OdooBundle</resource-bundle>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
@@ -124,8 +123,8 @@
       <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.models.index.OdooModelFileIndex" />
       <searchEverywhereContributor implementation="at.wtioit.intellij.plugins.odoo.search.OdooSearchEverywhere" />
       <localInspection implementationClass="at.wtioit.intellij.plugins.odoo.models.inspection.MissingModelDefinitionInspection"
-                       groupName="Odoo"
-                       displayName="MissingOdooModels"
+                       groupKey="INSP.GROUP.odoo"
+                       key="INSP.NAME.missing.model.definition"
                        enabledByDefault="true"
                        language="Python" />
   </extensions>
