@@ -1,6 +1,7 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.4.10'
+    // get the newest version from https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/prerequisites.html
+    id 'org.jetbrains.intellij' version '0.4.22'
 }
 
 group 'at.wtioit.intellij.plugins'
@@ -40,12 +41,15 @@ runIde {
 }
 
 patchPluginXml {
+    // please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description
     sinceBuild = 192.5728
     untilBuild = null
 //    changeNotes """
 //      Add change notes here.<br>
 //      <em>most HTML tags may be used</em>"""
 }
+
+
 
 publishPlugin {
     token = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_intellijPublishToken")
