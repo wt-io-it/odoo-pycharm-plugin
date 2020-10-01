@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+    <problem>
+        <file>model_b.py</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/odoo/addons/model_names/models/model_b.py" />
+        <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Reference to a missing module definition</problem_class>
+        <description>Missing module definition for not_model_b</description>
+    </problem>
+</problems>

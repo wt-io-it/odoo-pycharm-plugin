@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.models.inspection;
 
 import at.wtioit.intellij.plugins.odoo.OdooBundle;
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
+import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -41,7 +42,7 @@ public class MissingModelDefinitionInspection extends LocalInspectionTool {
             public void visitElement(PsiElement element) {
                 super.visitElement(element);
                 if (element instanceof PyStringElement) {
-                    if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(element)) {
+                    if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(element) && !OdooModelPsiElementMatcherUtil.isPartOfExpression(element)) {
                         TextRange contentRange = ((PyStringElement) element).getContentRange();
                         String modelName = element.getText().substring(contentRange.getStartOffset(), contentRange.getEndOffset());
                         if (!modelService.hasModel(modelName)) {
@@ -54,8 +55,9 @@ public class MissingModelDefinitionInspection extends LocalInspectionTool {
 
             @Override
             public void visitPyStringLiteralExpression(PyStringLiteralExpression element) {
+                // TODO this might be covered by the method above
                 super.visitPyStringLiteralExpression(element);
-                if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(element)) {
+                if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(element) && !OdooModelPsiElementMatcherUtil.isPartOfExpression(element)) {
                     String modelName = element.getStringValue();
                     if (!modelService.hasModel(modelName)) {
                         holder.registerProblem(element, OdooBundle.message("INSP.NAME.missing.model.definition.for.$0", modelName), ProblemHighlightType.ERROR);

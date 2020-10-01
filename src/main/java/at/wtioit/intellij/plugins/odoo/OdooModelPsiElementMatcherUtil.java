@@ -284,4 +284,7 @@ public interface OdooModelPsiElementMatcherUtil {
     }
 
 
+    static boolean isPartOfExpression(PsiElement element) {
+        return PsiElementsUtil.findParent(element, PyBinaryExpression.class, 2) != null;
+    }
 }
