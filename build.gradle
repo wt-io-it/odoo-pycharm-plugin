@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'at.wtioit.intellij.plugins'
-version '0.5.0-snapshot'
+version '0.5.0'
 
 sourceCompatibility = 1.8
 
