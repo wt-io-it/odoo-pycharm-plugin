@@ -120,6 +120,7 @@
                       serviceImplementation="at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl" />
       <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex" />
       <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.models.index.OdooModelFileIndex" />
+      <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.records.index.OdooRecordFileIndex" />
       <searchEverywhereContributor implementation="at.wtioit.intellij.plugins.odoo.search.OdooSearchEverywhere" />
       <localInspection implementationClass="at.wtioit.intellij.plugins.odoo.models.inspection.MissingModelDefinitionInspection"
                        groupKey="INSP.GROUP.odoo"

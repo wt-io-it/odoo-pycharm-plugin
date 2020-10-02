@@ -43,10 +43,32 @@ public interface PsiElementsUtil {
      * @param function function to investigate children, should return `true` if element is complete (does not need
      *                walking into) and return `false` if element is not complete (needs walking into)
      */
-    static void walkTree(PsiElement element, Function<PsiElement, Boolean> function) {
-        for (PsiElement child : element.getChildren()) {
-            if (!function.apply(child)) {
-                walkTree(child, function);
+    static void walkTree(@Nullable PsiElement element, Function<PsiElement, Boolean> function) {
+        walkTree(element, function, PsiElement.class);
+    }
+
+    /**
+     * walk the PsiElement tree (downwards)
+     * @param element element to walk into
+     * @param function function to investigate children, should return `true` if element is complete (does not need
+     *                walking into) and return `false` if element is not complete (needs walking into)
+     */
+    static <T extends PsiElement> void walkTree(@Nullable PsiElement element, Function<T, Boolean> function, Class<T> typeFilter) {
+        walkTree(element, function, typeFilter, Integer.MAX_VALUE);
+    }
+
+    /**
+     * walk the PsiElement tree (downwards)
+     * @param element element to walk into
+     * @param function function to investigate children, should return `true` if element is complete (does not need
+     *                walking into) and return `false` if element is not complete (needs walking into)
+     */
+    static <T extends PsiElement> void walkTree(@Nullable PsiElement element, Function<T, Boolean> function, Class<T> typeFilter, int maxDepth) {
+        if (element != null && maxDepth > 0) {
+            for (PsiElement child : element.getChildren()) {
+                if (typeFilter.isInstance(child) && !function.apply(typeFilter.cast(child))) {
+                    walkTree(child, function, typeFilter, maxDepth - 1);
+                }
             }
         }
     }
