@@ -1,7 +1,6 @@
 package at.wtioit.intellij.plugins.odoo;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
-import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.psi.PsiElement;
@@ -9,11 +8,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyDecoratorListImpl;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -100,7 +98,6 @@ public interface OdooModelPsiElementMatcherUtil {
             PyClass pyClass = PsiElementsUtil.findParent(element, PyClass.class);
             PyFunction function = PsiElementsUtil.findParent(element, PyFunction.class);
             if ("self.env".equals(text) && (isOdooModelDefinition(pyClass) || isOdooTest(pyClass) || isOdooApiFunction(function))) {
-                // TODO check functions like _lang_get that are defined directly in modules (we cannot resolve self there)
                 // handle self.env[...]
                 return true;
             } else if ("request.env".equals(text) && isOdooControllerDefinition(pyClass)) {
@@ -130,7 +127,8 @@ public interface OdooModelPsiElementMatcherUtil {
         return PsiElementsUtil.findParent(element, PyClass.class, 5) != null && PsiElementsUtil.findParent(element, PyFunction.class, 4) == null;
     }
 
-    static boolean isOdooApiFunction(PyFunction function) {
+    static boolean isOdooApiFunction(@Nullable PyFunction function) {
+        if (function == null) return false;
         PsiElement firstChild = function.getFirstChild();
         if (firstChild instanceof PyDecoratorList) {
             PyDecorator modelDecorator = ((PyDecoratorList) firstChild).findDecorator("api.model");
@@ -269,17 +267,6 @@ public interface OdooModelPsiElementMatcherUtil {
                 }
             }
         }
-        /*if (importSource != null && importSource.getText().equals("odoo")
-                && PsiElementsUtil.findChildrenByClassAndName(fromImport, PyImportElement.class, "models") != null) {
-            if (ODOO_MODEL_BASE_CLASS_NAMES.contains("odoo." + currentName)) {
-                return true;
-            }
-        } else if (importSource != null && importSource.getText().equals("odoo.tests.common")
-                && PsiElementsUtil.findChildrenByClassAndName(fromImport, PyImportElement.class, currentName) != null) {
-            if (ODOO_MODEL_BASE_CLASS_NAMES.contains("odoo.tests.common." + currentName)) {
-                return true;
-            }
-        }*/
         return false;
     }
 
