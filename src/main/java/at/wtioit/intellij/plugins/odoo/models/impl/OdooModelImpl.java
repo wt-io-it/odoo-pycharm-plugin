@@ -84,7 +84,7 @@ public class OdooModelImpl implements OdooModel {
                 if (definingElement.get() != null) return true;
                 if (OdooModelPsiElementMatcherUtil.isOdooModelDefinition(child)) {
                     OdooModelDefinition model = new OdooModelDefinition((PyClass) child);
-                    if (model.getName().equals(this.name)) {
+                    if (model.getName() != null && model.getName().equals(this.name)) {
                         definingElement.set(child);
                         return true;
                     }
