@@ -29,6 +29,12 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.5.1:
+          <ul>
+            <li>fix NullPointerException for odoo/odoo/addons/base/ir/ir_model.py CustomModel</li>
+          </ul>
+        </li>
+        <li>
           Version 0.5:
           <ul>
             <li>implement goto handler for _inherits</li>

@@ -17,6 +17,8 @@ import com.jetbrains.python.psi.PyStringLiteralExpression;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
+import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.*;
+
 public class MissingModelDefinitionInspection extends LocalInspectionTool {
 
 
@@ -42,7 +44,7 @@ public class MissingModelDefinitionInspection extends LocalInspectionTool {
             public void visitElement(PsiElement element) {
                 super.visitElement(element);
                 if (element instanceof PyStringElement) {
-                    if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(element) && !OdooModelPsiElementMatcherUtil.isPartOfExpression(element)) {
+                    if (isOdooModelPsiElement(element) && !isPartOfExpression(element) && !isUnresolvableOdooModelNameDefinitionPsiElement(element)) {
                         TextRange contentRange = ((PyStringElement) element).getContentRange();
                         String modelName = element.getText().substring(contentRange.getStartOffset(), contentRange.getEndOffset());
                         if (!modelService.hasModel(modelName)) {
@@ -57,7 +59,7 @@ public class MissingModelDefinitionInspection extends LocalInspectionTool {
             public void visitPyStringLiteralExpression(PyStringLiteralExpression element) {
                 // TODO this might be covered by the method above
                 super.visitPyStringLiteralExpression(element);
-                if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(element) && !OdooModelPsiElementMatcherUtil.isPartOfExpression(element)) {
+                if (isOdooModelPsiElement(element) && !isPartOfExpression(element) && !isUnresolvableOdooModelNameDefinitionPsiElement(element)) {
                     String modelName = element.getStringValue();
                     if (!modelService.hasModel(modelName)) {
                         holder.registerProblem(element, OdooBundle.message("INSP.NAME.missing.model.definition.for.$0", modelName), ProblemHighlightType.ERROR);

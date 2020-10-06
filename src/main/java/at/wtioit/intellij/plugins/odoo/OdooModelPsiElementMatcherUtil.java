@@ -42,12 +42,42 @@ public interface OdooModelPsiElementMatcherUtil {
     List<String> ODOO_MODEL_XML_ATTRIBUTE_NAMES = Arrays.asList("model", "data-oe-model");
     List<String> ODOO_MODEL_XML_FIELD_ATTRIBUTE_NAMES = Arrays.asList("model", "res_model", "src_model");
 
+
+    /**
+     * @param element element to check
+     * @return true if element is part of a definition for an odoo model name
+     */
+    static boolean isOdooModelNameDefinitionPsiElement(PsiElement element) {
+        PyAssignmentStatement assignmentStatement = findParent(element, PyAssignmentStatement.class, 4);
+        if (assignmentStatement != null && element.getParent() instanceof PyStringLiteralExpression) {
+            String variableName = assignmentStatement.getFirstChild().getText();
+            // _name and _inherit fields
+            return OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName) && isField(element);
+        }
+        return false;
+    }
+
+    /**
+     * @param element element to check
+     * @return true if element is part of an unresolvable definition for an odoo model name
+     */
+    static boolean isUnresolvableOdooModelNameDefinitionPsiElement(PsiElement element) {
+        if (isOdooModelNameDefinitionPsiElement(element)) {
+            // We cannot resolve subscription expections in model names (e.g. _name = model_data['name']) yet
+            return PsiElementsUtil.findParent(element, PySubscriptionExpression.class, 2) != null;
+        }
+        return false;
+    }
+
     /**
      * Checks if {@link PsiElement} is supposed to contain an Odoo model name e.g. `_name = 'ir.ui.view'`
      * @param element - element to check
      * @return `true` if element is supposed to contain an Odoo model name
      */
     static boolean isOdooModelPsiElement(PsiElement element) {
+        if (isOdooModelNameDefinitionPsiElement(element)) {
+            return true;
+        }
         PyCallExpression pyCallExpression = findParent(element, PyCallExpression.class, 3);
         if (pyCallExpression != null && pyCallExpression.getCallee() != null) {
             String fieldType = pyCallExpression.getCallee().getText();
@@ -79,10 +109,7 @@ public interface OdooModelPsiElementMatcherUtil {
         PyAssignmentStatement assignmentStatement = findParent(element, PyAssignmentStatement.class, 4);
         if (assignmentStatement != null && element.getParent() instanceof PyStringLiteralExpression) {
             String variableName = assignmentStatement.getFirstChild().getText();
-            if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName) && isField(element)) {
-                // _name and _inherit fields
-                return true;
-            } else if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME_IN_DICT_KEY.contains(variableName)) {
+            if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME_IN_DICT_KEY.contains(variableName)) {
                 PyKeyValueExpression valueExpression = findParent(element, PyKeyValueExpression.class, 2);
                 if (valueExpression != null && valueExpression.getValue() != element.getParent()) {
                     // keys (not values) for _inherits fields
@@ -144,7 +171,7 @@ public interface OdooModelPsiElementMatcherUtil {
             TypeEvalContext typeEvalContext = TypeEvalContext.codeAnalysis(pyClass.getContainingFile().getProject(), pyClass.getContainingFile());
             superClasses = pyClass.getSuperClasses(typeEvalContext);
             for (PyClass superClass : superClasses) {
-                if (isOdooControllerName(superClass.getQualifiedName(), pyClass)) {
+                if (isOdooControllerClassName(superClass.getQualifiedName(), pyClass)) {
                     return true;
                 }
             }
@@ -162,7 +189,7 @@ public interface OdooModelPsiElementMatcherUtil {
                 TypeEvalContext typeEvalContext = TypeEvalContext.codeAnalysis(pyClass.getContainingFile().getProject(), pyClass.getContainingFile());
                 superClasses = pyClass.getSuperClasses(typeEvalContext);
                 for (PyClass superClass : superClasses) {
-                    if (isOdooTestName(superClass.getQualifiedName(), pyClass)) {
+                    if (isOdooTestClassName(superClass.getQualifiedName(), pyClass)) {
                         return true;
                     }
                 }
@@ -174,7 +201,7 @@ public interface OdooModelPsiElementMatcherUtil {
             // when we cannot resolve super classes we resort to string matching
             for (@NotNull PsiElement superClassElement : pyClass.getChildren()[0].getChildren()) {
                 if (superClassElement instanceof PyReferenceExpression) {
-                    if (isOdooTestName(superClassElement.getText(), pyClass)) {
+                    if (isOdooTestClassName(superClassElement.getText(), pyClass)) {
                         return true;
                     }
                 }
@@ -192,7 +219,7 @@ public interface OdooModelPsiElementMatcherUtil {
                 try {
                     superClasses = pyClass.getSuperClasses(typeEvalContext);
                     for (PyClass superClass : superClasses) {
-                        if (isOdooModelName(superClass.getQualifiedName(), pyClass)) {
+                        if (isOdooModelClassName(superClass.getQualifiedName(), pyClass)) {
                             return true;
                         }
                     }
@@ -205,7 +232,7 @@ public interface OdooModelPsiElementMatcherUtil {
                 for (@NotNull PsiElement superClassElement : pyClass.getChildren()[0].getChildren()) {
                     if (superClassElement instanceof PyReferenceExpression) {
                         // TODO check classes defined in same file (make website.published.multi.mixin work)
-                        if (isOdooModelName(superClassElement.getText(), pyClass)) {
+                        if (isOdooModelClassName(superClassElement.getText(), pyClass)) {
                             return true;
                         }
                     }
@@ -215,15 +242,15 @@ public interface OdooModelPsiElementMatcherUtil {
         return false;
     }
 
-    static boolean isOdooModelName(String name, PyClass pyClass) {
+    static boolean isOdooModelClassName(String name, PyClass pyClass) {
         return isOdooClassName(ODOO_MODEL_BASE_CLASS_NAMES, name, pyClass);
     }
 
-    static boolean isOdooTestName(String name, PyClass pyClass) {
+    static boolean isOdooTestClassName(String name, PyClass pyClass) {
        return isOdooClassName(ODOO_TEST_BASE_CLASS_NAMES, name, pyClass);
     }
 
-    static boolean isOdooControllerName(String name, PyClass pyClass) {
+    static boolean isOdooControllerClassName(String name, PyClass pyClass) {
         return isOdooClassName(ODOO_CONTROLLER_BASE_CLASS_NAMES, name, pyClass);
     }
 

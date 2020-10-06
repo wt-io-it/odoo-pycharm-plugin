@@ -74,7 +74,7 @@ public class OdooModelUtil {
                     }
                 }
             }
-        } else if (valueChild instanceof PyCallExpression) {
+        } else if (valueChild instanceof PyCallExpression || valueChild instanceof PySubscriptionExpression) {
             logger.debug("Cannot detect string value for class: " + valueChild.getClass());
 
         } else {
