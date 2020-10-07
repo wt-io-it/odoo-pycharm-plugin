@@ -9,6 +9,8 @@ version '0.6.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
+def intellijVersion = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testVersion") ?: '2019.2'
+
 repositories {
     mavenCentral()
     jcenter()
@@ -22,7 +24,7 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     // it seems we cannot use 2019.1 here
-    version '2019.2'
+    version = intellijVersion
     type 'PC'
 }
 
