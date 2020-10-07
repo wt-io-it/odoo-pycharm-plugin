@@ -10,6 +10,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.NoAccessDuringPsiEvents;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -49,18 +50,23 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     @Nullable
     @Override
     public OdooModule getModule(String moduleName) {
-        return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
-            FileBasedIndex index = FileBasedIndex.getInstance();
-            GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-            List<OdooModule> modulesForName = index.getValues(OdooModuleFileIndex.NAME, moduleName, scope);
-            if (modulesForName.size() > 1) {
-                showDuplicateModuleWarning(moduleName);
-                return modulesForName.get(0);
-            } else if (modulesForName.size() == 1) {
-                return modulesForName.get(0);
-            }
-            return null;
-        });
+        // if we are indexing models the resolving of odoo.addons.* may call this one and trigger an exception if we
+        // try to access the index for models (because of call to NoAccessDuringPsiEvents#checkCallContext)
+        if (!NoAccessDuringPsiEvents.isInsideEventProcessing()) {
+            return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
+                FileBasedIndex index = FileBasedIndex.getInstance();
+                GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+                List<OdooModule> modulesForName = index.getValues(OdooModuleFileIndex.NAME, moduleName, scope);
+                if (modulesForName.size() > 1) {
+                    showDuplicateModuleWarning(moduleName);
+                    return modulesForName.get(0);
+                } else if (modulesForName.size() == 1) {
+                    return modulesForName.get(0);
+                }
+                return null;
+            });
+        }
+        return null;
     }
 
     @Nullable
