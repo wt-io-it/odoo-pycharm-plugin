@@ -5,6 +5,7 @@ import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -25,8 +26,10 @@ public abstract class AbstractOdooModuleImpl implements OdooModule {
     public String getRelativeLocationString() {
         String locationString = getPath();
         String basePath = null;
-        // TODO need to get basePath
-        //@SystemIndependent String basePath = getDirectory().getProject().getBasePath();
+        Project project = WithinProject.INSTANCE.get();
+        if (project != null) {
+            basePath = project.getBasePath();
+        }
         if (basePath != null && locationString.startsWith(basePath)) {
             return locationString.substring(basePath.length() + 1);
         }
