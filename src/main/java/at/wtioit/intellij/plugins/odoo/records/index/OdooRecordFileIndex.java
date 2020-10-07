@@ -25,6 +25,8 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
 
     private static final List ODOO_RECORD_TYPES = Arrays.asList("record", "template", "menuitem", "act_window", "report");
 
+    private static final String NULL_XML_ID_KEY = ":UNDETECTED_XML_ID:";
+
     @NonNls public static final ID<String, OdooRecord> NAME = ID.create("OdooRecordFileIndex");
 
     OdooRecordFileIndexer indexer = new OdooRecordFileIndexer();
@@ -72,7 +74,7 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
 
     @Override
     public int getVersion() {
-        return 5;
+        return 6;
     }
 
     @Override
@@ -130,7 +132,11 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
                 if ("function".equals(name)) return true;
                 if (ODOO_RECORD_TYPES.contains(name)) {
                     OdooRecord record = OdooRecordImpl.getFromXml(tag, path);
-                    records.put(record.getXmlId(), record);
+                    if (record.getXmlId() == null) {
+                        records.put(NULL_XML_ID_KEY, record);
+                    } else {
+                        records.put(record.getXmlId(), record);
+                    }
                     return true;
                 }
                 return false;
