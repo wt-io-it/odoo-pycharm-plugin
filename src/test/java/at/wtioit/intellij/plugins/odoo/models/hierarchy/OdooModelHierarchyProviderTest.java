@@ -7,10 +7,13 @@ import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.HierarchyProvider;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.lang.LanguageExtensionPoint;
+import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyClass;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import static com.intellij.ide.hierarchy.TypeHierarchyBrowserBase.SUBTYPES_HIERARCHY_TYPE;
@@ -109,7 +112,9 @@ public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
     }
 
     private HierarchyProvider getHierarchyProvider() {
-        return HierarchyProvider.TYPE_EP_NAME.getExtensionList().stream()
+        return ExtensionPointName.create("com.intellij.typeHierarchyProvider").getExtensionList().stream()
+                .map(ep -> {if (ep instanceof LanguageExtensionPoint) { return (LanguageExtensionPoint) ep; } else return null; })
+                .filter(Objects::nonNull)
                 .filter(languageExtensionPoint -> languageExtensionPoint.implementationClass.equals(OdooModelHierarchyProvider.class.getName()))
                 .map(languageExtensionPoint -> newInstance(languageExtensionPoint, HierarchyProvider.class))
                 .findFirst().orElse(null);
