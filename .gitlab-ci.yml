@@ -5,9 +5,13 @@ stages:
 run_tests:
   stage: test
   script:
-    - ./gradlew test
+    - AT_WTIOIT_PYCHARM_PLUGIN_testVersion=$VERSION ./gradlew test
   after_script:
     - java -version
+  parallel:
+    matrix:
+      - TYPE: "PC"
+        VERSION: ["2019.2", "2019.3", "2020.1", "2020.2"]
   artifacts:
     reports:
       junit: build/test-results/test/TEST-*.xml

@@ -10,6 +10,11 @@ version '0.6.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 def intellijVersion = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testVersion") ?: '2019.2'
+def intellijPlugins = []
+if (intellijVersion != '2019.2') {
+    // only pycharm 2019.2 seems to provide com.jetbrains.python.psi itself
+    intellijPlugins.add('PythonCore');
+}
 
 repositories {
     mavenCentral()
@@ -26,6 +31,7 @@ intellij {
     // it seems we cannot use 2019.1 here
     version = intellijVersion
     type 'PC'
+    plugins = intellijPlugins
 }
 
 // enable this to run in IntelliJ Idea Community Edition
