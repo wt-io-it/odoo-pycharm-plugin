@@ -1,13 +1,9 @@
 package at.wtioit.intellij.plugins.odoo.records.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
-import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
-import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
-import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.xml.*;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -17,15 +13,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+
+import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromFile;
 
 public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRecord> {
-
-    private static final List ODOO_RECORD_TYPES = Arrays.asList("record", "template", "menuitem", "act_window", "report");
-
-    private static final String NULL_XML_ID_KEY = ":UNDETECTED_XML_ID:";
 
     @NonNls public static final ID<String, OdooRecord> NAME = ID.create("OdooRecordFileIndex");
 
@@ -67,6 +61,9 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
                 String path = readString(in);
                 String modelName = readString(in);
                 String id = readString(in);
+                if (id == null && xmlId != null) {
+                    return new OdooDeserializedRecordImpl(xmlId, xmlId, path, modelName);
+                }
                 return new OdooDeserializedRecordImpl(id, xmlId, path, modelName);
             }
         };
@@ -96,52 +93,11 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
     private static class OdooRecordFileIndexer implements DataIndexer<String, OdooRecord, FileContent> {
         @Override
         public @NotNull Map<String, OdooRecord> map(@NotNull FileContent inputData) {
-            HashMap<String, OdooRecord> records = new HashMap<>();
             if (inputData.getFileType() == XmlFileType.INSTANCE) {
                 PsiFile file = inputData.getPsiFile();
-                PsiElementsUtil.walkTree(file, (element) -> {
-                    if (element instanceof XmlTag) {
-                        XmlTag tag = (XmlTag) element;
-                        if (tag.getNamespace().contains("http://relaxng.com/ns/")) {
-                            // skip investigating relaxng schemas for odoo models
-                            return true;
-                        } else if ("odoo".equals(tag.getName())) {
-                            records.putAll(getRecordsFromOdooTag(tag, inputData.getFile().getPath()));
-                            return true;
-                        }
-                        // investigate children
-                        return false;
-                    } else if (element instanceof XmlDocument) {
-                        // investigate children
-                        return false;
-                    }
-                    // skip investigating children
-                    return true;
-                }, XmlElement.class, 3);
+                return getRecordsFromFile(file);
             }
-            return records;
-        }
-
-        private Map<String, OdooRecord> getRecordsFromOdooTag(XmlTag odooTag, @NotNull String path) {
-            HashMap<String, OdooRecord> records = new HashMap<>();
-            PsiElementsUtil.walkTree(odooTag, (tag)-> {
-                String name = tag.getName();
-                // data needs further investigation (can hold records / templates)
-                if ("data".equals(name)) return false;
-                // function needs no further investigation (cannot hold records / templates)
-                if ("function".equals(name)) return true;
-                if (ODOO_RECORD_TYPES.contains(name)) {
-                    OdooRecord record = OdooRecordImpl.getFromXml(tag, path);
-                    if (record.getXmlId() == null) {
-                        records.put(NULL_XML_ID_KEY, record);
-                    } else {
-                        records.put(record.getXmlId(), record);
-                    }
-                    return true;
-                }
-                return false;
-            }, XmlTag.class, 2);
-            return records;
+            return Collections.emptyMap();
         }
     }
 }

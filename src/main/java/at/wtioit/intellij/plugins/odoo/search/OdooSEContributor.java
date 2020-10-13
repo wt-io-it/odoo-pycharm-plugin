@@ -6,6 +6,8 @@ import at.wtioit.intellij.plugins.odoo.models.search.OdooModelPsiElement;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.modules.search.OdooModulePsiElement;
+import at.wtioit.intellij.plugins.odoo.records.OdooRecordService;
+import at.wtioit.intellij.plugins.odoo.records.search.OdooRecordPsiElement;
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereContributor;
 import com.intellij.ide.projectView.impl.ProjectViewSharedSettings;
 import com.intellij.navigation.NavigationItem;
@@ -64,11 +66,20 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
 
         // TODO once we switch to indexes this should be runnable also in "dumb" mode
         if (!DumbService.isDumb(project)) {
-            OdooModelService service = ServiceManager.getService(project, OdooModelService.class);
+            OdooModelService modelService = ServiceManager.getService(project, OdooModelService.class);
             ApplicationManager.getApplication().runReadAction(() -> {
-                for (String modelName : service.getModelNames()) {
+                for (String modelName : modelService.getModelNames()) {
                     if (modelName != null && modelName.startsWith(pattern)) {
-                        consumer.process(new OdooModelPsiElement(service.getModel(modelName), project));
+                        consumer.process(new OdooModelPsiElement(modelService.getModel(modelName), project));
+                    }
+                }
+            });
+
+            OdooRecordService recordService = ServiceManager.getService(project, OdooRecordService.class);
+            ApplicationManager.getApplication().runReadAction(() -> {
+                for (String xmlId : recordService.getXmlIds()) {
+                    if (xmlId != null && xmlId.startsWith(pattern)) {
+                        consumer.process(new OdooRecordPsiElement(recordService.getRecord(xmlId), project));
                     }
                 }
             });

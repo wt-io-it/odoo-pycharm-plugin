@@ -20,7 +20,7 @@ public interface OdooModuleService {
     OdooModule getModule(String moduleName);
 
     @Nullable
-    OdooModule getModule(VirtualFile file);
+    OdooModule getModule(@Nullable VirtualFile file);
 
     OdooModule findModule(String moduleName);
 

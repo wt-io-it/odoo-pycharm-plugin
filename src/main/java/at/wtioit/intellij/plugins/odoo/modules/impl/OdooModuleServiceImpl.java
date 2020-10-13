@@ -71,7 +71,8 @@ public class OdooModuleServiceImpl implements OdooModuleService {
 
     @Nullable
     @Override
-    public OdooModule getModule(VirtualFile file) {
+    public OdooModule getModule(@Nullable VirtualFile file) {
+        if (file == null) return null;
         return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
             PsiDirectory moduleDirectory = getModuleDirectory(file.getPath());
             if (moduleDirectory != null) {
@@ -88,7 +89,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         });
     }
 
-        @Override
+    @Override
     public OdooModule findModule(String moduleName) {
         return getModule(moduleName);
     }

@@ -22,10 +22,11 @@
         <p><strong>Planned Features</strong></p>
         <ul>
           <li>Navigate to ... support for xml and csv records</li>
+          <li>Handle multiple definitions for the same record / model within one file</li>
         </ul>
       </div>
-    ]]></description>
-
+    ]]>
+  </description>
   <change-notes><![CDATA[
       <ul>
         <li>
@@ -124,6 +125,8 @@
                       serviceImplementation="at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleServiceImpl" />
       <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.models.OdooModelService"
                       serviceImplementation="at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl" />
+      <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.records.OdooRecordService"
+                      serviceImplementation="at.wtioit.intellij.plugins.odoo.records.impl.OdooRecordServiceImpl" />
       <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex" />
       <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.models.index.OdooModelFileIndex" />
       <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.records.index.OdooRecordFileIndex" />

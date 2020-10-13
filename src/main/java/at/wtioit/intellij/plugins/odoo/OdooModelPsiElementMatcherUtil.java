@@ -1,21 +1,24 @@
 package at.wtioit.intellij.plugins.odoo;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
+import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
+import at.wtioit.intellij.plugins.odoo.records.index.OdooRecordImpl;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlDocument;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.indexing.FileContent;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
@@ -41,6 +44,9 @@ public interface OdooModelPsiElementMatcherUtil {
     ));
     List<String> ODOO_MODEL_XML_ATTRIBUTE_NAMES = Arrays.asList("model", "data-oe-model");
     List<String> ODOO_MODEL_XML_FIELD_ATTRIBUTE_NAMES = Arrays.asList("model", "res_model", "src_model");
+    List<String> ODOO_XML_RECORD_TYPES = Arrays.asList("record", "template", "menuitem", "act_window", "report");
+    String NULL_XML_ID_KEY = ":UNDETECTED_XML_ID:";
+
 
 
     /**
@@ -297,8 +303,59 @@ public interface OdooModelPsiElementMatcherUtil {
         return false;
     }
 
-
     static boolean isPartOfExpression(PsiElement element) {
         return PsiElementsUtil.findParent(element, PyBinaryExpression.class, 2) != null;
+    }
+
+    static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file) {
+        return getRecordsFromFile(file, (record) -> true, Integer.MAX_VALUE);
+    }
+
+    static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file, Function<OdooRecord, Boolean> function, int limit) {
+        HashMap<String, OdooRecord> records = new HashMap<>();
+        PsiElementsUtil.walkTree(file, (element) -> {
+            if (element instanceof XmlTag) {
+                XmlTag tag = (XmlTag) element;
+                if (tag.getNamespace().contains("http://relaxng.com/ns/")) {
+                    // skip investigating relaxng schemas for odoo models
+                    return true;
+                } else if ("odoo".equals(tag.getName())) {
+                    records.putAll(getRecordsFromOdooTag(tag, file.getVirtualFile().getPath(), function, limit));
+                    return true;
+                }
+                // investigate children
+                return false;
+            } else if (element instanceof XmlDocument) {
+                // investigate children
+                return false;
+            }
+            // skip investigating children
+            return true;
+        }, XmlElement.class, 3);
+        return records;
+    }
+
+    static Map<String, OdooRecord> getRecordsFromOdooTag(XmlTag odooTag, @NotNull String path, Function<OdooRecord, Boolean> function, int limit) {
+        HashMap<String, OdooRecord> records = new HashMap<>();
+        PsiElementsUtil.walkTree(odooTag, (tag)-> {
+            String name = tag.getName();
+            // data needs further investigation (can hold records / templates)
+            if ("data".equals(name)) return records.size() >= limit;
+            // function needs no further investigation (cannot hold records / templates)
+            if ("function".equals(name)) return true;
+            if (ODOO_XML_RECORD_TYPES.contains(name)) {
+                OdooRecord record = OdooRecordImpl.getFromXml(tag, path);
+                if (function.apply(record)) {
+                    if (record.getXmlId() == null) {
+                        records.put(NULL_XML_ID_KEY, record);
+                    } else {
+                        records.put(record.getXmlId(), record);
+                    }
+                    return true;
+                }
+            }
+            return records.size() >= limit;
+        }, XmlTag.class, 2);
+        return records;
     }
 }

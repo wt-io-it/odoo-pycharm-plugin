@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.records.index;
 
 import at.wtioit.intellij.plugins.odoo.records.AbstractOdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.NotNull;
@@ -22,12 +23,15 @@ public class OdooRecordImpl extends AbstractOdooRecord {
 
     }
 
+    private final PsiElement definingElement;
+
     private OdooRecordImpl(@NotNull String id, @NotNull String modelName, @NotNull String path) {
-        this(id, null, modelName, path);
+        this(id, null, modelName, path, null);
     }
 
-    private OdooRecordImpl(@NotNull String id, @Nullable String xmlId, @NotNull String modelName, @NotNull String path) {
+    private OdooRecordImpl(@NotNull String id, @Nullable String xmlId, @NotNull String modelName, @NotNull String path, PsiElement definingElement) {
         super(id, xmlId, modelName, path);
+        this.definingElement = definingElement;
     }
 
     public static OdooRecord getFromXml(XmlTag tag, @NotNull String path) {
@@ -39,9 +43,14 @@ public class OdooRecordImpl extends AbstractOdooRecord {
         if (!id.contains(".")) {
             String xmlId = null;
             // TODO maybe make a fast guess for the module name from path
-            return new OdooRecordImpl(id, xmlId, modelName, path);
+            return new OdooRecordImpl(id, xmlId, modelName, path, tag);
         } else {
-            return new OdooRecordImpl(id, id, modelName, path);
+            return new OdooRecordImpl(id, id, modelName, path, tag);
         }
+    }
+
+    @Override
+    public PsiElement getDefiningElement() {
+        return definingElement;
     }
 }
