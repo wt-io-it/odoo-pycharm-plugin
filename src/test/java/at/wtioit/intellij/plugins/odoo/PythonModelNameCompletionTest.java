@@ -10,6 +10,14 @@ public class PythonModelNameCompletionTest extends BaseOdooPluginTest {
         doTest();
     }
 
+    public void testModelNameInEnv() {
+        doTest();
+    }
+
+    public void testModelNameInVariableEnv() {
+        doTest();
+    }
+
     public void testModelNameInMultipleInherit() {
         // TODO not yet implemented
         //doTest();
@@ -42,9 +50,6 @@ public class PythonModelNameCompletionTest extends BaseOdooPluginTest {
     public void testModelNameInMany2manyField() {
         doTest();
     }
-
-
-
 
     private void doTest() {
         myFixture.configureByFile("completion/pythonModelName/" + getTestName(true) + ".py");
