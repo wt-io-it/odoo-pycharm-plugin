@@ -29,6 +29,12 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.5.2:
+          <ul>
+            <li>fix ClassCastException in CompletionContributor</li>
+          </ul>
+        </li>
+        <li>
           Version 0.5.1:
           <ul>
             <li>fix NullPointerException for odoo/odoo/addons/base/ir/ir_model.py CustomModel</li>

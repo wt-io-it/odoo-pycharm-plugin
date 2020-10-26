@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
 
@@ -35,17 +36,23 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
             } else if (OdooModelPsiElementMatcherUtil.isOdooModelPsiElement(parameters.getPosition())) {
                 // suggest model names
                 String value = getStringValue(parameters, expressionWithDummy);
-                suggestModelName(parameters, result, value);
+                if (value != null) {
+                    suggestModelName(parameters, result, value);
+                }
             }
         }
 
     }
 
-    @NotNull
+    @Nullable
     private String getStringValue(@NotNull CompletionParameters parameters, String expressionWithDummy) {
-        TextRange contentRange = ((PyStringElement) parameters.getPosition()).getContentRange();
-        String content = expressionWithDummy.substring(contentRange.getStartOffset(), contentRange.getEndOffset());
-        return content.replace(CompletionUtilCore.DUMMY_IDENTIFIER, "")
-                .replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "");
+        PsiElement position = parameters.getPosition();
+        if (position instanceof PyStringElement) {
+            TextRange contentRange = ((PyStringElement) position).getContentRange();
+            String content = expressionWithDummy.substring(contentRange.getStartOffset(), contentRange.getEndOffset());
+            return content.replace(CompletionUtilCore.DUMMY_IDENTIFIER, "")
+                    .replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "");
+        }
+        return null;
     }
 }
