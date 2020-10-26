@@ -1,5 +1,9 @@
 package at.wtioit.intellij.plugins.odoo.records;
 
+import at.wtioit.intellij.plugins.odoo.WithinProject;
+import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +41,20 @@ public abstract class AbstractOdooRecord implements OdooRecord {
     @Override
     public String getXmlId() {
         if (xmlId == null) {
-            return null;
+            if (WithinProject.INSTANCE.get() != null) {
+                OdooModuleService moduleService = ServiceManager.getService(WithinProject.INSTANCE.get(), OdooModuleService.class);
+                PsiDirectory moduleDirectory = moduleService.getModuleDirectory(path);
+                if (moduleDirectory != null) {
+                    // TODO update index
+                    return moduleDirectory.getName() + "." + getId();
+                } else {
+                    // TODO remove from index?
+                    return null;
+                }
+            } else {
+                // TODO remove from index?
+                return null;
+            }
         }
         return xmlId;
     }

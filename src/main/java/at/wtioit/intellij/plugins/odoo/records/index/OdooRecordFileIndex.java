@@ -16,6 +16,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromFile;
 
@@ -48,10 +49,10 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
                 saveString(record.getXmlId(), out);
                 saveString(record.getPath(), out);
                 saveString(record.getModelName(), out);
-                if (record instanceof OdooRecordImpl) {
-                    saveString(((OdooRecordImpl) record).getId(), out);
-                } else {
+                if (Objects.equals(record.getId(), record.getXmlId())){
                     saveString(null, out);
+                } else {
+                    saveString(record.getId(), out);
                 }
             }
 
@@ -71,7 +72,7 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
 
     @Override
     public int getVersion() {
-        return 6;
+        return 8;
     }
 
     @Override
@@ -95,7 +96,7 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
         public @NotNull Map<String, OdooRecord> map(@NotNull FileContent inputData) {
             if (inputData.getFileType() == XmlFileType.INSTANCE) {
                 PsiFile file = inputData.getPsiFile();
-                return getRecordsFromFile(file);
+                return getRecordsFromFile(file, inputData.getFile().getPath());
             }
             return Collections.emptyMap();
         }

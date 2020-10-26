@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
@@ -308,10 +309,18 @@ public interface OdooModelPsiElementMatcherUtil {
     }
 
     static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file) {
-        return getRecordsFromFile(file, (record) -> true, Integer.MAX_VALUE);
+        return getRecordsFromFile(file, (record) -> true, Integer.MAX_VALUE, () -> file.getVirtualFile().getPath());
+    }
+
+    static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file, String path) {
+        return getRecordsFromFile(file, (record) -> true, Integer.MAX_VALUE, () -> path);
     }
 
     static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file, Function<OdooRecord, Boolean> function, int limit) {
+        return getRecordsFromFile(file, function, limit, () -> file.getVirtualFile().getPath());
+    }
+
+    static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file, Function<OdooRecord, Boolean> function, int limit, Supplier<String> pathSupplier) {
         HashMap<String, OdooRecord> records = new HashMap<>();
         PsiElementsUtil.walkTree(file, (element) -> {
             if (element instanceof XmlTag) {
@@ -320,7 +329,7 @@ public interface OdooModelPsiElementMatcherUtil {
                     // skip investigating relaxng schemas for odoo models
                     return true;
                 } else if ("odoo".equals(tag.getName())) {
-                    records.putAll(getRecordsFromOdooTag(tag, file.getVirtualFile().getPath(), function, limit));
+                    records.putAll(getRecordsFromOdooTag(tag, pathSupplier.get(), function, limit));
                     return true;
                 }
                 // investigate children
