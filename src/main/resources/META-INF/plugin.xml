@@ -32,6 +32,7 @@
           Version 0.5.2:
           <ul>
             <li>fix ClassCastException in CompletionContributor</li>
+            <li>fix NPE when creating a model class in editor</li>
           </ul>
         </li>
         <li>

@@ -28,17 +28,20 @@ public class OdooModelUtil {
     public static String detectName(PsiElement pyline, Supplier<PyResolveContext> contextSupplier) {
         String name = null;
         for (PsiElement statement : pyline.getChildren()[1].getChildren()) {
-            String variableName = statement.getFirstChild().getText();
-            if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
-                PsiElement valueChild = statement.getLastChild();
-                while (valueChild instanceof PsiComment || valueChild instanceof PsiWhiteSpace) {
-                    valueChild = valueChild.getPrevSibling();
+            PsiElement statementFirstChild = statement.getFirstChild();
+            if (statementFirstChild != null) {
+                String variableName = statementFirstChild.getText();
+                if (OdooModel.ODOO_MODEL_NAME_VARIABLE_NAME.contains(variableName)) {
+                    PsiElement valueChild = statement.getLastChild();
+                    while (valueChild instanceof PsiComment || valueChild instanceof PsiWhiteSpace) {
+                        valueChild = valueChild.getPrevSibling();
+                    }
+                    String stringValueForChild = getStringValueForValueChild(valueChild, contextSupplier);
+                    if (stringValueForChild != null) {
+                        name = stringValueForChild;
+                    }
+                    if ("_name".equals(variableName)) break;
                 }
-                String stringValueForChild = getStringValueForValueChild(valueChild, contextSupplier);
-                if (stringValueForChild != null) {
-                    name = stringValueForChild;
-                }
-                if ("_name".equals(variableName)) break;
             }
         }
         if (name == null) logger.debug("Cannot detect name for " + pyline + " in " + pyline.getContainingFile());
