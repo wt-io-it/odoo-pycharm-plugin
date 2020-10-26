@@ -38,7 +38,7 @@ To build the plugin perform the following steps
 * Click the "Restart IDE" button to apply the new version of the plugin:
 ![Restart IDE button](documentation/dev/02_install_dev_plugin_restart.png)
 ## Publish a new version
-* test plugin with `/gradlew test`
+* test plugin with `./gradlew test`
 * test plugin manually by installing it
 * review changelog
 * change -SNAPSHOT version to non snapshot version and perform release commit
