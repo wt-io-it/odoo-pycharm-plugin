@@ -3,6 +3,7 @@ package at.wtioit.intellij.plugins.odoo.models;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
@@ -79,7 +80,8 @@ public class OdooModelUtil {
             }
         } else if (valueChild instanceof PyCallExpression || valueChild instanceof PySubscriptionExpression) {
             logger.debug("Cannot detect string value for class: " + valueChild.getClass());
-
+        } else if (valueChild instanceof PsiErrorElement) {
+            // ignore PsiErrorElements (used to indicate errors in Editor)
         } else {
             logger.error("Unknown string value class: " + valueChild.getClass());
         }
