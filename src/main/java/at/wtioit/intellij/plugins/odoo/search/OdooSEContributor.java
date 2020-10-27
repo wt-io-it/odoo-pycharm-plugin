@@ -6,6 +6,7 @@ import at.wtioit.intellij.plugins.odoo.models.search.OdooModelPsiElement;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.modules.search.OdooModulePsiElement;
+import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecordService;
 import at.wtioit.intellij.plugins.odoo.records.search.OdooRecordPsiElement;
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereContributor;
@@ -108,6 +109,13 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
         } else if (selected instanceof OdooModel) {
             OdooModel model = (OdooModel) selected;
             PsiElement definingElement = model.getDefiningElement();
+            if (definingElement instanceof NavigationItem) {
+                ((NavigationItem) definingElement).navigate(true);
+                return true;
+            }
+        } else if (selected instanceof OdooRecord) {
+            OdooRecord record = (OdooRecord) selected;
+            PsiElement definingElement = record.getDefiningElement();
             if (definingElement instanceof NavigationItem) {
                 ((NavigationItem) definingElement).navigate(true);
                 return true;

@@ -64,7 +64,7 @@ public class OdooRecordPsiElement extends AbstractOdooPsiElement implements Odoo
 
     @Override
     public PsiElement getDefiningElement() {
-        return record.getDefiningElement();
+        return WithinProject.call(getProject(), record::getDefiningElement);
     }
 
     @Override
