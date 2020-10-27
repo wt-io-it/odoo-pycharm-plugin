@@ -30,6 +30,13 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.6.0:
+          <ul>
+            <li>enable support for Odoo records</li>
+            <li>add goto support for Odoo module names</li>
+          </ul>
+        </li>
+        <li>
           Version 0.5.2:
           <ul>
             <li>fix ClassCastException in CompletionContributor</li>

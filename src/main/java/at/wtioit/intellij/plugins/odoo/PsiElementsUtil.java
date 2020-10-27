@@ -1,15 +1,25 @@
 package at.wtioit.intellij.plugins.odoo;
 
+import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.PyFromImportStatement;
+import com.intellij.psi.PsiErrorElement;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface PsiElementsUtil {
+
+    Logger logger = Logger.getInstance(PsiElementsUtil.class);
+
     @Nullable
     static <T extends PsiElement> T findParent(@Nullable PsiElement element, Class<T> parentClass) {
         return findParent(element, parentClass, 100);
@@ -71,5 +81,44 @@ public interface PsiElementsUtil {
                 }
             }
         }
+    }
+
+    static String getStringValueForValueChild(@NotNull PsiElement valueChild, Supplier<PyResolveContext> contextSupplier) {
+        if (valueChild instanceof PyStringLiteralExpressionImpl) {
+            return ((PyStringLiteralExpressionImpl) valueChild).getStringValue();
+        } else if (valueChild instanceof PyListLiteralExpression) {
+            //firstChild() somehow returns the bracket
+            PsiElement firstChild = valueChild.getChildren()[0];
+            if (firstChild instanceof PyStringLiteralExpressionImpl) {
+                return ((PyStringLiteralExpressionImpl) firstChild).getStringValue();
+            } else {
+                logger.error("Unknown string value class: " + valueChild.getClass());
+            }
+        } else if (valueChild instanceof PyReferenceExpression) {
+            PyReferenceExpression expression = (PyReferenceExpression) valueChild;
+            PsiElement resolvedElement = expression.followAssignmentsChain(contextSupplier.get()).getElement();
+            if (resolvedElement != null) {
+                return getStringValueForValueChild(resolvedElement, contextSupplier);
+            } else {
+                logger.debug("Cannot detect string value for " + valueChild.getReference());
+            }
+        } else if (valueChild instanceof PyBinaryExpression) {
+            PyElementType operator = ((PyBinaryExpression) valueChild).getOperator();
+            if (operator != null) {
+                if ("__mod__".equals(operator.getSpecialMethodName())) {
+                    String formattedName = getStringValueForValueChild(valueChild.getFirstChild(), contextSupplier);
+                    if (formattedName != null) {
+                        return formattedName.replaceAll("%s", OdooModelUtil.NAME_WILDCARD_MARKER);
+                    }
+                }
+            }
+        } else if (valueChild instanceof PyCallExpression || valueChild instanceof PySubscriptionExpression) {
+            logger.debug("Cannot detect string value for class: " + valueChild.getClass());
+        } else if (valueChild instanceof PsiErrorElement) {
+            // ignore PsiErrorElements (used to indicate errors in Editor)
+        } else {
+            logger.error("Unknown string value class: " + valueChild.getClass());
+        }
+        return null;
     }
 }

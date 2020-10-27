@@ -91,20 +91,10 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
     public boolean processSelectedItem(@NotNull OdooSEResult selected, int modifiers, @NotNull String searchText) {
         if (selected instanceof OdooModule) {
             OdooModule module = (OdooModule) selected;
-            if (ProjectViewSharedSettings.Companion.getInstance().getAutoscrollFromSource()) {
-                // autoscroll from source scrolls to last opened file if we open a directory
-                // so we open the manifest file instead
-                PsiFile file = module.getManifestFile();
-                if (file != null) {
-                    file.navigate(true);
-                    return true;
-                }
-            } else {
-                PsiDirectory moduleDirectory = (PsiDirectory) module.getDirectory();
-                if (moduleDirectory != null) {
-                    moduleDirectory.navigate(true);
-                    return true;
-                }
+            NavigationItem navigationItem = module.getNavigationItem();
+            if (navigationItem != null) {
+                navigationItem.navigate(true);
+                return true;
             }
         } else if (selected instanceof OdooModel) {
             OdooModel model = (OdooModel) selected;

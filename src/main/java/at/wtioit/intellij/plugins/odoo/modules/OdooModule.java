@@ -1,6 +1,8 @@
 package at.wtioit.intellij.plugins.odoo.modules;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
+import com.intellij.navigation.NavigationItem;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -36,4 +38,7 @@ public interface OdooModule {
     boolean dependsOn(OdooModule module);
 
     PsiFile getManifestFile();
+
+    @Nullable
+    NavigatablePsiElement getNavigationItem();
 }

@@ -3,11 +3,14 @@ package at.wtioit.intellij.plugins.odoo.modules.impl;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
+import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.FileNotFoundException;
@@ -134,5 +137,16 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
             return null;
         }
         return module.getManifestFile();
+    }
+
+    @Override
+    public @Nullable NavigatablePsiElement getNavigationItem() {
+        try {
+            tryResolveOdooModule();
+        } catch (FileNotFoundException e) {
+            // TODO give a hint to the user that we cannot find the module (and he should add it to the workspace)
+            return null;
+        }
+        return module.getNavigationItem();
     }
 }

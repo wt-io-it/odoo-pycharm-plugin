@@ -85,4 +85,9 @@ public class OdooModulePsiElement extends AbstractOdooPsiElement implements Odoo
     public Icon getIcon(int flags) {
         return module.getIcon();
     }
+
+    @Override
+    public @Nullable NavigatablePsiElement getNavigationItem() {
+        return module.getNavigationItem();
+    }
 }

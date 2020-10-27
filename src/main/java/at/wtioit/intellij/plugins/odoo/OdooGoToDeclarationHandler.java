@@ -2,22 +2,19 @@ package at.wtioit.intellij.plugins.odoo;
 
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
+import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
+import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
+import at.wtioit.intellij.plugins.odoo.records.OdooRecordService;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandlerBase;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
 
@@ -44,15 +41,35 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
             } else if (psiElement instanceof XmlToken) {
                 return getOdooModel(psiElement.getProject(), psiElement.getText());
             }
+        } else if (OdooModulePsiElementMatcherUtil.isOdooModulePsiElement(psiElement)) {
+            if (psiElement instanceof PyStringElement) {
+                return getOdooModule((PyStringElement) psiElement);
+            }
+        }
+        return null;
+    }
+
+    private PsiElement getOdooModule(PyStringElement pyString) {
+        String value = getPyStringValue(pyString);
+        OdooModuleService moduleService = ServiceManager.getService(pyString.getProject(), OdooModuleService.class);
+        OdooModule module = moduleService.getModule(value);
+        if (module != null) {
+            return WithinProject.call(pyString.getProject(), module::getNavigationItem);
         }
         return null;
     }
 
     @Nullable
     private PsiElement getOdooModel(@NotNull PyStringElement pyString) {
+        String value = getPyStringValue(pyString);
+        return getOdooModel(pyString.getContainingFile().getProject(), value);
+    }
+
+    @NotNull
+    private String getPyStringValue(@NotNull PyStringElement pyString) {
         TextRange range = pyString.getContentRange();
         String value = pyString.getText().substring(range.getStartOffset(), range.getEndOffset());
-        return getOdooModel(pyString.getContainingFile().getProject(), value);
+        return value;
     }
 
     @Nullable
@@ -60,8 +77,7 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
         OdooModelService modelService = ServiceManager.getService(project, OdooModelService.class);
         OdooModel model = modelService.getModel(value);
         if (model != null) {
-            PsiElement definingElement = model.getDefiningElement();
-            return definingElement;
+            return model.getDefiningElement();
         }
         return null;
     }
