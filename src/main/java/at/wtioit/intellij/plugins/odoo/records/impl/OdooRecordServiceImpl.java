@@ -9,8 +9,10 @@ import at.wtioit.intellij.plugins.odoo.records.OdooRecordService;
 import at.wtioit.intellij.plugins.odoo.records.index.OdooRecordFileIndex;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +37,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
 
     @Override
     public OdooRecord getRecord(String xmlId) {
-        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        List<OdooRecord> records = findOdooRecords(xmlId, scope);
+        List<OdooRecord> records = findOdooRecords(xmlId);
         if (records.size() == 1) {
             return records.get(0);
         }
@@ -63,8 +64,38 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         });
     }
 
+    @Override
+    public boolean hasRecord(String xmlId) {
+        Collection<String> allKeys = FileBasedIndex.getInstance().getAllKeys(OdooRecordFileIndex.NAME, project);
+        if (allKeys.contains(xmlId)) {
+            return true;
+        } else {
+            String undetectedXmlId = xmlId.replaceFirst(".*(?=\\.)", OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY);
+            GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+            @NotNull List<OdooRecord> records = FileBasedIndex.getInstance().getValues(OdooRecordFileIndex.NAME, undetectedXmlId, scope);
+            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            return WithinProject.call(project, () -> records.stream()
+                    .map(record -> Pair.create(
+                            moduleService.getModule(record.getDefiningElement().getContainingFile().getVirtualFile()),
+                            record))
+                    .filter(pair -> pair.first != null)
+                    .anyMatch(pair -> xmlId.equals(pair.first.getName() + "." + pair.second.getId())));
+        }
+    }
+
+    @Override
+    public String ensureFullXmlId(PsiFile file, String refName) {
+        if (!refName.contains(".")) {
+            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            OdooModule currentModule = moduleService.getModule(file.getVirtualFile());
+            refName = currentModule.getName() + "." + refName;
+        }
+        return refName;
+    }
+
     @NotNull
-    private List<OdooRecord> findOdooRecords(String xmlId, GlobalSearchScope scope) {
+    private List<OdooRecord> findOdooRecords(String xmlId) {
+        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         List<OdooRecord> records = FileBasedIndex.getInstance().getValues(OdooRecordFileIndex.NAME, xmlId, scope);
         if (records.size() == 0) {
             String undetectedXmlId = xmlId.replaceFirst(".*(?=\\.)", OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY);

@@ -1,13 +1,12 @@
 package at.wtioit.intellij.plugins.odoo.models.inspection;
 
 import at.wtioit.intellij.plugins.odoo.OdooBundle;
-import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
-import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -37,9 +36,8 @@ public class MissingModelDefinitionInspection extends LocalInspectionTool {
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        final OdooModelService modelService = OdooModelService.getInstance(holder.getProject());
+        final OdooModelService modelService = ServiceManager.getService(holder.getProject(), OdooModelService.class);
         return new PyElementVisitor() {
-
             @Override
             public void visitElement(PsiElement element) {
                 super.visitElement(element);

@@ -43,7 +43,7 @@ intellij {
 
 runIde {
     // enable DebugAttachDetector
-    jvmArgs '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED'
+    jvmArgs '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED', '-Xmx4G'
     //jvmArgs '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED', '-agentpath:/home/bigbear3001/bin/YourKit-JavaProfiler-2020.7/bin/linux-x86-64/libyjpagent.so=disablestacktelemetry,exceptions=disable,delay=10000'
 
 }

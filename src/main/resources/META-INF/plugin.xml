@@ -150,6 +150,11 @@
                        key="INSP.NAME.missing.model.definition"
                        enabledByDefault="true"
                        language="Python" />
+      <localInspection implementationClass="at.wtioit.intellij.plugins.odoo.records.inspection.MissingRecordDefinitionXmlInspection"
+                       groupKey="INSP.GROUP.odoo"
+                       key="INSP.NAME.missing.record.definition"
+                       enabledByDefault="true"
+                       language="XML" />
       <lang.inspectionSuppressor implementationClass="at.wtioit.intellij.plugins.odoo.modules.inspection.ManifestInspectionSuppressor"
                                  language="Python" />
   </extensions>

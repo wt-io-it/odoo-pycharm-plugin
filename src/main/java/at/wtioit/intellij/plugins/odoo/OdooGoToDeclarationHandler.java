@@ -89,12 +89,8 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
     }
 
     private PsiElement getOdooRecord(Project project, PsiFile file, String refName) {
-        if (!refName.contains(".")) {
-            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
-            OdooModule currentModule = moduleService.getModule(file.getVirtualFile());
-            refName = currentModule.getName() + "." + refName;
-        }
         OdooRecordService recordService = ServiceManager.getService(project, OdooRecordService.class);
+        refName = recordService.ensureFullXmlId(file, refName);
         OdooRecord record = recordService.getRecord(refName);
         if (record != null) {
             return WithinProject.call(project, record::getDefiningElement);
