@@ -1,8 +1,10 @@
 package at.wtioit.intellij.plugins.odoo.records.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
+import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import com.intellij.ide.highlighter.XmlFileType;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
@@ -23,6 +25,8 @@ import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.get
 public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRecord> {
 
     @NonNls public static final ID<String, OdooRecord> NAME = ID.create("OdooRecordFileIndex");
+
+    private static final Logger logger = Logger.getInstance(OdooRecordFileIndex.class);
 
     OdooRecordFileIndexer indexer = new OdooRecordFileIndexer();
 
@@ -72,7 +76,7 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
 
     @Override
     public int getVersion() {
-        return 8;
+        return 9;
     }
 
     @Override

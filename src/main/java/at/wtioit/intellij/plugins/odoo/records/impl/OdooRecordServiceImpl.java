@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.records.impl;
 
+import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
@@ -35,7 +36,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     @Override
     public OdooRecord getRecord(String xmlId) {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        List<OdooRecord> records = FileBasedIndex.getInstance().getValues(OdooRecordFileIndex.NAME, xmlId, scope);
+        List<OdooRecord> records = findOdooRecords(xmlId, scope);
         if (records.size() == 1) {
             return records.get(0);
         }
@@ -60,6 +61,16 @@ public class OdooRecordServiceImpl implements OdooRecordService {
             }
             return null;
         });
+    }
+
+    @NotNull
+    private List<OdooRecord> findOdooRecords(String xmlId, GlobalSearchScope scope) {
+        List<OdooRecord> records = FileBasedIndex.getInstance().getValues(OdooRecordFileIndex.NAME, xmlId, scope);
+        if (records.size() == 0) {
+            String undetectedXmlId = xmlId.replaceFirst(".*(?=\\.)", OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY);
+            records = FileBasedIndex.getInstance().getValues(OdooRecordFileIndex.NAME, undetectedXmlId, scope);
+        }
+        return records;
     }
 
     private VirtualFile getVirtualFileForPath(String path) {

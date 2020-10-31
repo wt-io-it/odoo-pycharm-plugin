@@ -356,7 +356,7 @@ public interface OdooModelPsiElementMatcherUtil {
                 OdooRecord record = OdooRecordImpl.getFromXml(tag, path);
                 if (function.apply(record)) {
                     if (record.getXmlId() == null) {
-                        records.put(NULL_XML_ID_KEY, record);
+                        records.put(NULL_XML_ID_KEY + "." + record.getId(), record);
                     } else {
                         records.put(record.getXmlId(), record);
                     }
