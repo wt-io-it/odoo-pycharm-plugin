@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="record1" model="existing" />
+        <record id="addon1.record2" model="existing" />
+    </data>
+</odoo>

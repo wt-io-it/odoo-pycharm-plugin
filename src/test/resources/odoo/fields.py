@@ -16,3 +16,7 @@ class Many2one:
 class Selection:
     def __init__(self, *args, **kwargs):
         pass
+
+class Char:
+    def __init__(self, *args, **kwargs):
+        pass
