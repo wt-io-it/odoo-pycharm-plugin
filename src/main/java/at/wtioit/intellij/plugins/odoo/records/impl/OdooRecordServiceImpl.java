@@ -75,9 +75,11 @@ public class OdooRecordServiceImpl implements OdooRecordService {
             @NotNull List<OdooRecord> records = FileBasedIndex.getInstance().getValues(OdooRecordFileIndex.NAME, undetectedXmlId, scope);
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
             return WithinProject.call(project, () -> records.stream()
-                    .map(record -> Pair.create(
-                            moduleService.getModule(record.getDefiningElement().getContainingFile().getVirtualFile()),
-                            record))
+                    .map(record -> Pair.create(record.getDefiningElement(), record))
+                    .filter(pair -> pair.first != null)
+                    .map(pair -> Pair.create(pair.first.getContainingFile(), pair.second))
+                    .map(pair -> Pair.create(pair.first.getVirtualFile(), pair.second))
+                    .map(pair -> Pair.create(moduleService.getModule(pair.first), pair.second))
                     .filter(pair -> pair.first != null)
                     .anyMatch(pair -> xmlId.equals(pair.first.getName() + "." + pair.second.getId())));
         }

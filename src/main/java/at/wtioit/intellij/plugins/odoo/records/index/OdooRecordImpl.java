@@ -3,7 +3,6 @@ package at.wtioit.intellij.plugins.odoo.records.index;
 import at.wtioit.intellij.plugins.odoo.records.AbstractOdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,19 +33,44 @@ public class OdooRecordImpl extends AbstractOdooRecord {
         this.definingElement = definingElement;
     }
 
+    @Nullable
     public static OdooRecord getFromXml(XmlTag tag, @NotNull String path) {
         String id = tag.getAttributeValue("id");
         String modelName = tag.getAttributeValue("model");
         if (modelName == null) {
             modelName = MODELS_FOR_TAG_NAMES.get(tag.getName());
         }
-        if (!id.contains(".")) {
-            String xmlId = null;
-            // TODO maybe make a fast guess for the module name from path
-            return new OdooRecordImpl(id, xmlId, modelName, path, tag);
-        } else {
-            return new OdooRecordImpl(id, id, modelName, path, tag);
+        if (modelName != null && id != null) {
+            if (!id.contains(".")) {
+                String xmlId = null;
+                // TODO maybe make a fast guess for the module name from path
+                return new OdooRecordImpl(id, xmlId, modelName, path, tag);
+            } else {
+                return new OdooRecordImpl(id, id, modelName, path, tag);
+            }
         }
+        return null;
+    }
+
+    public static OdooRecord getFromCsvLine(@NotNull String modelName, @NotNull String[] columns, String[] line, String path, PsiElement definingElement) {
+        String id = null;
+        for (int i = 0; i < columns.length; i++) {
+            if ("id".equals(columns[i])) {
+                if (line.length > i) {
+                    id = line[i];
+                }
+                break;
+            }
+        }
+        if (id != null) {
+            String xmlId = id;
+            if (!xmlId.contains(".")) {
+                xmlId = null;
+            }
+            // TODO maybe make a fast guess for the module name from path
+            return new OdooRecordImpl(id, xmlId, modelName, path, definingElement);
+        }
+        return null;
     }
 
     @Override

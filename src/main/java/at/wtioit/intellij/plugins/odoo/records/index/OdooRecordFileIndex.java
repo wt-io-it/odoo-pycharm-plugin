@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
+import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromCsvFile;
 import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromFile;
 
 public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRecord> {
@@ -76,13 +77,13 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
 
     @Override
     public int getVersion() {
-        return 9;
+        return 13;
     }
 
     @Override
     public FileBasedIndex.@NotNull InputFilter getInputFilter() {
-        // an odoo module has __manifest__.py as a definition file
-        return file -> file.getFileType() == XmlFileType.INSTANCE || file.getName().equals(".csv");
+        // records can be inside of xml and csv files
+        return file -> file.getFileType() == XmlFileType.INSTANCE || Objects.equals(file.getExtension(), "csv");
     }
 
     @Override
@@ -101,6 +102,9 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
             if (inputData.getFileType() == XmlFileType.INSTANCE) {
                 PsiFile file = inputData.getPsiFile();
                 return getRecordsFromFile(file, inputData.getFile().getPath());
+            } else if (Objects.equals(inputData.getFile().getExtension(), "csv")) {
+                PsiFile file = inputData.getPsiFile();
+                return getRecordsFromCsvFile(file, inputData.getFile().getPath());
             }
             return Collections.emptyMap();
         }
