@@ -90,7 +90,9 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         if (!refName.contains(".")) {
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
             OdooModule currentModule = moduleService.getModule(file.getVirtualFile());
-            refName = currentModule.getName() + "." + refName;
+            if (currentModule != null) {
+                refName = currentModule.getName() + "." + refName;
+            }
         }
         return refName;
     }
