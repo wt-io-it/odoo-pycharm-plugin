@@ -4,7 +4,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.impl.PyClassImpl;
 import org.jetbrains.annotations.Nullable;
 
-public class OdooGoToDeclarationHandlerXMLTest extends AbstractOdooGoToDeclarationHandlerTest {
+public class OdooModelGoToDeclarationHandlerXMLTest extends AbstractOdooGoToDeclarationHandlerTest {
 
     public void testModelNameInModelAttribute() {
         doTest("odoo.addons.addon1.models.existing.Existing");

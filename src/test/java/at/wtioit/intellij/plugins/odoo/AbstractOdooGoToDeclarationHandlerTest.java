@@ -16,20 +16,31 @@ public abstract class AbstractOdooGoToDeclarationHandlerTest extends BaseOdooPlu
 
     abstract String getFileExtension();
 
+    Class<? extends PsiElement> getExpectedClass() {
+        return PyClassImpl.class;
+    }
+
+    String resultToString(PsiElement result) {
+        return ((PyClassImpl) result).getQualifiedName();
+    }
+
     void doTestExpectNoResult() {
         doTest(null);
     }
 
-    void doTest(String expectedClassName) {
+    void doTest(String expectedResultName) {
         myFixture.configureByFile("goto/" + getTestName(true) + getFileExtension());
         PsiElement elementToClick = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-        @Nullable PsiElement result = handler.getGotoDeclarationTarget(elementToClick, myFixture.getEditor());
-        if (expectedClassName != null) {
+        @Nullable PsiElement[] results = handler.getGotoDeclarationTargets(elementToClick, myFixture.getCaretOffset(), myFixture.getEditor());
+        if (expectedResultName != null) {
+            assertNotNull(results);
+            assertTrue(results.length >= 1);
+            PsiElement result = results[0];
             assertNotNull(result);
-            assertTrue(result instanceof PyClassImpl);
-            assertEquals(expectedClassName, ((PyClassImpl) result).getQualifiedName());
+            assertTrue(getExpectedClass().isAssignableFrom(result.getClass()));
+            assertEquals(expectedResultName, resultToString(result));
         } else {
-            assertNull(result);
+            assertNull(results);
         }
     }
 }

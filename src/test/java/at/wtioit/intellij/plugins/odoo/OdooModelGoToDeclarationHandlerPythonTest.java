@@ -1,6 +1,6 @@
 package at.wtioit.intellij.plugins.odoo;
 
-public class OdooGoToDeclarationHandlerPythonTest extends AbstractOdooGoToDeclarationHandlerTest {
+public class OdooModelGoToDeclarationHandlerPythonTest extends AbstractOdooGoToDeclarationHandlerTest {
 
     @Override
     String getFileExtension() {

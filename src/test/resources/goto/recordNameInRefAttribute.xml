@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="test.record100" model="existing">
+            <field name="parent_id" ref="addon1.reco<caret>rd1" />
+        </record>
+    </data>
+</odoo>
