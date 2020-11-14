@@ -1,6 +1,8 @@
 package at.wtioit.intellij.plugins.odoo.models;
 
+import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -49,9 +51,16 @@ public class OdooModelUtil {
         return name;
     }
 
-    private static String getStringValueForValueChild(@NotNull PsiElement valueChild, Supplier<PyResolveContext> contextSupplier) {
+    public static String getStringValueForValueChild(@NotNull PsiElement valueChild) {
+        return getStringValueForValueChild(valueChild, () -> PyResolveContext.defaultContext().withTypeEvalContext(TypeEvalContext.codeAnalysis(valueChild.getContainingFile().getProject(), valueChild.getContainingFile())));
+    }
+
+    public static String getStringValueForValueChild(@NotNull PsiElement valueChild, Supplier<PyResolveContext> contextSupplier) {
         if (valueChild instanceof PyStringLiteralExpressionImpl) {
             return ((PyStringLiteralExpressionImpl) valueChild).getStringValue();
+        } else if (valueChild instanceof PyStringElement) {
+            TextRange contentRange = ((PyStringElement) valueChild).getContentRange();
+            return valueChild.getText().substring(contentRange.getStartOffset(), contentRange.getEndOffset());
         } else if (valueChild instanceof PyListLiteralExpression) {
             //firstChild() somehow returns the bracket
             PsiElement firstChild = valueChild.getChildren()[0];

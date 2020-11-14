@@ -29,6 +29,13 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.5.3:
+          <ul>
+            <li>fix base model definition detection for models with multiple definitons in on module
+             (e.g. res.partner in 14.0 was detected to be rooted in populate instead of models)</li>
+          </ul>
+        </li>
+        <li>
           Version 0.5.2:
           <ul>
             <li>fix ClassCastException in CompletionContributor</li>

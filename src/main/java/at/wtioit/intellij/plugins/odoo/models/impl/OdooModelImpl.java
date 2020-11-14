@@ -4,6 +4,7 @@ import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
+import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
 import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
@@ -15,13 +16,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -48,22 +49,50 @@ public class OdooModelImpl implements OdooModel {
         PsiElement psiElement = ApplicationManager.getApplication().runReadAction((Computable<PsiElement>) () -> {
             if (definingFiles.size() == 1) {
                 PsiFile psiFile = PsiManager.getInstance(project).findFile(definingFiles.iterator().next());
-                return retrieveDefiningElementFromFile(psiFile);
+                List<PsiElement> psiElements = retrieveDefiningElementsFromFile(psiFile);
+                return getDefiningElement(psiElements);
             } else {
                 PsiManager psiManager = PsiManager.getInstance(project);
                 OdooModuleService moduleService = OdooModuleService.getInstance(project);
-                PsiFile psiFile = definingFiles.stream()
+                List<PsiFile> psiFiles = definingFiles.stream()
                         .map(file -> Pair.create(file, moduleService.getModule(file)))
                         .filter(pair -> pair.first != null && pair.second != null)
                         .filter(pair -> pair.second.equals(getBaseModule()))
                         .map(pair -> pair.first)
-                        .findFirst()
                         .map(psiManager::findFile)
-                        .orElse(null);
-                return retrieveDefiningElementFromFile(psiFile);
+                        .collect(Collectors.toList());
+                List<PsiElement> psiElements = psiFiles.stream().map(this::retrieveDefiningElementsFromFile).collect(ArrayList::new, List::addAll, List::addAll);
+                return getDefiningElement(psiElements);
             }
         });
         return psiElement;
+    }
+
+    private PsiElement getDefiningElement(List<PsiElement> psiElements) {
+        AtomicReference<PyClass> definingElement = new AtomicReference<>();
+        for (PsiElement element : psiElements) {
+            PyClass pyClass = (PyClass) element;
+            PsiElementsUtil.walkTree(pyClass, child -> {
+                if (definingElement.get() != null) return true;
+                if (OdooModelPsiElementMatcherUtil.isOdooModelNameDefinitionPsiElement(child)) {
+                    PyAssignmentStatement assignmentStatement = PsiElementsUtil.findParent(child, PyAssignmentStatement.class, 4);
+                    if (assignmentStatement != null) {
+                        String variableName = assignmentStatement.getLeftHandSideExpression().getText();
+                        String modelName = OdooModelUtil.getStringValueForValueChild(child);
+                        if ("_name".equals(variableName) && name.equals(modelName)) {
+                            definingElement.set(pyClass);
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            });
+        }
+        if (definingElement.get() != null) {
+            return definingElement.get();
+        } else {
+            return psiElements.stream().findFirst().orElseThrow(null);
+        }
     }
 
     @NotNull
@@ -72,26 +101,25 @@ public class OdooModelImpl implements OdooModel {
             PsiManager psiManager = PsiManager.getInstance(project);
             return definingFiles.stream()
                     .map(psiManager::findFile)
-                    .map(this::retrieveDefiningElementFromFile)
-                    .collect(Collectors.toList());
+                    .map(this::retrieveDefiningElementsFromFile)
+                    .collect(ArrayList::new, List::addAll, List::addAll);
         });
     }
 
-    private PsiElement retrieveDefiningElementFromFile(PsiFile psiFile) {
+    private List<PsiElement> retrieveDefiningElementsFromFile(PsiFile psiFile) {
         if (psiFile != null) {
-            AtomicReference<PsiElement> definingElement = new AtomicReference<>();
+            ArrayList<PsiElement> elements = new ArrayList<>();
             PsiElementsUtil.walkTree(psiFile, (child) -> {
-                if (definingElement.get() != null) return true;
                 if (OdooModelPsiElementMatcherUtil.isOdooModelDefinition(child)) {
                     OdooModelDefinition model = new OdooModelDefinition((PyClass) child);
                     if (model.getName() != null && model.getName().equals(this.name)) {
-                        definingElement.set(child);
+                        elements.add(child);
                         return true;
                     }
                 }
                 return false;
             });
-            return definingElement.get();
+            return elements;
         }
         return null;
     }

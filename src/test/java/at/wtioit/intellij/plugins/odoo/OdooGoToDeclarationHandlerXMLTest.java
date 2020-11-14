@@ -15,7 +15,7 @@ public class OdooGoToDeclarationHandlerXMLTest extends AbstractOdooGoToDeclarati
     }
 
     public void testModelNameInRecordField() {
-        doTest("odoo.addons.addon3.models.inherited.Inherited");
+        doTest("odoo.addons.addon3.models.inherited.InheritedBase");
     }
 
     @Override

@@ -3,6 +3,8 @@ package at.wtioit.intellij.plugins.odoo;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyStringElement;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -47,6 +49,13 @@ public interface PsiElementsUtil {
         for (PsiElement child : element.getChildren()) {
             if (!function.apply(child)) {
                 walkTree(child, function);
+            }
+        }
+        if (element instanceof PyStringLiteralExpression) {
+            for (PyStringElement pyStringElement : ((PyStringLiteralExpression) element).getStringElements()) {
+                if (!function.apply(pyStringElement)) {
+                    walkTree(pyStringElement, function);
+                }
             }
         }
     }

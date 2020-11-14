@@ -1,2 +1,4 @@
-,PyClass: Inherited,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/models
+,PyClass: InheritedBase,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/models
 ,PyClass: Inherited,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon1/models
+,PyClass: InheritedInherited,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/models
+,PyClass: InheritedInherited,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/other_dir
