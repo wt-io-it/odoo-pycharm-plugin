@@ -23,10 +23,29 @@ class OdooModelTypeHierarchyTreeStructureUtil {
         }
         Project project = hierarchyNodeDescriptor.getProject();
         if (model instanceof OdooModelImpl) {
+
             List<PsiElement> definingElements = ((OdooModelImpl) model).getDefiningElements();
             if (project != null) {
                 OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
-                definingElements.sort(Comparator.comparing(e -> moduleService.getModule(e.getContainingFile().getVirtualFile()).getName()));
+                OdooModule baseModule = model.getBaseModule();
+                definingElements.sort((e1, e2) -> {
+                    OdooModule module1 = moduleService.getModule(e1.getContainingFile().getVirtualFile());
+                    OdooModule module2 = moduleService.getModule(e2.getContainingFile().getVirtualFile());
+                    if (module1 == null || module2 == null) {
+                        // Cannot compare if one of the modules is null
+                        return 0;
+                    } else if (module1.getName().equals(baseModule.getName()) && module2.getName().equals(baseModule.getName())) {
+                        return 0;
+                    } else if (module1.getName().equals(baseModule.getName())) {
+                        return -1;
+                    } else if (module2.getName().equals(baseModule.getName())) {
+                        return 1;
+                    } else {
+                        // TODO factor in the dependency tree?
+                        // TODO prefer models in models directory?
+                        return module1.getName().compareTo(module2.getName());
+                    }
+                });
             }
             for (PsiElement definingElement : definingElements) {
                 if (definingElement != model.getDefiningElement()) {
