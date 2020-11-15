@@ -2,6 +2,8 @@ package at.wtioit.intellij.plugins.odoo.records.impl;
 
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
+import at.wtioit.intellij.plugins.odoo.models.OdooModel;
+import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
@@ -16,6 +18,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +46,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         }
         // TODO find base elements
         OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
-        return WithinProject.call(project, () -> {
+        OdooRecord baseRecord = WithinProject.call(project, () -> {
             for (OdooRecord record : records) {
                 boolean dependsOnOtherRecords = false;
                 OdooModule module = moduleService.getModule(getVirtualFileForPath(record.getPath()));
@@ -62,6 +65,33 @@ public class OdooRecordServiceImpl implements OdooRecordService {
             }
             return null;
         });
+        if (baseRecord != null) return baseRecord;
+        return getOdooModelRecord(xmlId);
+    }
+
+    @Nullable
+    private OdooModelRecord getOdooModelRecord(String xmlId) {
+        String[] xmlIdParts = xmlId.split("\\.");
+        if (xmlIdParts[1].startsWith("model_")) {
+            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            String moduleName = xmlIdParts[0];
+            String modelNameId = xmlIdParts[1].substring(6);
+            OdooModule module = moduleService.getModule(moduleName);
+            if (module != null) {
+                return WithinProject.call(project, () -> {
+                    for (OdooModel model : module.getModels()) {
+                        String name = model.getName();
+                        if (name != null) {
+                            if (name.replace('.', '_').equals(modelNameId)) {
+                                return new OdooModelRecord(model);
+                            }
+                        }
+                    }
+                    return null;
+                });
+            }
+        }
+        return null;
     }
 
     @Override
@@ -81,7 +111,8 @@ public class OdooRecordServiceImpl implements OdooRecordService {
                     .map(pair -> Pair.create(pair.first.getVirtualFile(), pair.second))
                     .map(pair -> Pair.create(moduleService.getModule(pair.first), pair.second))
                     .filter(pair -> pair.first != null)
-                    .anyMatch(pair -> xmlId.equals(pair.first.getName() + "." + pair.second.getId())));
+                    .anyMatch(pair -> xmlId.equals(pair.first.getName() + "." + pair.second.getId())))
+                    || getOdooModelRecord(xmlId) != null;
         }
     }
 
