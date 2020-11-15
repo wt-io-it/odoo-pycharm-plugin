@@ -35,15 +35,17 @@ class OdooModelTypeHierarchyTreeStructureUtil {
                         // Cannot compare if one of the modules is null
                         return 0;
                     } else if (module1.getName().equals(baseModule.getName()) && module2.getName().equals(baseModule.getName())) {
-                        return 0;
+                        return comparePaths(e1, e2);
                     } else if (module1.getName().equals(baseModule.getName())) {
                         return -1;
                     } else if (module2.getName().equals(baseModule.getName())) {
                         return 1;
                     } else {
+                        int moduleComparison = module1.getName().compareTo(module2.getName());
                         // TODO factor in the dependency tree?
-                        // TODO prefer models in models directory?
-                        return module1.getName().compareTo(module2.getName());
+                        if (moduleComparison != 0) return moduleComparison;
+
+                        return comparePaths(e1, e2);
                     }
                 });
             }
@@ -64,5 +66,10 @@ class OdooModelTypeHierarchyTreeStructureUtil {
                 }
             });
         }
+    }
+
+    private static int comparePaths(PsiElement e1, PsiElement e2) {
+        // TODO prefer models in models directory?
+        return e1.getContainingFile().getVirtualFile().getPath().compareTo(e2.getContainingFile().getVirtualFile().getPath());
     }
 }
