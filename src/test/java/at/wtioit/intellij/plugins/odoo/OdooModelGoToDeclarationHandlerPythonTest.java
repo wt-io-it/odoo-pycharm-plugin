@@ -8,7 +8,7 @@ public class OdooModelGoToDeclarationHandlerPythonTest extends AbstractOdooGoToD
     }
 
     public void testModelName() {
-        doTest("odoo.addons.addon3.models.inherited.Inherited");
+        doTest("odoo.addons.addon3.models.inherited.InheritedBase");
     }
 
     public void testModelNameEnv() {

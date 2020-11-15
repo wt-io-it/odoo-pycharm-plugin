@@ -3,11 +3,16 @@ package at.wtioit.intellij.plugins.odoo;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyStringElement;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.intellij.psi.PsiErrorElement;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,12 +85,27 @@ public interface PsiElementsUtil {
                     walkTree(child, function, typeFilter, maxDepth - 1);
                 }
             }
+            if (element instanceof PyStringLiteralExpression) {
+                for (PyStringElement pyStringElement : ((PyStringLiteralExpression) element).getStringElements()) {
+                    if (typeFilter.isInstance(pyStringElement) && !function.apply(typeFilter.cast(pyStringElement))) {
+                        walkTree(pyStringElement, function, typeFilter, maxDepth - 1);
+                    }
+                }
+            }
         }
     }
+
+    static String getStringValueForValueChild(@NotNull PsiElement valueChild) {
+        return getStringValueForValueChild(valueChild, () -> PyResolveContext.defaultContext().withTypeEvalContext(TypeEvalContext.codeAnalysis(valueChild.getContainingFile().getProject(), valueChild.getContainingFile())));
+    }
+
 
     static String getStringValueForValueChild(@NotNull PsiElement valueChild, Supplier<PyResolveContext> contextSupplier) {
         if (valueChild instanceof PyStringLiteralExpressionImpl) {
             return ((PyStringLiteralExpressionImpl) valueChild).getStringValue();
+        } else if (valueChild instanceof PyStringElement) {
+            TextRange contentRange = ((PyStringElement) valueChild).getContentRange();
+            return valueChild.getText().substring(contentRange.getStartOffset(), contentRange.getEndOffset());
         } else if (valueChild instanceof PyListLiteralExpression) {
             //firstChild() somehow returns the bracket
             PsiElement firstChild = valueChild.getChildren()[0];
