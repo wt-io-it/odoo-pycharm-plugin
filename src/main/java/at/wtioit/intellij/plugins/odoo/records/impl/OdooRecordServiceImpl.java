@@ -72,7 +72,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     @Nullable
     private OdooModelRecord getOdooModelRecord(String xmlId) {
         String[] xmlIdParts = xmlId.split("\\.");
-        if (xmlIdParts[1].startsWith("model_")) {
+        if (xmlIdParts.length == 2 && xmlIdParts[1].startsWith("model_")) {
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
             String moduleName = xmlIdParts[0];
             String modelNameId = xmlIdParts[1].substring(6);
