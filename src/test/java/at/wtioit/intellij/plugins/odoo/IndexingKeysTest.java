@@ -71,6 +71,8 @@ public class IndexingKeysTest extends BaseOdooPluginTest {
                 ":UNDETECTED_XML_ID:.record10",
                 ":UNDETECTED_XML_ID:.record11",
                 ":UNDETECTED_XML_ID:.record14",
+                ":UNDETECTED_XML_ID:.record15",
+                ":UNDETECTED_XML_ID:.record16",
                 "addon1.record2",
                 "addon1.record4",
                 ":UNDETECTED_XML_ID:.existing_kanban_view",

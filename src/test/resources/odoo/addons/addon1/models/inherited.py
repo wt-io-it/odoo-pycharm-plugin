@@ -9,3 +9,9 @@ class Inherited(models.Model):
 class Interited2(models.Model):
     _name = 'inherited2'
     _inherit = 'inherited'
+
+class Interited3(models.Model):
+    _name = 'inherited3'
+    _inherit = 'inherited'
+
+    code = fields.Char('code')

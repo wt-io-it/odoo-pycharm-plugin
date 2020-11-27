@@ -316,7 +316,7 @@ public interface OdooModelPsiElementMatcherUtil {
         return getRecordsFromFile(file, function, limit, () -> file.getVirtualFile().getPath());
     }
 
-    static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file, Function<OdooRecord, Boolean> function, int limit, Supplier<String> pathSupplier) {
+    static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file, Function<OdooRecord, Boolean> matches, int limit, Supplier<String> pathSupplier) {
         HashMap<String, OdooRecord> records = new HashMap<>();
         if (file instanceof XmlFile) {
             PsiElementsUtil.walkTree(file, (element) -> {
@@ -326,7 +326,7 @@ public interface OdooModelPsiElementMatcherUtil {
                         // skip investigating relaxng schemas for odoo models
                         return true;
                     } else if ("odoo".equals(tag.getName())) {
-                        records.putAll(getRecordsFromOdooTag(tag, pathSupplier.get(), function, limit));
+                        records.putAll(getRecordsFromOdooTag(tag, pathSupplier.get(), matches, limit));
                         return true;
                     }
                     // investigate children
@@ -338,13 +338,17 @@ public interface OdooModelPsiElementMatcherUtil {
                 // skip investigating children
                 return true;
             }, XmlElement.class, 3);
-        } else if (file.getVirtualFile().getExtension() == "csv") {
-            records.putAll(getRecordsFromCsvFile(file, pathSupplier.get()));
+        } else if ("csv".equals(file.getVirtualFile().getExtension())) {
+            records.putAll(getRecordsFromCsvFile(file, pathSupplier.get(), matches, limit));
         }
         return records;
     }
 
     static HashMap<String, OdooRecord> getRecordsFromCsvFile(PsiFile file, String path) {
+        return getRecordsFromCsvFile(file, path, (r) -> true, Integer.MAX_VALUE);
+    }
+
+    static HashMap<String, OdooRecord> getRecordsFromCsvFile(PsiFile file, String path, Function<OdooRecord, Boolean> matches, int limit) {
         String modelName = file.getName().replaceFirst(".csv$", "");
         HashMap<String, OdooRecord> result = new HashMap<>();
         PsiElement firstChild = file.getFirstChild();
@@ -352,11 +356,11 @@ public interface OdooModelPsiElementMatcherUtil {
             // TODO replace with a proper csv parser
             String[] lines = firstChild.getText().split("\r?\n");
             String[] columns = csvLine(lines[0]);
-            for (int i = 1; i < lines.length; i++) {
+            for (int i = 1; i < lines.length && result.size() < limit; i++) {
                 String line = lines[i];
                 OdooRecord record = OdooRecordImpl.getFromCsvLine(modelName, columns, csvLine(line), path, firstChild);
                 // TODO check module name
-                if (record != null) {
+                if (record != null && matches.apply(record)) {
                     if (record.getXmlId() != null) {
                         result.put(record.getXmlId(), record);
                     } else {
