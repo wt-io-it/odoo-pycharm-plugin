@@ -1,0 +1,51 @@
+<odoo>
+    <record id="existing_kanban_view" model="ir.ui.view">
+        <field name="name">existing.kanban</field>
+        <field name="model">existing</field>
+        <field name="arch" type="xml">
+            <kanban create="false" class="oe_background_grey o_kanban_dashboard o_account_kanban"
+                    banner_route="/addon1/existing_dashboard" js_class="existing_dashboard_kanban">
+                <field name="name"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div>
+                            <t t-call="Header"/>
+                            <div>
+                                Content
+                            </div>
+                            <t t-call="Footer"/>
+                        </div>
+                    </t>
+
+                    <t t-name="Header">
+                        <div>
+                            Header
+                        </div>
+                    </t>
+
+                    <t t-name="Footer">
+                        <div>
+                            Footer
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="open_existing_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Existing Dashboard</field>
+        <field name="res_model">existing</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="existing_kanban_view"/>
+        <field name="usage">menu</field>
+        <field name="context">{'search_default_dashboard':1}</field>
+        <field name="domain">[]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the existing dashboard
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,8 +1,9 @@
-from odoo import models
+from odoo import models, fields
 
 
 class Existing(models.Model):
     _name = 'existing'
+    name = fields.Char()
 
 for name in ["one"]:
     class Wildcard(models.Model):

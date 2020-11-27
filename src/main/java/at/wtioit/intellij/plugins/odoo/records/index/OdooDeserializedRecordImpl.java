@@ -22,13 +22,28 @@ public class OdooDeserializedRecordImpl extends AbstractOdooRecord {
 
     @Override
     public PsiElement getDefiningElement() {
-        VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl("file:///" + getPath());
+        VirtualFileManager fileManager = VirtualFileManager.getInstance();
+        VirtualFile virtualFile = fileManager.findFileByUrl("file:///" + getPath());
+        if (virtualFile == null) {
+            // Mostly enable tests where files for the current tests are configured as temp files
+            virtualFile = fileManager.findFileByUrl("temp:///" + getPath());
+        }
         if (virtualFile != null) {
             PsiFile file = PsiManager.getInstance(WithinProject.INSTANCE.get()).findFile(virtualFile);
-            HashMap<String, OdooRecord> recordsFromFile = getRecordsFromFile(file, (record) -> Objects.equals(getXmlId(), record.getXmlId()), 1);
+            HashMap<String, OdooRecord> recordsFromFile = getRecordsFromFile(file, (record) ->
+            {
+                return Objects.equals(getXmlId(), record.getXmlId());
+            }, 1);
             if (recordsFromFile.size() == 1) {
                 OdooRecord record = recordsFromFile.values().iterator().next();
                 return record.getDefiningElement();
+            } else if (getXmlId() == null && recordsFromFile.size() > 0) {
+                // find matching ids
+                for (OdooRecord record : recordsFromFile.values()) {
+                    if (Objects.equals(record.getId(), getId())) {
+                        return record.getDefiningElement();
+                    }
+                }
             }
         }
         return null;

@@ -7,5 +7,7 @@
         'data/existing.csv',
         'data/records.xml',
         'data/records2.xml',
+
+        'views/existing_view.xml',
     ]
 }

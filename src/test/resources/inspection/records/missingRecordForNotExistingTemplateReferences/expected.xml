@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+    <problem>
+        <file>views.xml</file>
+        <line>7</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/views.xml" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Reference to a missing record defintion (xmlId)</problem_class>
+        <description>Missing record definition for template_c</description>
+    </problem>
+</problems>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="template_a">
+    </template>
+    <template id="template_b">
+    </template>
+</odoo>

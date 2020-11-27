@@ -100,7 +100,12 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         if (allKeys.contains(xmlId)) {
             return true;
         } else {
-            String undetectedXmlId = xmlId.replaceFirst(".*(?=\\.)", OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY);
+            String undetectedXmlId;
+            if (xmlId.contains(".")) {
+                undetectedXmlId = xmlId.replaceFirst(".*(?=\\.)", OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY);
+            } else {
+                undetectedXmlId = OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY + "." + xmlId;
+            }
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             @NotNull List<OdooRecord> records = FileBasedIndex.getInstance().getValues(OdooRecordFileIndex.NAME, undetectedXmlId, scope);
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
@@ -110,8 +115,10 @@ public class OdooRecordServiceImpl implements OdooRecordService {
                     .map(pair -> Pair.create(pair.first.getContainingFile(), pair.second))
                     .map(pair -> Pair.create(pair.first.getVirtualFile(), pair.second))
                     .map(pair -> Pair.create(moduleService.getModule(pair.first), pair.second))
-                    .filter(pair -> pair.first != null)
-                    .anyMatch(pair -> xmlId.equals(pair.first.getName() + "." + pair.second.getId())))
+                    .anyMatch(pair ->
+                            (xmlId.contains(".") && pair.first != null && xmlId.equals(pair.first.getName() + "." + pair.second.getId()))
+                                    // TODO the or part should be before resolving the defining elements for resolving the module
+                                    || (!xmlId.contains(".") && pair.second.getXmlId() == null && pair.second.getId().equals(xmlId))))
                     || getOdooModelRecord(xmlId) != null;
         }
     }

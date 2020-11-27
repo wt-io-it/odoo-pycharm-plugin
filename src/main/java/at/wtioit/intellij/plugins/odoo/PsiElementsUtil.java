@@ -31,12 +31,25 @@ public interface PsiElementsUtil {
     }
 
     @Nullable
+    static <T extends PsiElement> T findParent(@Nullable PsiElement element, Class<T> parentClass, Function<T, Boolean> parentMatch) {
+        return findParent(element, parentClass, parentMatch, 100);
+    }
+
+    @Nullable
     static <T extends PsiElement> T findParent(@Nullable PsiElement element, Class<T> parentClass, int inspectionLimit) {
+        return findParent(element, parentClass, (e) -> true, inspectionLimit);
+    }
+
+    @Nullable
+    static <T extends PsiElement> T findParent(@Nullable PsiElement element, Class<T> parentClass, Function<T, Boolean> parentMatch, int inspectionLimit) {
         if (element == null) return null;
         PsiElement parent = element.getParent();
         for (int i = 0; parent != null && i < inspectionLimit; i++) {
             if (parentClass.isAssignableFrom(parent.getClass())) {
-                return parentClass.cast(parent);
+                T foundElement = parentClass.cast(parent);
+                if (parentMatch.apply(foundElement)) {
+                    return foundElement;
+                }
             }
             parent = parent.getParent();
         }

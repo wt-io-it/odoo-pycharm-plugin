@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="template_a">
+        <t t-call="template_b" />
+    </template>
+    <template id="template_b">
+        <t t-call="template_c" />
+    </template>
+</odoo>
