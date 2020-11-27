@@ -1,9 +1,9 @@
 package at.wtioit.intellij.plugins.odoo.records.impl;
 
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
+import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
-import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
@@ -14,14 +14,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.xml.XmlTagImpl;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class OdooRecordServiceImpl implements OdooRecordService {
@@ -133,6 +137,32 @@ public class OdooRecordServiceImpl implements OdooRecordService {
             }
         }
         return refName;
+    }
+
+    @Override
+    public boolean hasLocalTemplate(PsiElement element, String id, String xmlId) {
+        // TODO enable goto handler for those
+        XmlTagImpl templateTag = PsiElementsUtil.findParent(element, XmlTagImpl.class, (tag) -> "templates".equals(tag.getName()) || "template".equals(tag.getName()));
+        if (templateTag != null) {
+            HashMap<String, XmlTag> localTemplates = new HashMap<>();
+            for (PsiElement child : templateTag.getChildren()) {
+                if (child instanceof XmlTag) {
+                    if ("t".equals(((XmlTag) child).getName())) {
+                        XmlAttribute nameAttribute = ((XmlTag) child).getAttribute("t-name");
+                        if (nameAttribute != null) {
+                            String templateName = nameAttribute.getValue();
+                            if (id.equals(templateName) || xmlId.equals(templateName)) {
+                                // We found the template
+                                return true;
+                            }
+                            localTemplates.put(templateName, (XmlTag) child);
+                        }
+                    }
+                }
+            }
+            // TODO add index for those local names
+        }
+        return false;
     }
 
     @NotNull

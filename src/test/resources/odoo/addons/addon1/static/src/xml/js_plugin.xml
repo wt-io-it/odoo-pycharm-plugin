@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+<t t-name="Board1">
+    <div>Board1</div>
+    <t t-foreach="['a', 'b']" t-as="action" t-call="Board1.action" />
+</t>
+<t t-name="Board1.action">
+    <button t-esc="action" />
+</t>
+</template>
