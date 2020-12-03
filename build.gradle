@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     // get the newest version from https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/prerequisites.html
-    id 'org.jetbrains.intellij' version '0.4.22'
+    id 'org.jetbrains.intellij' version '0.6.5'
 }
 
 group 'at.wtioit.intellij.plugins'
@@ -24,6 +24,14 @@ intellij {
     // it seems we cannot use 2019.1 here
     version '2019.2'
     type 'PC'
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    // it seems we cannot use 2019.1 here
+    version '2020.3'
+    type 'PC'
+    plugins 'PythonCore'
 }
 
 // enable this to run in IntelliJ Idea Community Edition
