@@ -10,12 +10,18 @@ version '0.6.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 def intellijVersion = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testVersion") ?: '2019.2'
+def intellijType = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testType") ?: 'PC'
 def intellijPlugins = []
-if (intellijVersion != '2019.2') {
+
+if (intellijVersion != '2019.2' && intellijType == 'PC') {
     // only pycharm 2019.2 seems to provide com.jetbrains.python.psi itself
-    intellijPlugins.add('PythonCore');
+    intellijPlugins.add('PythonCore')
+    // see https://plugins.jetbrains.com/plugin/7322-python-community-edition/versions
+} else if (intellijType == 'PY') {
+    // PyCharm Professional uses another python plugin
+    intellijPlugins.add('Pythonid')
+    // see https://plugins.jetbrains.com/plugin/631-python/versions
 }
-def intellijType = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testType") ?: 'PS'
 
 repositories {
     mavenCentral()
