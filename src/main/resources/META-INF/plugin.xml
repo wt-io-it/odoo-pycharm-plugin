@@ -31,8 +31,7 @@
         <li>
           Version 0.5.4:
           <ul>
-            <li>fix base model definition detection for models with multiple definitons in on module
-             (e.g. res.partner in 14.0 was detected to be rooted in populate instead of models)</li>
+            <li>fix compatibility with 2020.3 IDEA release</li>
           </ul>
         </li>
         <li>
