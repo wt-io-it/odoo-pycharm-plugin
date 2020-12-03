@@ -1,0 +1,35 @@
+<idea-plugin>
+
+    <resource-bundle>at.wtioit.intellij.plugins.OdooBundle</resource-bundle>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <completion.contributor language="Python"
+                                implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor" />
+        <completion.contributor language="XML"
+                                implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsXmlCompletionContributor" />
+        <typeHierarchyProvider language="Python"
+                               implementationClass="at.wtioit.intellij.plugins.odoo.models.hierarchy.OdooModelHierarchyProvider"
+                               order="first" />
+        <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.modules.OdooModuleService"
+                        serviceImplementation="at.wtioit.intellij.plugins.odoo.modules.impl.OdooModuleServiceImpl" />
+        <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.models.OdooModelService"
+                        serviceImplementation="at.wtioit.intellij.plugins.odoo.models.impl.OdooModelServiceImpl" />
+        <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex" />
+        <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.models.index.OdooModelFileIndex" />
+        <searchEverywhereContributor implementation="at.wtioit.intellij.plugins.odoo.search.OdooSearchEverywhere" />
+        <localInspection implementationClass="at.wtioit.intellij.plugins.odoo.models.inspection.MissingModelDefinitionInspection"
+                         groupKey="INSP.GROUP.odoo"
+                         key="INSP.NAME.missing.model.definition"
+                         enabledByDefault="true"
+                         language="Python" />
+        <lang.inspectionSuppressor implementationClass="at.wtioit.intellij.plugins.odoo.modules.inspection.ManifestInspectionSuppressor"
+                                   language="Python" />
+    </extensions>
+
+    <application-components>
+        <component>
+            <implementation-class>at.wtioit.intellij.plugins.odoo.pycharm.PyCharmInitializer</implementation-class>
+        </component>
+    </application-components>
+</idea-plugin>
