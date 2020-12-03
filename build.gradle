@@ -15,6 +15,7 @@ if (intellijVersion != '2019.2') {
     // only pycharm 2019.2 seems to provide com.jetbrains.python.psi itself
     intellijPlugins.add('PythonCore');
 }
+def intellijType = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testType") ?: 'PS'
 
 repositories {
     mavenCentral()
@@ -30,7 +31,7 @@ dependencies {
 intellij {
     // it seems we cannot use 2019.1 here
     version = intellijVersion
-    type 'PC'
+    type = intellijType
     plugins = intellijPlugins
 }
 
