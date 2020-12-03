@@ -2,12 +2,10 @@ package at.wtioit.intellij.plugins.odoo.models.hierarchy;
 
 import at.wtioit.intellij.plugins.odoo.BaseOdooPluginTest;
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
-import com.intellij.ide.hierarchy.HierarchyBrowser;
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
-import com.intellij.ide.hierarchy.HierarchyProvider;
-import com.intellij.ide.hierarchy.HierarchyTreeStructure;
+import com.intellij.ide.hierarchy.*;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.psi.PsiElement;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyClass;
 
 import java.util.Arrays;
@@ -109,22 +107,9 @@ public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
     }
 
     private HierarchyProvider getHierarchyProvider() {
-        return HierarchyProvider.TYPE_EP_NAME.getExtensionList().stream()
-                .filter(languageExtensionPoint -> languageExtensionPoint.implementationClass.equals(OdooModelHierarchyProvider.class.getName()))
-                .map(languageExtensionPoint -> newInstance(languageExtensionPoint, HierarchyProvider.class))
+        return LanguageTypeHierarchy.INSTANCE.allForLanguage(PythonLanguage.INSTANCE).stream()
+                .filter(languageExtensionPoint -> languageExtensionPoint instanceof OdooModelHierarchyProvider)
                 .findFirst().orElse(null);
-    }
-
-    private <T> T newInstance(LanguageExtensionPoint languageExtensionPoint, Class<T> providerClass) {
-        try {
-            Class<?> clazz = Class.forName(languageExtensionPoint.implementationClass);
-            if (providerClass.isAssignableFrom(clazz)) {
-                return (T) clazz.asSubclass(providerClass).newInstance();
-            }
-            throw new AssertionError("Cannot find provider Class " + providerClass + " in extension point");
-        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-            throw new AssertionError("Cannot create instance", e);
-        }
     }
 
 }
