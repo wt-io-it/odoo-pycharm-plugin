@@ -28,6 +28,11 @@ public class MissingModelDefinitionInspection extends LocalInspectionTool {
         return OdooBundle.message("INSP.NAME.missing.model.definition");
     }
 
+    @Override
+    public @Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String getGroupDisplayName() {
+        return OdooBundle.message("INSP.GROUP.odoo");
+    }
+
     @NotNull
     @Override
     public HighlightDisplayLevel getDefaultLevel() {
