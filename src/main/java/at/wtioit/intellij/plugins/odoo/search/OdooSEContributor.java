@@ -43,7 +43,9 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
 
     @Override
     public int getSortWeight() {
-        return 0;
+        // need to use the first "free" number in 2020.3 until
+        // see https://youtrack.jetbrains.com/issue/IDEA-255566
+        return -1;
     }
 
     @Override
