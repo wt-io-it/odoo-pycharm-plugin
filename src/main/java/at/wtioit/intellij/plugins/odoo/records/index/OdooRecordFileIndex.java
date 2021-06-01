@@ -98,6 +98,10 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
     private static class OdooRecordFileIndexer implements DataIndexer<String, OdooRecord, FileContent> {
         @Override
         public @NotNull Map<String, OdooRecord> map(@NotNull FileContent inputData) {
+            if (inputData.getFileType().isBinary()) {
+                // TODO we should make sure that XML and CSV are treated as text
+                return Collections.emptyMap();
+            }
             if (inputData.getFileType() == XmlFileType.INSTANCE) {
                 PsiFile file = inputData.getPsiFile();
                 return getRecordsFromFile(file, inputData.getFile().getPath());
