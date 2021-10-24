@@ -11,9 +11,9 @@ run_tests:
   parallel:
     matrix:
       - TYPE: "PC" # PyCharm Community
-        VERSION: ["2019.2", "2019.3", "2020.1", "2020.2", "2020.3", "2021.1" ]
+        VERSION: ["2019.2", "2019.3", "2020.1", "2020.2", "2020.3", "2021.1", "2021.2" ]
       - TYPE: "PY" # PyCharm Professional
-        VERSION: [ "2019.2", "2019.3", "2020.1", "2020.2", "2020.3", "2021.1" ]
+        VERSION: [ "2019.2", "2019.3", "2020.1", "2020.2", "2020.3", "2021.1", "2021.2" ]
   artifacts:
     reports:
       junit: build/test-results/test/TEST-*.xml
