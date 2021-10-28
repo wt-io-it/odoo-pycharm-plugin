@@ -57,7 +57,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
                 if (module != null) {
                     for (OdooRecord otherRecord : records) {
                         OdooModule otherModule = moduleService.getModule(getVirtualFileForPath(otherRecord.getPath()));
-                        if (module.dependsOn(otherModule)) {
+                        if (otherModule != null && module.dependsOn(otherModule)) {
                             dependsOnOtherRecords = true;
                             break;
                         }
@@ -177,6 +177,12 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     }
 
     private VirtualFile getVirtualFileForPath(String path) {
-        return VirtualFileManager.getInstance().findFileByUrl("file:///" + path);
+        VirtualFileManager fileManager = VirtualFileManager.getInstance();
+        VirtualFile virtualFile = fileManager.findFileByUrl("file:///" + path);
+        if (virtualFile == null) {
+            // Mostly enable tests where files for the current tests are configured as temp files
+            virtualFile = fileManager.findFileByUrl("temp:///" + path);
+        }
+        return virtualFile;
     }
 }

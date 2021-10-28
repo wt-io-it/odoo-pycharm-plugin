@@ -1,20 +1,10 @@
 package at.wtioit.intellij.plugins.odoo.modules.search;
 
-import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.search.AbstractOdooPsiElement;
-import at.wtioit.intellij.plugins.odoo.search.OdooSEResult;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,7 +62,7 @@ public class OdooModulePsiElement extends AbstractOdooPsiElement implements Odoo
     }
 
     @Override
-    public boolean dependsOn(OdooModule module) {
+    public boolean dependsOn(@NotNull OdooModule module) {
         return module.dependsOn(module);
     }
 

@@ -3,7 +3,6 @@ package at.wtioit.intellij.plugins.odoo.modules.impl;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
-import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.NavigatablePsiElement;
@@ -118,7 +117,7 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
     }
 
     @Override
-    public boolean dependsOn(OdooModule possibleDependency) {
+    public boolean dependsOn(@NotNull OdooModule possibleDependency) {
         try {
             tryResolveOdooModule();
         } catch (FileNotFoundException e) {
