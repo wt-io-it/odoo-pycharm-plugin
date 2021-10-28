@@ -69,8 +69,8 @@ tasks {
     patchPluginXml {
         version.set(project.findProperty("pluginVersion"))
         // please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description
-        sinceBuild.set("192.5728")
-        untilBuild.set("212.*")
+        sinceBuild.set(project.findProperty("pluginSinceBuild"))
+        untilBuild.set(project.findProperty("pluginUntilBuild"))
     }
 
     publishPlugin {
