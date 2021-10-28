@@ -1,6 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.modules.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
+import at.wtioit.intellij.plugins.odoo.index.OdooDataIndexer;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.util.indexing.*;
@@ -75,9 +76,9 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
         return false;
     }
 
-    private static class OdooModuleFileIndexer implements DataIndexer<String, OdooModule, FileContent> {
+    private static class OdooModuleFileIndexer extends OdooDataIndexer<OdooModule> {
         @Override
-        public @NotNull Map<String, OdooModule> map(@NotNull FileContent inputData) {
+        public @NotNull Map<String, OdooModule> mapWatched(@NotNull FileContent inputData) {
             OdooVirtualFileModuleImpl module = new OdooVirtualFileModuleImpl(inputData.getFile());
             return Collections.singletonMap(module.getName(), module);
         }

@@ -28,3 +28,4 @@ build:
   artifacts:
     paths:
       - build/libs/odoo_plugin-*.jar
+      - "build/distributions/Odoo Autocompletion Support-*.jar"
