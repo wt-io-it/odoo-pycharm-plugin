@@ -14,8 +14,6 @@ plugins {
 group = project.findProperty("pluginGroup")
 version = project.findProperty("pluginVersion")
 
-sourceCompatibility = 1.8
-
 def intellijVersion = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testVersion") ?: '2019.2'
 def intellijType = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testType") ?: 'PC'
 def intellijPlugins = Arrays.stream(project.findProperty("platformPlugins").split(',')).map(String::trim).filter((s) -> s.length() > 0).collect(Collectors.toList())
@@ -55,6 +53,9 @@ intellij {
 }
 
 tasks {
+    // for compatibility with 2019.x
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     wrapper {
         gradleVersion = project.findProperty("gradleVersion")
