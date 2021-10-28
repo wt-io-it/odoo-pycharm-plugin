@@ -42,7 +42,14 @@ public interface ApplicationInfoHelper {
     }
 
     static int getBugfixVersion() {
-        return Integer.parseInt(ApplicationInfo.getInstance().getMinorVersion().substring(ApplicationInfo.getInstance().getMinorVersionMainPart().length() + 1));
+        String minorVersion = ApplicationInfo.getInstance().getMinorVersionMainPart();
+        String fullMinorVersion = ApplicationInfo.getInstance().getMinorVersion();
+        if (fullMinorVersion.length() > minorVersion.length() + 1) {
+            return Integer.parseInt(fullMinorVersion.substring(minorVersion.length() + 1));
+        } else {
+            return -1;
+        }
+
     }
 
     static boolean versionGreaterThanEqual(Versions version) {
