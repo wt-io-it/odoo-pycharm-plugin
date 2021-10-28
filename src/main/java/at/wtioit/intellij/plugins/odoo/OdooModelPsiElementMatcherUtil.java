@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo;
 
+import at.wtioit.intellij.plugins.odoo.index.IndexWatcher;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
@@ -215,7 +216,13 @@ public interface OdooModelPsiElementMatcherUtil {
             TypeEvalContext typeEvalContext = TypeEvalContext.codeAnalysis(pyline.getContainingFile().getProject(), pyline.getContainingFile());
             PyClass pyClass = (PyClass) pyline;
             @NotNull PyClass[] superClasses = new PyClass[0];
-            if (!DumbService.isDumb(pyline.getProject())) {
+            if (!(IndexWatcher.isCalledInIndexJob() && ApplicationInfoHelper.versionGreaterThanEqual(ApplicationInfoHelper.Versions.V_2021))
+                    && !DumbService.isDumb(pyline.getProject())) {
+                /*
+                We use a version switch here because starting with 2021 releases JetBrains shows an error to the use if
+                an indexing job opens a file it did not expect it to. Inspecting the super classes may lead to such an
+                error because it may load other python files. So we fall back to our own parsing for 2021+.
+                */
                 try {
                     superClasses = pyClass.getSuperClasses(typeEvalContext);
                     for (PyClass superClass : superClasses) {

@@ -3,6 +3,7 @@ package at.wtioit.intellij.plugins.odoo.models.index;
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
+import at.wtioit.intellij.plugins.odoo.index.OdooDataIndexer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -98,12 +99,12 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
         return true;
     }
 
-    private static class OdooModelFileIndexer implements DataIndexer<String, OdooModelDefinition, FileContent> {
+    private static class OdooModelFileIndexer extends OdooDataIndexer<OdooModelDefinition> {
 
         private final Logger logger = Logger.getInstance(OdooModelFileIndexer.class);
 
         @Override
-        public @NotNull Map<String, OdooModelDefinition> map(@NotNull FileContent inputData) {
+        public @NotNull Map<String, OdooModelDefinition> mapWatched(@NotNull FileContent inputData) {
             HashMap<String, OdooModelDefinition> models = new HashMap<>();
             @NotNull PsiFile file = inputData.getPsiFile();
             PsiElementsUtil.walkTree(file, (child) -> {
