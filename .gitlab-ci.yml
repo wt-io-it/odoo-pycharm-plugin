@@ -21,6 +21,24 @@ run_tests:
       - build/reports
     when: always
 
+verify_plugin:
+  stage: test
+  script:
+    - ./gradlew verifyPlugin
+  after_script:
+    - java -version
+
+plugin_verifier:
+  stage: test
+  script:
+    - ./gradlew runPluginVerifier
+  after_script:
+    - java -version
+  artifacts:
+    paths:
+      - build/reports
+    when: always
+
 build:
   stage: build
   script:

@@ -42,6 +42,7 @@ To build the plugin perform the following steps
 * test plugin manually by installing it
 * review changelog
 * change -SNAPSHOT version to non snapshot version and perform release commit
+* verify plugin with `./gradlew verifyPlugin && ./gradlew runPluginVerifier`
 * submit plugin to jetbrains review process with `./gradlew publishPlugin`
 * tag commit as version with `vN.N.N`
 * push commit and tag

@@ -14,8 +14,8 @@ plugins {
 group = project.findProperty("pluginGroup")
 version = project.findProperty("pluginVersion")
 
-def intellijVersion = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testVersion") ?: '2019.2'
-def intellijType = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testType") ?: 'PC'
+def intellijVersion = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testVersion") ?: project.findProperty("platformVersion")
+def intellijType = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testType") ?: project.findProperty("platformType")
 def intellijPlugins = Arrays.stream(project.findProperty("platformPlugins").split(',')).map(String::trim).filter((s) -> s.length() > 0).collect(Collectors.toList())
 def buildDownloadSources = project.findProperty("platformDownloadSources").toBoolean()
 
@@ -67,6 +67,11 @@ tasks {
         //jvmArgs '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED', '-agentpath:/home/bigbear3001/bin/YourKit-JavaProfiler-2020.7/bin/linux-x86-64/libyjpagent.so=disablestacktelemetry,exceptions=disable,delay=10000'
 
     }
+
+    runPluginVerifier {
+        ideVersions.set(Arrays.stream(project.findProperty("pluginVerifierIdeVersions").split(',')).map(String::trim).filter((s) -> s.length() > 0).collect(Collectors.toList()))
+    }
+
 
     patchPluginXml {
         version.set(project.findProperty("pluginVersion"))
