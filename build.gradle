@@ -1,3 +1,5 @@
+import java.util.stream.Collectors
+
 plugins {
     id("java")
     // get the newest version from https://github.com/JetBrains/intellij-platform-plugin-template/blob/main/build.gradle.kts
@@ -16,7 +18,7 @@ sourceCompatibility = 1.8
 
 def intellijVersion = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testVersion") ?: '2019.2'
 def intellijType = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testType") ?: 'PC'
-def intellijPlugins = []
+def intellijPlugins = Arrays.stream(project.findProperty("platformPlugins").split(',')).map(String::trim).filter((s) -> s.length() > 0).collect(Collectors.toList())
 def buildDownloadSources = project.findProperty("platformDownloadSources").toBoolean()
 
 if (intellijVersion != '2019.2' && intellijType == 'PC') {
