@@ -37,6 +37,12 @@
           </ul>
         </li>
         <li>
+          Version 0.5.7:
+          <ul>
+            <li>fix compatibility with minor releases</li>
+          </ul>
+        </li>
+        <li>
           Version 0.5.6:
           <ul>
             <li>fix index error when detecting model super classes in 2021.x releases</li>
