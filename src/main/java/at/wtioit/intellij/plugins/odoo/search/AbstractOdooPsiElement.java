@@ -27,7 +27,7 @@ public abstract class AbstractOdooPsiElement implements OdooSEResult {
 
     @Override
     public @NotNull Language getLanguage() {
-        return psiElementSupplier.get().getLanguage();
+        return WithinProject.call(this.project, () -> psiElementSupplier.get().getLanguage());
     }
 
     @Override
