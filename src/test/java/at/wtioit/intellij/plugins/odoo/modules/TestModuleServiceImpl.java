@@ -22,7 +22,7 @@ public class TestModuleServiceImpl extends BaseOdooPluginTest {
             PsiFile manifestFile = module.getManifestFile();
             OdooModule moduleFromFile = moduleService.getModule(manifestFile.getVirtualFile());
             assertNotNull("Expected to get module for existing directory with manifest", moduleFromFile);
-            assertSame("Expected to get the same module by file as by name", moduleFromFile, module);
+            assertEquals("Expected to get the same (equal) module by file as by name", moduleFromFile, module);
         });
 
     }
