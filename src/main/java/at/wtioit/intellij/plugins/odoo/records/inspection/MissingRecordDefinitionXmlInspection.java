@@ -48,7 +48,10 @@ public class MissingRecordDefinitionXmlInspection extends LocalInspectionTool {
                 if (OdooRecordPsiElementMatcherUtil.isOdooRecordPsiElement(element)) {
                     String id = element.getText();
                     String xmlId = recordService.ensureFullXmlId(element.getContainingFile(), id);
-                    if (!recordService.hasRecord(xmlId) && !recordService.hasLocalTemplate(element, id, xmlId)) {
+                    if (!recordService.hasRecord(xmlId)
+                            && !recordService.hasLocalTemplate(element, id, xmlId)
+                            && !xmlId.contains(".field_") // fields are not yet implemented
+                    ) {
                         holder.registerProblem(element, OdooBundle.message("INSP.NAME.missing.record.definition.for.$0", xmlId), ProblemHighlightType.WARNING);
                         // TODO add possible quick fixes
                     }
