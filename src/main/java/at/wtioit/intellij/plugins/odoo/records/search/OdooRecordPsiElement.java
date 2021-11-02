@@ -69,7 +69,11 @@ public class OdooRecordPsiElement extends AbstractOdooPsiElement implements Odoo
 
     @Override
     public String getName() {
-        return getXmlId();
+        String name = getXmlId();
+        if (name != null) {
+            return name;
+        }
+        return getId();
     }
 
     @Override
