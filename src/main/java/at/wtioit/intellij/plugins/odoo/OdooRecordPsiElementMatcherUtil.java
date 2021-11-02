@@ -12,7 +12,12 @@ import static com.intellij.psi.xml.XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
 
 public interface OdooRecordPsiElementMatcherUtil {
 
-    List<String> ODOO_RECORD_REF_ATTRIBUTES = Collections.unmodifiableList(Arrays.asList("ref", "inherit_id", "t-call", "t-call-assets"));
+    List<String> ODOO_RECORD_REF_ATTRIBUTES = Collections.unmodifiableList(Arrays.asList(
+            "ref",
+            "inherit_id",
+            "t-call",
+            "t-call-assets",
+            "t-extend"));
 
     static boolean isOdooRecordPsiElement(PsiElement psiElement) {
         if (psiElement instanceof XmlToken && ((XmlToken) psiElement).getTokenType() == XML_ATTRIBUTE_VALUE_TOKEN) {
