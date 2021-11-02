@@ -19,7 +19,6 @@ public class OdooRecordImpl extends AbstractOdooRecord {
         MODELS_FOR_TAG_NAMES.put("menuitem", "ir.ui.menu");
         MODELS_FOR_TAG_NAMES.put("report", "ir.actions.report");
         MODELS_FOR_TAG_NAMES.put("act_window", "ir.actions.act_window");
-
     }
 
     private final PsiElement definingElement;
@@ -47,6 +46,22 @@ public class OdooRecordImpl extends AbstractOdooRecord {
                 return new OdooRecordImpl(id, xmlId, modelName, path, tag);
             } else {
                 return new OdooRecordImpl(id, id, modelName, path, tag);
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static OdooRecord getFromXmlTemplate(XmlTag templateTag, @NotNull String path) {
+        String id = templateTag.getAttributeValue("t-name");
+        String modelName = "ir.ui.view"; //TODO this is not really an ui view but a javascript template
+        if (id != null) {
+            if (!id.contains(".")) {
+                String xmlId = null;
+                // TODO maybe make a fast guess for the module name from path
+                return new OdooRecordImpl(id, xmlId, modelName, path, templateTag);
+            } else {
+                return new OdooRecordImpl(id, id, modelName, path, templateTag);
             }
         }
         return null;

@@ -335,6 +335,8 @@ public interface OdooModelPsiElementMatcherUtil {
                     } else if ("odoo".equals(tag.getName())) {
                         records.putAll(getRecordsFromOdooTag(tag, pathSupplier.get(), matches, limit));
                         return true;
+                    } else if ("templates".equals(tag.getName())) {
+                        records.putAll(getRecordsFromTemplateTag(tag, pathSupplier.get(), matches, limit));
                     }
                     // investigate children
                     return false;
@@ -426,20 +428,38 @@ public interface OdooModelPsiElementMatcherUtil {
             if ("function".equals(name)) return true;
             if (ODOO_XML_RECORD_TYPES.contains(name)) {
                 OdooRecord record = OdooRecordImpl.getFromXml(tag, path);
-                if (record == null) {
-                    return true;
-                }
-                if (function.apply(record)) {
-                    if (record.getXmlId() == null) {
-                        records.put(NULL_XML_ID_KEY + "." + record.getId(), record);
-                    } else {
-                        records.put(record.getXmlId(), record);
-                    }
-                    return true;
-                }
+                if (applyRecord(function, records, record)) return true;
             }
             return records.size() >= limit;
         }, XmlTag.class, 2);
         return records;
+    }
+
+    static Map<String, OdooRecord> getRecordsFromTemplateTag(XmlTag recordsTag, @NotNull String path, Function<OdooRecord, Boolean> function, int limit) {
+        HashMap<String, OdooRecord> records = new HashMap<>();
+        PsiElementsUtil.walkTree(recordsTag, (tag)-> {
+            String name = tag.getAttributeValue("t-name");
+            if (name != null) {
+                OdooRecord record = OdooRecordImpl.getFromXmlTemplate(tag, path);
+                if (applyRecord(function, records, record)) return true;
+            }
+            return records.size() >= limit;
+        }, XmlTag.class, 2);
+        return records;
+    }
+
+    static boolean applyRecord(Function<OdooRecord, Boolean> function, HashMap<String, OdooRecord> records, OdooRecord record) {
+        if (record == null) {
+            return true;
+        }
+        if (function.apply(record)) {
+            if (record.getXmlId() == null) {
+                records.put(NULL_XML_ID_KEY + "." + record.getId(), record);
+            } else {
+                records.put(record.getXmlId(), record);
+            }
+            return true;
+        }
+        return false;
     }
 }

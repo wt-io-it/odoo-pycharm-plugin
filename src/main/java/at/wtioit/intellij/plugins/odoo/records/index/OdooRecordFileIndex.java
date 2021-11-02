@@ -76,7 +76,7 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
 
     @Override
     public int getVersion() {
-        return 13;
+        return 14;
     }
 
     @Override
