@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pycharm-plugin [:runIde] (2021.2, Profesional)" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="pycharm-plugin [:runIde] (2021.1, Professional)" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="env">
         <map>
           <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testType" value="PY" />
-          <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testVersion" value="2021.2" />
+          <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testVersion" value="2021.1" />
         </map>
       </option>
       <option name="executionName" />
