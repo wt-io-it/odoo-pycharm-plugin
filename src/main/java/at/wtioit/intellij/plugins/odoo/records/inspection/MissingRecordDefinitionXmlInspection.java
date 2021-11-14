@@ -52,6 +52,7 @@ public class MissingRecordDefinitionXmlInspection extends LocalInspectionTool {
                             && !recordService.hasLocalTemplate(element, id, xmlId)
                             && !xmlId.contains(".field_") // fields are not yet implemented
                             && !(id.startsWith("{{") && id.endsWith("}}")) // we cannot resolve dynamic refs yet
+                            && !(id.startsWith("#{") && id.endsWith("}")) // we cannot resolve dynamic refs yet
                     ) {
                         holder.registerProblem(element, OdooBundle.message("INSP.NAME.missing.record.definition.for.$0", xmlId), ProblemHighlightType.WARNING);
                         // TODO add possible quick fixes
