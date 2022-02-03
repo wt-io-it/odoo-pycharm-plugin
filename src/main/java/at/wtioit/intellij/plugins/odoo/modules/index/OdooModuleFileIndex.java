@@ -59,7 +59,7 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
 
     @Override
     public int getVersion() {
-        return 5;
+        return 7;
     }
 
     @NotNull

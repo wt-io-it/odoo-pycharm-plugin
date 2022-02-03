@@ -31,7 +31,7 @@
         <li>
           Version 0.5.8:
           <ul>
-            <li>TODO: fixes indexing error, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/5, thanks to SimonRubi for reporting</li>
+            <li>fixes indexing error, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/5, thanks to SimonRubi for reporting</li>
           </ul>
         </li>
         <li>
