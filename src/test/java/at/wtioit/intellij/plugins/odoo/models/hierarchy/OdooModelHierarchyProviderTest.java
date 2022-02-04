@@ -3,21 +3,41 @@ package at.wtioit.intellij.plugins.odoo.models.hierarchy;
 import at.wtioit.intellij.plugins.odoo.BaseOdooPluginTest;
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import com.intellij.ide.hierarchy.*;
-import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyClass;
+import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static com.intellij.ide.hierarchy.TypeHierarchyBrowserBase.SUBTYPES_HIERARCHY_TYPE;
-import static com.intellij.ide.hierarchy.TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE;
-
 public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
+
+    private static String getHierarchyType(@NotNull String methodName, @NotNull String fieldName, @NotNull String defaultValue) {
+        // Starting with 2021.3 the static fields we used are no longer available but the getters are used for creating the type strings
+        try {
+            Method method = TypeHierarchyBrowserBase.class.getMethod(methodName);
+            return (String) method.invoke(TypeHierarchyBrowserBase.class);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassCastException e) {
+            Field field = null;
+            try {
+                field = TypeHierarchyBrowserBase.class.getField(fieldName);
+                return (String) field.get(TypeHierarchyBrowserBase.class);
+            } catch (NoSuchFieldException | IllegalAccessException | ClassCastException ex) {
+                return defaultValue;
+            }
+        }
+
+    }
+
+    public static final String TYPE_HIERARCHY_TYPE = getHierarchyType("getTypeHierarchyType", "TYPE_HIERARCHY_TYPE", "Class {0}");
+    public static final String SUBTYPES_HIERARCHY_TYPE = getHierarchyType("getSubtypesHierarchyType", "SUBTYPES_HIERARCHY_TYPE","Subtypes of {0}");
 
     HierarchyProvider hierarchyProvider;
 
