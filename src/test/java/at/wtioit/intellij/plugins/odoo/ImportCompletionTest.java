@@ -48,6 +48,15 @@ public class ImportCompletionTest extends BaseOdooPluginTest {
         assertEquals("__manifest__,models", lookupStrings);
     }
 
+    public void testFromOdooAddonsMyOtherAddonImportFromSpecificModel() {
+        LookupElement[] result = doTest(FileComparisonFailure.class);
+        String lookupStrings = Arrays.stream(result)
+                .map(LookupElement::getLookupString)
+                .sorted()
+                .collect(Collectors.joining(","));
+        assertEquals("my_models_with_dynamic_name,my_other_model", lookupStrings);
+    }
+
     public void testFromOdooAddonsNoDependencies() {
         // this completion fails because there is two completion contributors suggesting odoo.addons.no_dependencies
         // in the normal auto-completion the user would decide for one of them but in the tests it just is empty

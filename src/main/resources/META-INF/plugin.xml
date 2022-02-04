@@ -33,6 +33,7 @@
           <ul>
             <li>fixes indexing error, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/5, thanks to SimonRubi for reporting</li>
             <li>added a custom error handler to make reporting errors easier</li>
+            <li>fix autocompletion for paths inside a module, do not suggest module names for <pre>from odoo.addons.addon.</pre></li>
           </ul>
         </li>
         <li>

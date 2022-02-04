@@ -23,11 +23,16 @@ public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletio
         String fqdn = expressionWithDummy.substring(0, expressionWithDummy.length() - CompletionUtilCore.DUMMY_IDENTIFIER.length() + 1);
         if (fqdn.startsWith("odoo.addons.")) {
             PsiElement dot = parameters.getPosition().getPrevSibling();
-            String addonNameStart = "";
-            if (dot != null && dot.getText().equals(".")) {
-                addonNameStart = fqdn.substring(dot.getStartOffsetInParent() + 1);
+            if (dot != null) {
+                PsiElement packageName = dot.getPrevSibling();
+                String addonNameStart = "";
+                if (packageName.getText().equals("odoo.addons")) {
+                    if (dot.getText().equals(".")) {
+                        addonNameStart = fqdn.substring(dot.getStartOffsetInParent() + 1);
+                    }
+                    suggestModuleName(parameters, result, addonNameStart);
+                }
             }
-            suggestModuleName(parameters, result, addonNameStart);
         } else {
             PyFromImportStatement parentImportStatement = findParent(parameters.getPosition(), PyFromImportStatement.class);
             if (!fqdn.contains(".") && parentImportStatement != null
