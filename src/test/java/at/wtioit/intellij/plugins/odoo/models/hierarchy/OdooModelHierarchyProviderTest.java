@@ -9,7 +9,10 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyClass;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.intellij.ide.hierarchy.TypeHierarchyBrowserBase.SUBTYPES_HIERARCHY_TYPE;
 import static com.intellij.ide.hierarchy.TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE;
@@ -96,12 +99,15 @@ public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
                 .append(element.getPsiElement()).append(",")
                 .append(element.getContainingFile()).append(",")
                 .append(element.getContainingFile().getContainingDirectory()).append("\n");
-        for (Object descriptorObj : hierarchyTreeStructure.getChildElements(element)) {
-            if (descriptorObj instanceof HierarchyNodeDescriptor) {
-                result.append(computeTree(hierarchyTreeStructure, (HierarchyNodeDescriptor) descriptorObj));
-            } else {
-                throw new AssertionError("Expected all children to be a HierarchyNodeDescriptor");
-            }
+        Object[] childElements = hierarchyTreeStructure.getChildElements(element);
+        List<HierarchyNodeDescriptor> sortedChildElements = Arrays.stream(childElements)
+                .filter((o) -> o instanceof HierarchyNodeDescriptor)
+                .map(o -> (HierarchyNodeDescriptor) o)
+                .sorted(Comparator.comparing(o -> o.getContainingFile().getContainingDirectory().toString()))
+                .collect(Collectors.toList());
+        assertEquals("Expected all children to be a HierarchyNodeDescriptor", childElements.length, sortedChildElements.size());
+        for (HierarchyNodeDescriptor descriptorObj : sortedChildElements) {
+            result.append(computeTree(hierarchyTreeStructure, descriptorObj));
         }
         return result.toString();
     }
