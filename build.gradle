@@ -16,7 +16,7 @@ version = project.findProperty("pluginVersion")
 
 sourceCompatibility = 1.8
 
-def intellijVersion = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testVersion") ?: '2021.1.3'
+def intellijVersion = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testVersion") ?: '2021.2.4'
 def intellijType = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testType") ?: 'PC'
 def intellijPlugins = []
 def buildDownloadSources = project.findProperty("platformDownloadSources").toBoolean()
