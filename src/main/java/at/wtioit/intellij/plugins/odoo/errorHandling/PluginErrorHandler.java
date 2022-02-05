@@ -6,6 +6,8 @@ import com.intellij.diagnostic.IdeaReportingEvent;
 import com.intellij.diagnostic.LogMessage;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
+import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.ErrorReportSubmitter;
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
@@ -52,7 +54,7 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
                 .map(getGetVersionDependentVersionFunktion())
                 .collect(Collectors.joining(","));
         String issueTitle = OdooBundle.message("PLUGIN.ERROR.HANDLER.report.new.issue.title");
-        String shortenedIssueText = createIssueText(events, additionalInfo);
+        String shortenedIssueText = createIssueText(events, additionalInfo, versions);
         shortenedIssueText = shortenIssueText(shortenedIssueText);
         try {
             // for github issue parameters see https://docs.github.com/en/enterprise-server@3.1/issues/tracking-your-work-with-issues/creating-an-issue#creating-an-issue-from-a-url-query
@@ -74,18 +76,28 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
         if (ApplicationInfoHelper.versionGreaterThanEqual(ApplicationInfoHelper.Versions.V_2020)) {
             return (pluginDescriptor) -> {
                 try {
-                    // We use reflective access here to maintain compatiblity with 2019.2 and 2019.3 API
+                    // We use reflective access here to maintain compatibility with 2019.2 and 2019.3 API
                     Method getVersion = pluginDescriptor.getClass().getMethod("getVersion");
                     return (String) getVersion.invoke(pluginDescriptor);
                 } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassCastException e) {
-                    // TODO use the same fallback as for 2019.2 and 2019.3
-                    return "";
+                    return detectVersionFromLegacyObjects(pluginDescriptor);
                 }
             };
         } else {
-            // TODO find plugin version in 2019.2, 2019.3
-            return (pluginDescriptor) -> "";
+            return this::detectVersionFromLegacyObjects;
         }
+    }
+
+    /**
+     * Detect plugin version for versions 2019.2 and 2019.3
+     * @param pluginDescriptor - descriptor of the plugin to get the version for
+     * @return version as a string
+     */
+    private String detectVersionFromLegacyObjects(IdeaPluginDescriptor pluginDescriptor) {
+        if (pluginDescriptor instanceof IdeaPluginDescriptorImpl) {
+            return ((IdeaPluginDescriptorImpl) pluginDescriptor).getVersion();
+        }
+        return "Undetected Version";
     }
 
     @NotNull
@@ -110,10 +122,15 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
     }
 
     @NotNull
-    private String createIssueText(@NotNull IdeaLoggingEvent[] events, @Nullable String additionalInfo) {
+    private String createIssueText(@NotNull IdeaLoggingEvent[] events, @Nullable String additionalInfo, String versions) {
         StringBuilder issueText = new StringBuilder();
         if (additionalInfo != null) {
             issueText.append(additionalInfo);
+            issueText.append("\n\n");
+        }
+        if (versions != null) {
+            issueText.append("Plugin Version: " + versions + "\n");
+            issueText.append("IDEA Version: " + ApplicationInfo.getInstance().getFullApplicationName() + "\n");
             issueText.append("\n\n");
         }
         for (IdeaLoggingEvent event : events) {
