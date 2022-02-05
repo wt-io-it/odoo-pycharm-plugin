@@ -79,11 +79,12 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
 
     @Override
     public int getVersion() {
-        return 18;
+        return 20;
     }
 
+    @NotNull
     @Override
-    public FileBasedIndex.@NotNull InputFilter getInputFilter() {
+    public FileBasedIndex.InputFilter getInputFilter() {
         return file -> {
             // TODO maybe check that we are inside of a possible module
             return file.getFileType() == PythonFileType.INSTANCE

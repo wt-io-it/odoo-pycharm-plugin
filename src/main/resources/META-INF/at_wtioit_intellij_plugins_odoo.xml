@@ -45,6 +45,7 @@
         <lang.inspectionSuppressor implementationClass="at.wtioit.intellij.plugins.odoo.modules.inspection.ManifestInspectionSuppressor"
                                    language="Python" />
         <gotoDeclarationHandler implementation="at.wtioit.intellij.plugins.odoo.OdooGoToDeclarationHandler" />
+        <errorHandler implementation="at.wtioit.intellij.plugins.odoo.errorHandling.PluginErrorHandler" />
     </extensions>
     <extensions defaultExtensionNs="Pythonid">
         <importResolver implementation="at.wtioit.intellij.plugins.odoo.pycharm.PyCharmOdooAddonsImportResolver" />

@@ -32,7 +32,7 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
         if (fqn.startsWith("odoo.addons.")) {
             if (fqn.indexOf('.', 12) == -1) {
                 // we resolve the addon directly, this is triggered when using 'import odoo.addons.addon_name' or 'from odoo.addons.addon_name import models'
-                String addonName = fqn.substring(12);
+                String addonName = name.getLastComponent();
                 OdooModule module = moduleService.getModule(addonName);
                 if (module != null) {
                     return WithinProject.call(context.getProject(), module::getDirectory);

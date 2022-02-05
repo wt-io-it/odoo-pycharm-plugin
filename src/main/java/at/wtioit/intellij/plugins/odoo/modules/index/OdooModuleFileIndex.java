@@ -59,11 +59,12 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
 
     @Override
     public int getVersion() {
-        return 5;
+        return 7;
     }
 
+    @NotNull
     @Override
-    public FileBasedIndex.@NotNull InputFilter getInputFilter() {
+    public FileBasedIndex.InputFilter getInputFilter() {
         // an odoo module has __manifest__.py as a definition file
         return file -> "__manifest__.py".equals(file.getName())
                 && OdooModuleService.isValidOdooModuleDirectory(file.getPath())

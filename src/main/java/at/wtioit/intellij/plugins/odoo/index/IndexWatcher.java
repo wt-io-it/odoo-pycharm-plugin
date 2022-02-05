@@ -23,6 +23,10 @@ public class IndexWatcher extends ThreadLocal<IndexWatcher.IndexState> {
 
     public static boolean isCalledInIndexJob() {
         IndexState state = INSTANCE.get();
-        return state == null || state.insideIndex;
+        if (state != null) {
+            return state.insideIndex;
+        } else {
+            return false;
+        }
     }
 }

@@ -3,11 +3,11 @@ import java.util.stream.Collectors
 plugins {
     id("java")
     // get the newest version from https://github.com/JetBrains/intellij-platform-plugin-template/blob/main/build.gradle.kts
-    id("org.jetbrains.intellij") version '1.2.1'
+    id("org.jetbrains.intellij") version '1.3.0'
     // Gradle Changelog Plugin
     id("org.jetbrains.changelog") version "1.3.0"
     // Gradle Qodana Plugin
-    id("org.jetbrains.qodana") version "0.1.12"
+    id("org.jetbrains.qodana") version "0.1.13"
 }
 
 
@@ -28,7 +28,11 @@ if (intellijVersion != '2019.2' && intellijType == 'PC') {
     intellijPlugins.add('Pythonid')
     // see https://plugins.jetbrains.com/plugin/631-python/versions
 }
-if (intellijType == 'PY' || intellijType == 'PC') {
+def intellijMinorVersion = intellijVersion.substring(0, 6)
+if (intellijType == 'PY' || intellijMinorVersion in ['2019.2', '2019.3','2020.1', '2020.2', '2020.3', '2021.1']) {
+    // we can get no sources for pycharm professional
+    // or versions where the source code does not reside in ivy
+    // (2021 JCenter shut down and it seems that JetBrains did not publish/migrate older sources to ivy)
     buildDownloadSources = false
 }
 
@@ -37,8 +41,7 @@ repositories {
 }
 
 dependencies {
-    //testCompile group: 'junit', name: 'junit', version: '4.12'
-    //testCompile group: 'org.mockito', name: 'mockito-core', version: '2.28.2'
+    testImplementation("junit:junit:4.13.2")
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
@@ -50,6 +53,17 @@ intellij {
     plugins.set(intellijPlugins)
     // this needs to be false to be able to leave out the until-build in plugin.xml
     updateSinceUntilBuild.set(false)
+}
+
+// workaround for tests not being found in 2021.3+
+// see https://youtrack.jetbrains.com/issue/IDEA-278926#focus=Comments-27-5561012.0-0
+allprojects {
+    test {
+        scanForTestClasses false
+        include "**/*Test.class"
+        exclude "**/Abstract*Test.class"
+        exclude "**/BaseOdooPluginTest.class"
+    }
 }
 
 tasks {
@@ -83,4 +97,5 @@ tasks {
     publishPlugin {
         token.set(System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_intellijPublishToken"))
     }
+
 }
