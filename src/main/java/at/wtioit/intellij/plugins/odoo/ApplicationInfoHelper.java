@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationInfo;
 public interface ApplicationInfoHelper {
 
     enum Versions {
+        V_2020("2020"),
         V_2021("2021");
 
         private final int major;
