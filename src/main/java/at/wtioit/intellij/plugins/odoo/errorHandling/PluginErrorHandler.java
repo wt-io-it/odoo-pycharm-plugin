@@ -54,7 +54,7 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
                 .map(getGetVersionDependentVersionFunktion())
                 .collect(Collectors.joining(","));
         String issueTitle = OdooBundle.message("PLUGIN.ERROR.HANDLER.report.new.issue.title");
-        String shortenedIssueText = createIssueText(events, additionalInfo);
+        String shortenedIssueText = createIssueText(events, additionalInfo, versions);
         shortenedIssueText = shortenIssueText(shortenedIssueText);
         try {
             // for github issue parameters see https://docs.github.com/en/enterprise-server@3.1/issues/tracking-your-work-with-issues/creating-an-issue#creating-an-issue-from-a-url-query
@@ -122,10 +122,15 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
     }
 
     @NotNull
-    private String createIssueText(@NotNull IdeaLoggingEvent[] events, @Nullable String additionalInfo) {
+    private String createIssueText(@NotNull IdeaLoggingEvent[] events, @Nullable String additionalInfo, String versions) {
         StringBuilder issueText = new StringBuilder();
         if (additionalInfo != null) {
             issueText.append(additionalInfo);
+            issueText.append("\n\n");
+        }
+        if (versions != null) {
+            issueText.append("Plugin Version: " + versions + "\n");
+            issueText.append("IDEA Version: " + ApplicationInfo.getInstance().getFullApplicationName() + "\n");
             issueText.append("\n\n");
         }
         for (IdeaLoggingEvent event : events) {
