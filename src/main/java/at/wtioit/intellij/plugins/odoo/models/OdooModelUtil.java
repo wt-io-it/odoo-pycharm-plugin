@@ -1,6 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.models;
 
-import com.intellij.codeInsight.completion.CompletionUtilCore;
+import at.wtioit.intellij.plugins.odoo.index.IndexWatcher;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
@@ -70,13 +70,19 @@ public class OdooModelUtil {
                 logger.error("Unknown string value class: " + valueChild.getClass());
             }
         } else if (valueChild instanceof PyReferenceExpression) {
-            PyReferenceExpression expression = (PyReferenceExpression) valueChild;
-            PsiElement resolvedElement = expression.followAssignmentsChain(contextSupplier.get()).getElement();
-            if (resolvedElement != null) {
-                return getStringValueForValueChild(resolvedElement, contextSupplier);
-            } else {
-                logger.debug("Cannot detect string value for " + valueChild.getReference());
+            if (!IndexWatcher.isCalledInIndexJob()) {
+                // this is only safe when not running in index job as the followAssignmentsChain may load other
+                // python files and this leads to `Indexing process should not rely on non-indexed file data`
+                PyReferenceExpression expression = (PyReferenceExpression) valueChild;
+                PsiElement resolvedElement = expression.followAssignmentsChain(contextSupplier.get()).getElement();
+                if (resolvedElement != null) {
+                    return getStringValueForValueChild(resolvedElement, contextSupplier);
+                } else {
+                    logger.debug("Cannot detect string value for " + valueChild.getReference());
+                }
             }
+            // TODO when running in index job add some magic that lets us look up self.SOMETHING within the same file
+            // like we do for superclasses at/wtioit/intellij/plugins/odoo/OdooModelPsiElementMatcherUtil.java:201
         } else if (valueChild instanceof PyBinaryExpression) {
             PyElementType operator = ((PyBinaryExpression) valueChild).getOperator();
             if (operator != null) {
