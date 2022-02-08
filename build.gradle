@@ -21,16 +21,22 @@ def intellijType = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testType") ?: 'PC'
 def intellijPlugins = []
 def buildDownloadSources = project.findProperty("platformDownloadSources").toBoolean()
 
+def intellijMinorVersion = intellijVersion.substring(0, 6)
 if (intellijVersion != '2019.2' && intellijType == 'PC') {
-    // only pycharm 2019.2 seems to provide com.jetbrains.python.psi itself
+    // only PyCharm 2019.2 seems to provide com.jetbrains.python.psi itself
     intellijPlugins.add('PythonCore')
     // see https://plugins.jetbrains.com/plugin/7322-python-community-edition/versions
 } else if (intellijVersion != '2019.2' && intellijType == 'PY') {
     // PyCharm Professional uses another python plugin
     intellijPlugins.add('Pythonid')
     // see https://plugins.jetbrains.com/plugin/631-python/versions
+} else if (intellijType == 'IU') {
+    // TODO resolve release number to build number for plugin Pythonid
+    intellijPlugins.add('Pythonid:213.6777.52')
+} else if (intellijType == 'IC') {
+    // TODO resolve release number to build number for plugin Pythonid
+    intellijPlugins.add('PythonCore:213.6777.52')
 }
-def intellijMinorVersion = intellijVersion.substring(0, 6)
 if (intellijType == 'PY' || intellijMinorVersion in ['2019.2', '2019.3','2020.1', '2020.2', '2020.3', '2021.1']) {
     // we can get no sources for pycharm professional
     // or versions where the source code does not reside in ivy

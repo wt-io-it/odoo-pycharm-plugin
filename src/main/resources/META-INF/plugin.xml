@@ -33,6 +33,7 @@
           <ul>
             <li>fix indexing error, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/8</li>
             <li>fix Pattern error on Windows, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/9, thanks to kanyijoshua for reporting</li>
+            <li>fix SearchEverywhere for IntelliJ, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/16, thanks to fromero for reporting</li>
           </ul>
         </li>
         <li>
