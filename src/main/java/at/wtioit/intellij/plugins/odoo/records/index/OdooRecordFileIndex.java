@@ -80,7 +80,7 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
     }
 
     @Override
-    public FileBasedIndex.@NotNull InputFilter getInputFilter() {
+    public @NotNull FileBasedIndex.InputFilter getInputFilter() {
         // records can be inside of xml and csv files
         return file -> file.getFileType() == XmlFileType.INSTANCE || Objects.equals(file.getExtension(), "csv");
     }

@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.models;
 
+import at.wtioit.intellij.plugins.odoo.index.IndexWatcher;
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.openapi.diagnostic.Logger;

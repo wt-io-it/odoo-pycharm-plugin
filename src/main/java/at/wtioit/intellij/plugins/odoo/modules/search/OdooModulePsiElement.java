@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.modules.search;
 
+import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.search.AbstractOdooPsiElement;
@@ -33,7 +34,7 @@ public class OdooModulePsiElement extends AbstractOdooPsiElement implements Odoo
 
     @Override
     public @Nullable PsiElement getDirectory() {
-        return module.getDirectory();
+        return WithinProject.call(getProject(), module::getDirectory);
     }
 
     @Override

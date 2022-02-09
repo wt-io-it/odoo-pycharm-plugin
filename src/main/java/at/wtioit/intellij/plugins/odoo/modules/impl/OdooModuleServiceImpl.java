@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class OdooModuleServiceImpl implements OdooModuleService {
 
@@ -104,7 +105,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     @Override
     public PsiDirectory getModuleDirectory(String location) {
         // guess a module first (fast path)
-        String[] path = location.split(File.separator);
+        String[] path = location.split(Pattern.quote(File.separator));
         String moduleName = null;
         if ("addons".equals(path[path.length - 2])) {
             moduleName = path[path.length - 1];
