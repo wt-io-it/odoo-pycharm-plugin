@@ -8,6 +8,8 @@ import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
 import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContextImpl;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+
 public class PyCharmOdooAddonsImportResolverTest extends BaseOdooPluginTest {
 
     private PyImportResolver importResolver;
@@ -74,6 +76,9 @@ public class PyCharmOdooAddonsImportResolverTest extends BaseOdooPluginTest {
         @Nullable PsiElement resolved = importResolver.resolveImportReference(name, context, true);
         if (expected != null) {
             assertNotNull(resolved);
+            if (File.separator.equals("\\")) {
+                expected = expected.replaceAll("/", "\\\\");
+            }
             assertEquals(expected, resolved.toString());
         } else {
             assertNull(resolved);
