@@ -69,6 +69,7 @@ allprojects {
     test {
         scanForTestClasses false
         include "**/*Test.class"
+        include "**/Test*.class"
         exclude "**/Abstract*Test.class"
         exclude "**/BaseOdooPluginTest.class"
     }
