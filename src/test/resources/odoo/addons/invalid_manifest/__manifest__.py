@@ -1,3 +1,3 @@
 {
     'depends': [],
-# this file is invalid (its not an accident its a test ;-) )
+# this file is invalid (it's not an accident it's a test ;-) )
