@@ -115,7 +115,10 @@ public interface PsiElementsUtil {
 
 
     static String getStringValueForValueChild(@NotNull PsiElement valueChild, Supplier<PyResolveContext> contextSupplier) {
-        if (valueChild instanceof PyStringLiteralExpressionImpl) {
+        if (valueChild instanceof PyNoneLiteralExpression) {
+            // _name = None, see src/test/resources/odoo/addons/module_indexing_special_cases/models/abstract_model.py
+            return null;
+        } else if (valueChild instanceof PyStringLiteralExpressionImpl) {
             return ((PyStringLiteralExpressionImpl) valueChild).getStringValue();
         } else if (valueChild instanceof PyStringElement) {
             TextRange contentRange = ((PyStringElement) valueChild).getContentRange();
