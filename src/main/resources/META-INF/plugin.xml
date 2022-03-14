@@ -38,6 +38,18 @@
           </ul>
         </li>
         <li>
+          Version 0.5.12:
+          <ul>
+            <li>fix indexing error for models with name None, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/21, thanks to YoannyD for reporting</li>
+          </ul>
+        </li>
+        <li>
+          Version 0.5.11:
+          <ul>
+            <li>fix paths on Windows, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/19, thanks to borisdamevin for reporting</li>
+          </ul>
+        </li>
+        <li>
           Version 0.5.10:
           <ul>
             <li>fix indexing error, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/8</li>

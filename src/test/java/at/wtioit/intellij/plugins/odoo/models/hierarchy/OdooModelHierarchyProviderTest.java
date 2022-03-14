@@ -8,6 +8,7 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyClass;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -109,6 +110,9 @@ public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
         assertNotNull(hierarchyTreeStructure);
         String tree = computeTree(hierarchyTreeStructure, (HierarchyNodeDescriptor) hierarchyTreeStructure.getRootElement());
         String expectedTree = myFixture.configureByFile("hierarchy/" + getTestName(true) + ".tree.txt").getText();
+        if (File.separator.equals("\\")) {
+            expectedTree = expectedTree.replaceAll("/", "\\\\");
+        }
         assertEquals(expectedTree, tree);
     }
 

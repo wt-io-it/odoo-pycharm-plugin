@@ -105,11 +105,12 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     @Override
     public PsiDirectory getModuleDirectory(String location) {
         // guess a module first (fast path)
-        String[] path = location.split(Pattern.quote(File.separator));
+        // windows locations have slashes here as well (we get them from getPath())
+        String[] path = location.split("/");
         String moduleName = null;
-        if ("addons".equals(path[path.length - 2])) {
+        if (path.length >= 2 && "addons".equals(path[path.length - 2])) {
             moduleName = path[path.length - 1];
-        } else if ("models".equals(path[path.length - 2])) {
+        } else if (path.length >= 3 && "models".equals(path[path.length - 2])) {
             moduleName = path[path.length - 3];
         }
         if (moduleName != null) {
@@ -130,13 +131,14 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     }
 
     private PsiDirectory getModuleDirectorySlow(String location) {
+        // Windows paths have slashes here as well (we get the from getPath())
         return ApplicationManager.getApplication().runReadAction((Computable<PsiDirectory>) () -> {
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             for (PsiFile file : FilenameIndex.getFilesByName(project, "__manifest__.py", scope)) {
                 PsiDirectory directory = file.getParent();
                 if (directory != null) {
                     String directoryPath = directory.getVirtualFile().getPath();
-                    if (OdooModuleService.isValidOdooModuleDirectory(directoryPath) && location.equals(directoryPath) || location.startsWith(directoryPath + File.separator)) {
+                    if (OdooModuleService.isValidOdooModuleDirectory(directoryPath) && location.equals(directoryPath) || location.startsWith(directoryPath + "/")) {
                         return directory;
                     }
                 }
