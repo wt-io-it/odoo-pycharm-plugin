@@ -39,7 +39,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     @Override
     public String[] getXmlIds() {
         Collection<String> allKeys = FileBasedIndex.getInstance().getAllKeys(OdooRecordFileIndex.NAME, project);
-        return allKeys.toArray(new String[allKeys.size()]);
+        return allKeys.toArray(new String[0]);
     }
 
     @Override

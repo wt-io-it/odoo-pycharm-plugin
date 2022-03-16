@@ -18,7 +18,7 @@ public class TestRecordServiceImpl extends BaseOdooPluginTest {
 
         assertNull("Expected to get a record for an existing record", recordService.getRecord("addon1.not_existing_record"));
         assertNotNull("Expected to get a record for an existing record", recordService.getRecord("addon1.record1"));
-        // TODO this should work but currently the xmlId is empty if we cannot find it right aways (during first index pass)
+        // TODO this should work but currently the xmlId is empty if we cannot find it right away (during first index pass)
         //assertEquals("addon1.record1", recordService.getRecord("addon1.record1").getXmlId());
         assertEquals("record1", recordService.getRecord("addon1.record1").getId());
     }
@@ -37,6 +37,8 @@ public class TestRecordServiceImpl extends BaseOdooPluginTest {
     }
 
     public void testRecordXmlIds() {
+        // test.record100 is read from this recordNameInRefAttribute.xml so we make sure it belongs to the project
+        myFixture.configureByFile("goto/recordNameInRefAttribute.xml");
         OdooRecordService recordService = ServiceManager.getService(getProject(), OdooRecordService.class);
         assertContainsElements(Arrays.stream(recordService.getXmlIds()).collect(Collectors.toList()), "addon1.record4", "test.record100");
     }
