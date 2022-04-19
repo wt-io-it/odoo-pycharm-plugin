@@ -44,6 +44,7 @@ public class TestModelImpl extends BaseOdooPluginTest {
                 "PyClass: Inherited; /src/odoo/addons/addon1/models/inherited.py",
                 "PyClass: InheritedBase; /src/odoo/addons/addon3/models/inherited.py",
                 "PyClass: InheritedInherited; /src/odoo/addons/addon3/models/inherited.py",
+                "PyClass: InheritedInherited2; /src/odoo/addons/addon3/models/inherited.py",
                 "PyClass: InheritedInherited; /src/odoo/addons/addon3/other_dir/inherited.py");
     }
 

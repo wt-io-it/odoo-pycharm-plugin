@@ -98,6 +98,11 @@ public class OdooModelUtil {
             }
         } else if (valueChild instanceof PyCallExpression || valueChild instanceof PySubscriptionExpression) {
             logger.debug("Cannot detect string value for class: " + valueChild.getClass());
+        } else if (valueChild instanceof PyParenthesizedExpression) {
+            // for values in parentheses we return the value for the contained expression
+            // which should be correct at least for non lists
+            // https://docs.python.org/3/reference/expressions.html#parenthesized-forms
+            return getStringValueForValueChild(((PyParenthesizedExpression) valueChild).getContainedExpression(), contextSupplier);
         } else if (valueChild instanceof PsiErrorElement) {
             // ignore PsiErrorElements (used to indicate errors in Editor)
         } else {
