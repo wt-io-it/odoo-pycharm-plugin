@@ -32,6 +32,7 @@
           Version 0.5.13:
           <ul>
             <li>fix indexing error for models with name in parentheses, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/24, thanks to gitmehedi for reporting</li>
+            <li>fix indexing error for models with a set expression for inherit
           </ul>
         </li>
         <li>
