@@ -102,6 +102,12 @@ public class OdooModelUtil {
             if (containedExpression != null) {
                 return getStringValueForValueChild(containedExpression, contextSupplier);
             }
+        } else if (valueChild instanceof PyDictLiteralExpression) {
+            //firstChild() somehow returns the bracket
+            PsiElement firstChild = valueChild.getChildren()[0];
+            if (firstChild instanceof PyKeyValueExpression) {
+                return getStringValueForValueChild(((PyKeyValueExpression) firstChild).getKey(), contextSupplier);
+            }
         } else if (valueChild instanceof PsiErrorElement) {
             // ignore PsiErrorElements (used to indicate errors in Editor)
         } else {
