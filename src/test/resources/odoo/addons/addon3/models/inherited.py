@@ -5,3 +5,6 @@ class InheritedBase(models.Model):
 
 class InheritedInherited(models.Model):
     _inherit = 'inherited'
+
+class InheritedInherited2(models.Model):
+    _inherit = ("inherited")
