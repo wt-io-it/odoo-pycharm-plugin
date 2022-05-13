@@ -38,7 +38,7 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
     public static final int ISSUE_BODY_LIMIT = 3000;
 
     public static final String NOT_SO_IMPORTANT_PACKAGES = "(?:java|kotlinx?|com.jetbrains|com.intellij|org.intellij)";
-    public static final String ELIPSIS = "...";
+    public static final String ELLIPSIS = "...";
 
     @Override
     public @NlsActions.ActionText
@@ -104,11 +104,11 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
     private String shortenIssueText(String issueText) {
         if (issueText.length() > ISSUE_BODY_LIMIT) {
             // shorten groups of calls with the same package name
-            issueText = issueText.replaceAll("\t(at " + NOT_SO_IMPORTANT_PACKAGES + "\\.)([^\n]+)(?:\n\t\\1[^\n]+)+\n\t(\\1)", "\t$1$2\n\t" + ELIPSIS + "\n\t$3");
+            issueText = issueText.replaceAll("\t(at " + NOT_SO_IMPORTANT_PACKAGES + "\\.)([^\n]+)(?:\n\t\\1[^\n]+)+\n\t(\\1)", "\t$1$2\n\t" + ELLIPSIS + "\n\t$3");
         }
         if (issueText.length() > ISSUE_BODY_LIMIT) {
             // shorten as much calls as possible event if packages change in between
-            issueText = issueText.replaceAll("\t(at " + NOT_SO_IMPORTANT_PACKAGES + "[^\n]+)(?:\n\t(?:at " + NOT_SO_IMPORTANT_PACKAGES + "[^\n]+|" + ELIPSIS + "))+\n\t(at " + NOT_SO_IMPORTANT_PACKAGES + "[^\n]+)", "\t$1\n\t" + ELIPSIS + "\n\t$2");
+            issueText = issueText.replaceAll("\t(at " + NOT_SO_IMPORTANT_PACKAGES + "[^\n]+)(?:\n\t(?:at " + NOT_SO_IMPORTANT_PACKAGES + "[^\n]+|" + ELLIPSIS + "))+\n\t(at " + NOT_SO_IMPORTANT_PACKAGES + "[^\n]+)", "\t$1\n\t" + ELLIPSIS + "\n\t$2");
         }
         if (issueText.length() > ISSUE_BODY_LIMIT) {
             // shorten package names of not so important packages
