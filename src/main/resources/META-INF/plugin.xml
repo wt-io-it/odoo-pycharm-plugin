@@ -30,13 +30,21 @@
   <change-notes><![CDATA[
       <ul>
         <li>
-        <li>
           Version 0.6.0:
           <ul>
             <li>enable support for Odoo records</li>
             <li>add goto support for Odoo module names</li>
           </ul>
         </li>
+        <li>
+          Version 0.5.13:
+          <ul>
+            <li>fix indexing error for models with name in parentheses, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/24, thanks to gitmehedi for reporting</li>
+            <li>fix indexing error for models with a set expression for inherit</li>
+            <li>fix indexing error for models with inherit in dict, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/20, thanks to  omarouhari for reporting</li>
+          </ul>
+        </li>
+        <li>
         <li>
           Version 0.5.12:
           <ul>

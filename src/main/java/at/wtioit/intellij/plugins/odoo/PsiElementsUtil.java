@@ -118,19 +118,15 @@ public interface PsiElementsUtil {
         if (valueChild instanceof PyNoneLiteralExpression) {
             // _name = None, see src/test/resources/odoo/addons/module_indexing_special_cases/models/abstract_model.py
             return null;
-        } else if (valueChild instanceof PyStringLiteralExpressionImpl) {
-            return ((PyStringLiteralExpressionImpl) valueChild).getStringValue();
+        } else if (valueChild instanceof PyStringLiteralExpression) {
+            return ((PyStringLiteralExpression) valueChild).getStringValue();
         } else if (valueChild instanceof PyStringElement) {
             TextRange contentRange = ((PyStringElement) valueChild).getContentRange();
             return valueChild.getText().substring(contentRange.getStartOffset(), contentRange.getEndOffset());
-        } else if (valueChild instanceof PyListLiteralExpression) {
+        } else if (valueChild instanceof PyListLiteralExpression || valueChild instanceof PySetLiteralExpression) {
             //firstChild() somehow returns the bracket
             PsiElement firstChild = valueChild.getChildren()[0];
-            if (firstChild instanceof PyStringLiteralExpressionImpl) {
-                return ((PyStringLiteralExpressionImpl) firstChild).getStringValue();
-            } else {
-                logger.error("Unknown string value class: " + valueChild.getClass());
-            }
+            return getStringValueForValueChild(firstChild);
         } else if (valueChild instanceof PyReferenceExpression) {
             if (!IndexWatcher.isCalledInIndexJob()) {
                 // this is only safe when not running in index job as the followAssignmentsChain may load other
@@ -157,6 +153,21 @@ public interface PsiElementsUtil {
             }
         } else if (valueChild instanceof PyCallExpression || valueChild instanceof PySubscriptionExpression) {
             logger.debug("Cannot detect string value for class: " + valueChild.getClass());
+        } else if (valueChild instanceof PyParenthesizedExpression) {
+            // for values in parentheses we return the value for the contained expression
+            // which should be correct at least for non lists
+            // https://docs.python.org/3/reference/expressions.html#parenthesized-forms
+            PyExpression containedExpression = ((PyParenthesizedExpression) valueChild).getContainedExpression();
+            if (containedExpression != null) {
+                return getStringValueForValueChild(containedExpression, contextSupplier);
+            }
+        } else if (valueChild instanceof PyDictLiteralExpression) {
+                //firstChild() somehow returns the bracket
+                PsiElement firstChild = valueChild.getChildren()[0];
+                if (firstChild instanceof PyKeyValueExpression) {
+                    return getStringValueForValueChild(((PyKeyValueExpression) firstChild).getKey(), contextSupplier);
+                }
+
         } else if (valueChild instanceof PsiErrorElement) {
             // ignore PsiErrorElements (used to indicate errors in Editor)
         } else {

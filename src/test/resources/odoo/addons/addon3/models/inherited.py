@@ -5,3 +5,9 @@ class InheritedBase(models.Model):
 
 class InheritedInherited(models.Model):
     _inherit = 'inherited'
+
+class InheritedInheritedParentheses(models.Model):
+    _inherit = ("inherited")
+
+class InheritedInheritedSetExpression(models.Model):
+    _inherit = {"inherited"}

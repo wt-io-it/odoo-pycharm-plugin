@@ -6,6 +6,10 @@ public class PythonModelNameCompletionTest extends BaseOdooPluginTest {
         doTest();
     }
 
+    public void testModelNameInNameParenthesized() {
+        doTest();
+    }
+
     public void testModelNameInInherit() {
         doTest();
     }
