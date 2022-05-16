@@ -4,6 +4,9 @@ import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.index.OdooDataIndexer;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexEntry;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexError;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexExtension;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -24,7 +27,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooModelDefinition> {
+public class OdooModelFileIndex extends OdooIndexExtension<OdooModelDefinition> {
 
     @NonNls public static final ID<String, OdooModelDefinition> NAME = ID.create("OdooModelFileIndex");
 
@@ -122,5 +125,13 @@ public class OdooModelFileIndex extends FileBasedIndexExtension<String, OdooMode
             });
             return models;
         }
+    }
+
+    @Override
+    public <E extends OdooIndexEntry> OdooModelDefinition castValue(E entry) {
+        if (entry instanceof OdooModelDefinition) {
+            return (OdooModelDefinition) entry;
+        }
+        throw new OdooIndexError("expected entry to be of type OdooModelDefinition");
     }
 }

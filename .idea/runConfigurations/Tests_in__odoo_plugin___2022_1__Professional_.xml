@@ -1,27 +1,30 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pycharm-plugin [:runIde] (2020.1, Professional)" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Tests in 'odoo_plugin' (2022.1, Professional)" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="env">
         <map>
           <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testType" value="PY" />
-          <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testVersion" value="2020.1" />
+          <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testVersion" value="2022.1" />
         </map>
       </option>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="--stacktrace" />
+      <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
         <list>
-          <option value=":runIde" />
+          <option value=":cleanTest" />
+          <option value=":test" />
+          <option value="--tests" />
+          <option value="*" />
         </list>
       </option>
-      <option name="vmOptions" />
+      <option name="vmOptions" value="" />
     </ExternalSystemSettings>
-    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
     <method v="2" />

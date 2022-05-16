@@ -14,7 +14,10 @@ public abstract class AbstractDataExternalizer<T> implements DataExternalizer<T>
 
     protected String readString(@NotNull DataInput in) throws IOException {
         int nameLength = in.readInt();
-        if (nameLength != NULL_VALUE_MARKER) {
+        if (nameLength < 0) {
+            // TODO index is corrupt we need to reindex everything
+            return null;
+        } else if (nameLength != NULL_VALUE_MARKER) {
             byte[] nameBytes = new byte[nameLength];
             for (int i = 0; i < nameLength; i++) {
                 nameBytes[i] = in.readByte();

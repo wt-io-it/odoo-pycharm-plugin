@@ -3,6 +3,7 @@ package at.wtioit.intellij.plugins.odoo.modules.impl;
 import at.wtioit.intellij.plugins.odoo.OdooBundle;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.index.IndexWatcher;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndex;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.modules.index.OdooDeserializedModuleImpl;
@@ -13,6 +14,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -20,13 +22,14 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.Nullable;
+import sun.nio.cs.IBM737;
 
 import java.io.File;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class OdooModuleServiceImpl implements OdooModuleService {
 
+    private static final List<String> COMMON_ODOO_MODULE_SUBDIRS = Arrays.asList("data", "demo", "views", "models", "tests");
     Project project;
 
     public OdooModuleServiceImpl(Project project) {
@@ -36,15 +39,13 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     @Override
     public Iterable<OdooModule> getModules() {
         List<OdooModule> modules = new ArrayList<>();
-        FileBasedIndex index = FileBasedIndex.getInstance();
-        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        for (String moduleName : index.getAllKeys(OdooModuleFileIndex.NAME, project)) {
-            List<OdooModule> modulesForName = index.getValues(OdooModuleFileIndex.NAME, moduleName, scope);
+        OdooIndex.getAllKeyValuesPairs(project, OdooModule.class).forEach(nameModules -> {
+            List<OdooModule> modulesForName = nameModules.getSecond();
             if (modulesForName.size() > 1) {
-                showDuplicateModuleWarning(moduleName);
+                showDuplicateModuleWarning(nameModules.getFirst());
             }
             modules.addAll(modulesForName);
-        }
+        });
         return modules;
     }
 
@@ -53,9 +54,8 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     public OdooModule getModule(String moduleName) {
         if(!IndexWatcher.isCalledInIndexJob()) {
             return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
-                FileBasedIndex index = FileBasedIndex.getInstance();
                 GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-                List<OdooModule> modulesForName = index.getValues(OdooModuleFileIndex.NAME, moduleName, scope);
+                List<OdooModule> modulesForName = OdooIndex.getValues(moduleName, scope, OdooModule.class);
                 if (modulesForName.size() > 1) {
                     showDuplicateModuleWarning(moduleName);
                     return modulesForName.get(0);
@@ -78,7 +78,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
                 FileBasedIndex index = FileBasedIndex.getInstance();
                 VirtualFile manifest = moduleDirectory.getVirtualFile().findFileByRelativePath("__manifest__.py");
                 if (manifest != null) {
-                    Map<String, OdooModule> modules = index.getFileData(OdooModuleFileIndex.NAME, manifest, project);
+                    Map<String, OdooModule> modules = OdooIndex.getFileData(manifest, project, OdooModule.class);
                     if (modules.size() == 1) {
                         return modules.values().iterator().next();
                     }
@@ -110,7 +110,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         String moduleName = null;
         if (path.length >= 2 && "addons".equals(path[path.length - 2])) {
             moduleName = path[path.length - 1];
-        } else if (path.length >= 3 && "models".equals(path[path.length - 2])) {
+        } else if (path.length >= 3 && COMMON_ODOO_MODULE_SUBDIRS.contains(path[path.length - 2])) {
             moduleName = path[path.length - 3];
         }
         if (moduleName != null) {
@@ -133,6 +133,8 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     private PsiDirectory getModuleDirectorySlow(String location) {
         // Windows paths have slashes here as well (we get the from getPath())
         return ApplicationManager.getApplication().runReadAction((Computable<PsiDirectory>) () -> {
+            // TODO iterate over known modules first, before accessing FilenameIndex
+            // TODO do not acccess FilenameIndex while indexing
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             for (PsiFile file : FilenameIndex.getFilesByName(project, "__manifest__.py", scope)) {
                 PsiDirectory directory = file.getParent();

@@ -1,9 +1,12 @@
 package at.wtioit.intellij.plugins.odoo.records.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexEntry;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexError;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexExtension;
+import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import com.intellij.ide.highlighter.XmlFileType;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.indexing.*;
@@ -21,11 +24,9 @@ import java.util.*;
 import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromCsvFile;
 import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromFile;
 
-public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRecord> {
+public class OdooRecordFileIndex extends OdooIndexExtension<OdooRecord> {
 
     @NonNls public static final ID<String, OdooRecord> NAME = ID.create("OdooRecordFileIndex");
-
-    private static final Logger logger = Logger.getInstance(OdooRecordFileIndex.class);
 
     OdooRecordFileIndexer indexer = new OdooRecordFileIndexer();
 
@@ -46,6 +47,7 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
 
     @Override
     public @NotNull DataExternalizer<OdooRecord> getValueExternalizer() {
+        // TODO only hand out one instance
         return new AbstractDataExternalizer<OdooRecord>() {
             @Override
             public void save(@NotNull DataOutput out, OdooRecord record) throws IOException {
@@ -124,5 +126,13 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
             }
             return Collections.emptyMap();
         }
+    }
+
+    @Override
+    public <E extends OdooIndexEntry> OdooRecord castValue(E entry) {
+        if (entry instanceof OdooRecord) {
+            return (OdooRecord) entry;
+        }
+        throw new OdooIndexError("expected entry to be of type OdooRecord");
     }
 }

@@ -1,6 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.records;
 
 import at.wtioit.intellij.plugins.odoo.WithinProject;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiDirectory;
@@ -23,6 +24,11 @@ public abstract class AbstractOdooRecord implements OdooRecord {
         this.xmlId = xmlId;
         this.modelName = modelName;
         this.path = path;
+    }
+
+    @Override
+    public OdooIndexSubKeys getSubIndexKey() {
+        return OdooIndexSubKeys.ODOO_RECORDS;
     }
 
     @NotNull

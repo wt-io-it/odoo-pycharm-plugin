@@ -1,6 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.modules.impl;
 
 import at.wtioit.intellij.plugins.odoo.WithinProject;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
@@ -17,6 +18,11 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public abstract class AbstractOdooModuleImpl implements OdooModule {
+
+    @Override
+    public OdooIndexSubKeys getSubIndexKey() {
+        return OdooIndexSubKeys.ODOO_MODULES;
+    }
 
     @Override
     public @NotNull List<OdooModel> getModels() {

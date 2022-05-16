@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.records.impl;
 
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import com.intellij.psi.PsiElement;
@@ -11,6 +12,11 @@ public class OdooModelRecord implements OdooRecord {
 
     public OdooModelRecord(OdooModel model) {
         this.model = model;
+    }
+
+    @Override
+    public OdooIndexSubKeys getSubIndexKey() {
+        return OdooIndexSubKeys.ODOO_MODELS;
     }
 
     @Override

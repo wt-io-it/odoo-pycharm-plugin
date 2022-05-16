@@ -1,8 +1,11 @@
 package at.wtioit.intellij.plugins.odoo.models.impl;
 
+import at.wtioit.intellij.plugins.odoo.index.OdooIndex;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
+import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
 import at.wtioit.intellij.plugins.odoo.models.index.OdooModelFileIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -27,8 +30,10 @@ public class OdooModelServiceImpl implements OdooModelService {
         // TODO check usages for wildcard scenarios
         FileBasedIndex index = FileBasedIndex.getInstance();
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        return index.getAllKeys(OdooModelFileIndex.NAME, project).stream()
-                .map(modelName -> Pair.create(modelName, index.getContainingFiles(OdooModelFileIndex.NAME, modelName, scope)))
+        // TODO this seems inefficient
+        // TODO check if this yields false positives (records names like models?)
+        return OdooIndex.getAllKeys(OdooIndexSubKeys.ODOO_MODELS, project)
+                .map(modelName -> Pair.create(modelName, index.getContainingFiles(OdooIndex.NAME, modelName, scope)))
                 .filter(pair -> pair.second.size() > 0)
                 .map(pair -> (OdooModel) new OdooModelImpl(pair.first, pair.second, project))
                 ::iterator;
@@ -62,8 +67,7 @@ public class OdooModelServiceImpl implements OdooModelService {
 
     @Override
     public boolean hasModel(String name) {
-        FileBasedIndex index = FileBasedIndex.getInstance();
-        if (index.getAllKeys(OdooModelFileIndex.NAME, project).contains(name)) {
+        if (OdooIndex.getAllKeys(OdooIndexSubKeys.ODOO_MODELS, project).anyMatch(k -> k.equals(name))) {
             return true;
         }
         return matchedByWildcardName(name) != null;
@@ -72,8 +76,7 @@ public class OdooModelServiceImpl implements OdooModelService {
     @Nullable
     private String matchedByWildcardName(@Nullable  String name) {
         if (name == null) return null;
-        FileBasedIndex index = FileBasedIndex.getInstance();
-        return index.getAllKeys(OdooModelFileIndex.NAME, project).parallelStream()
+        return OdooIndex.getAllKeys(OdooIndexSubKeys.ODOO_MODELS, project)
                 .filter(modelName -> OdooModelUtil.wildcardNameMatches(modelName, name))
                 .findFirst()
                 .orElse(null);

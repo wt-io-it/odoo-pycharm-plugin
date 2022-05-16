@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.records.search;
 
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.icons.OdooPluginIcons;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import at.wtioit.intellij.plugins.odoo.search.AbstractOdooPsiElement;
 import com.intellij.openapi.project.Project;
@@ -20,6 +21,11 @@ public class OdooRecordPsiElement extends AbstractOdooPsiElement implements Odoo
     public OdooRecordPsiElement(@NotNull OdooRecord record, @NotNull Project project) {
         super(project, record::getDefiningElement);
         this.record = record;
+    }
+
+    @Override
+    public OdooIndexSubKeys getSubIndexKey() {
+        return OdooIndexSubKeys.ODOO_RECORDS;
     }
 
     @Override

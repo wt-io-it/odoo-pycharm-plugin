@@ -1,12 +1,14 @@
 package at.wtioit.intellij.plugins.odoo.models.index;
 
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexEntry;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.psi.PyClass;
 
 import java.util.Objects;
 
-public class OdooModelDefinition {
+public class OdooModelDefinition implements OdooIndexEntry {
 
     private final String className;
     private final String name;
@@ -32,6 +34,11 @@ public class OdooModelDefinition {
         this.className = className;
         name = modelName;
         this.project = projectPresentableUrl;
+    }
+
+    @Override
+    public OdooIndexSubKeys getSubIndexKey() {
+        return OdooIndexSubKeys.ODOO_MODELS;
     }
 
     public String getClassName() {

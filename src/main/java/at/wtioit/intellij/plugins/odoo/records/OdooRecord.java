@@ -1,10 +1,11 @@
 package at.wtioit.intellij.plugins.odoo.records;
 
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexEntry;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface OdooRecord {
+public interface OdooRecord extends OdooIndexEntry {
 
     @NotNull
     String getId();

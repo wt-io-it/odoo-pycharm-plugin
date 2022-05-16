@@ -1,8 +1,10 @@
 package at.wtioit.intellij.plugins.odoo.modules.search;
 
 import at.wtioit.intellij.plugins.odoo.WithinProject;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
+import at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex;
 import at.wtioit.intellij.plugins.odoo.search.AbstractOdooPsiElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -20,6 +22,11 @@ public class OdooModulePsiElement extends AbstractOdooPsiElement implements Odoo
     public OdooModulePsiElement(OdooModule forModule, Project project) {
         super(project, forModule::getDirectory);
         module = forModule;
+    }
+
+    @Override
+    public OdooIndexSubKeys getSubIndexKey() {
+        return OdooIndexSubKeys.ODOO_MODULES;
     }
 
     @Override

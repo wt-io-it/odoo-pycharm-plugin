@@ -2,6 +2,9 @@ package at.wtioit.intellij.plugins.odoo.modules.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
 import at.wtioit.intellij.plugins.odoo.index.OdooDataIndexer;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexEntry;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexError;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexExtension;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.util.indexing.*;
@@ -18,7 +21,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
-public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooModule> {
+public class OdooModuleFileIndex extends OdooIndexExtension<OdooModule> {
 
     @NonNls public static final ID<String, OdooModule> NAME = ID.create("OdooModuleFileIndex");
 
@@ -83,5 +86,13 @@ public class OdooModuleFileIndex extends FileBasedIndexExtension<String, OdooMod
             OdooVirtualFileModuleImpl module = new OdooVirtualFileModuleImpl(inputData.getFile());
             return Collections.singletonMap(module.getName(), module);
         }
+    }
+
+    @Override
+    public <E extends OdooIndexEntry> OdooModule castValue(E entry) {
+        if (entry instanceof OdooModule) {
+            return (OdooModule) entry;
+        }
+        throw new OdooIndexError("expected entry to be of type OdooModule");
     }
 }

@@ -21,9 +21,10 @@
         <projectService serviceInterface="at.wtioit.intellij.plugins.odoo.records.OdooRecordService"
                         serviceImplementation="at.wtioit.intellij.plugins.odoo.records.impl.OdooRecordServiceImpl" />
 
-        <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex" />
-        <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.models.index.OdooModelFileIndex" />
-        <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.records.index.OdooRecordFileIndex" />
+        <fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.index.OdooIndex" />
+        <!--fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex" /-->
+        <!--fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.models.index.OdooModelFileIndex" /-->
+        <!--fileBasedIndex implementation="at.wtioit.intellij.plugins.odoo.records.index.OdooRecordFileIndex" /-->
 
         <searchEverywhereContributor implementation="at.wtioit.intellij.plugins.odoo.search.OdooSearchEverywhere" />
 

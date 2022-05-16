@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.modules.impl;
 
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
@@ -26,6 +27,11 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
     public ResolveLaterOdooModuleImpl(String dependencyName, Project project) {
         moduleName = dependencyName;
         this.project = project;
+    }
+
+    @Override
+    public OdooIndexSubKeys getSubIndexKey() {
+        return OdooIndexSubKeys.ODOO_MODULES;
     }
 
     @NotNull
