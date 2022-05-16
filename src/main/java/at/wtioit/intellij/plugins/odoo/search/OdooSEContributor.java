@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.search;
 
+import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.models.search.OdooModelPsiElement;
@@ -10,16 +11,13 @@ import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecordService;
 import at.wtioit.intellij.plugins.odoo.records.search.OdooRecordPsiElement;
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereContributor;
-import com.intellij.ide.projectView.impl.ProjectViewSharedSettings;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,11 +78,16 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
 
             OdooRecordService recordService = ServiceManager.getService(project, OdooRecordService.class);
             ApplicationManager.getApplication().runReadAction(() -> {
-                for (String xmlId : recordService.getXmlIds()) {
-                    if (xmlId != null && xmlId.startsWith(pattern)) {
-                        consumer.process(new OdooRecordPsiElement(recordService.getRecord(xmlId), project));
+                WithinProject.run(project, () -> {
+                    for (String xmlId : recordService.getXmlIds()) {
+                        if (xmlId != null && xmlId.startsWith(pattern)) {
+                            OdooRecord record = recordService.getRecord(xmlId);
+                            if (record != null) {
+                                consumer.process(new OdooRecordPsiElement(record, project));
+                            }
+                        }
                     }
-                }
+                });
             });
         }
     }
