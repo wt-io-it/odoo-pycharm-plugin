@@ -4,6 +4,7 @@ import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
@@ -15,9 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromCsvFile;
 import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromFile;
@@ -96,18 +95,32 @@ public class OdooRecordFileIndex extends FileBasedIndexExtension<String, OdooRec
     }
 
     private static class OdooRecordFileIndexer implements DataIndexer<String, OdooRecord, FileContent> {
+        private static final List<String> CSV_FILETYPE_CLASS_NAMES = Arrays.asList(
+                "com.intellij.openapi.fileTypes.PlainTextFileType", // 2022.1 for csv
+                "com.intellij.database.csv.CsvFileType" // 2021.3 for csv
+        );
+
         @Override
         public @NotNull Map<String, OdooRecord> map(@NotNull FileContent inputData) {
-            if (inputData.getFileType().isBinary()) {
+            FileType fileType = inputData.getFileType();
+            if (fileType.isBinary()) {
                 // TODO we should make sure that XML and CSV are treated as text
                 return Collections.emptyMap();
             }
-            if (inputData.getFileType() == XmlFileType.INSTANCE) {
+            if (fileType == XmlFileType.INSTANCE) {
                 PsiFile file = inputData.getPsiFile();
                 return getRecordsFromFile(file, inputData.getFile().getPath());
             } else if (Objects.equals(inputData.getFile().getExtension(), "csv")) {
-                PsiFile file = inputData.getPsiFile();
-                return getRecordsFromCsvFile(file, inputData.getFile().getPath());
+                // we use names of classes here, as the presence of the classes wildly differs between versions
+                if (CSV_FILETYPE_CLASS_NAMES.contains(fileType.getClass().getName())) {
+                    PsiFile file = inputData.getPsiFile();
+                    return getRecordsFromCsvFile(file, inputData.getFile().getPath());
+                } else {
+                    // it seems starting with 2022.1 we cannot support indexing CSVs without an explicit file type
+                    // TODO provide our own basic CSV filetype for indexing for those files
+                    // * DetectedByContentFileType (new in 2022.1) (temp:///src/odoo/addons/addon1/data/existing.csv)
+                    return Collections.emptyMap();
+                }
             }
             return Collections.emptyMap();
         }

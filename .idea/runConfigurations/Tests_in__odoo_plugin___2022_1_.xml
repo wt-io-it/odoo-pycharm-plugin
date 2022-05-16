@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Tests in 'odoo_plugin' (2020.3)" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Tests in 'odoo_plugin' (2022.1)" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="env">
         <map>
-          <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testVersion" value="2020.3" />
+          <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testVersion" value="2022.1" />
         </map>
       </option>
       <option name="executionName" />

@@ -6,7 +6,7 @@ for version in "2019.2" \
  "2020.3" \
  "2021.1" \
  "2021.2" "2021.2.1" "2021.2.2" "2021.2.3" "2021.2.4" \
- "2021.3" "2021.3.1" "2021.3.2" \
+ "2021.3" "2021.3.1" "2021.3.2" "2021.3.3" \
  "2022.1" "2022.1.1"; do
   AT_WTIOIT_PYCHARM_PLUGIN_testVersion=$version
   export AT_WTIOIT_PYCHARM_PLUGIN_testVersion

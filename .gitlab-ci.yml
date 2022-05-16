@@ -13,9 +13,9 @@ run_tests:
       - TYPE: "PC" # PyCharm Community
         # TODO find a way to test "2019.2", "2019.3", "2020.1", "2020.2" with compiled plugin
         # we should still be run-time compatible, but are not compile-time compatible
-        VERSION: [ "2020.3", "2021.1", "2021.2", "2021.3", "2022.1", "2022.1.1" ]
+        VERSION: [ "2020.3", "2021.1", "2021.2", "2021.3", "2021.3.1", "2021.3.2", "2021.3.3", "2022.1", "2022.1.1" ]
       - TYPE: "PY" # PyCharm Professional
-        VERSION: [ "2020.3", "2021.1", "2021.2", "2021.3", "2022.1", "2022.1.1" ]
+        VERSION: [ "2020.3", "2021.1", "2021.2", "2021.3", "2021.3.1", "2021.3.2", "2021.3.3", "2022.1", "2022.1.1" ]
   artifacts:
     reports:
       junit: build/test-results/test/TEST-*.xml
