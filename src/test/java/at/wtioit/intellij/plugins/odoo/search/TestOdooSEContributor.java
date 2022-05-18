@@ -33,7 +33,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         OdooSEContributor contributor = new OdooSEContributor(getProject());
         ArrayList<String> resultsAddons = new ArrayList<>();
         contributor.fetchElements("addon1", new MockProgressIndicator(), (result) -> resultsAddons.add(result.getName() + ":" + result.getLocationString()));
-        assertOrderedEquals(resultsAddons, Arrays.asList(
+        assertSameElements(resultsAddons, Arrays.asList(
                 "addon1_extension:/src/odoo/addons/addon1_extension",
                 "addon1:/src/odoo/addons/addon1",
                 "addon1.record2:/src/odoo/addons/addon1/data/records.xml",
@@ -41,11 +41,13 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         ));
     }
 
+
+
     public void testFetchModulesAddonRecords() {
         OdooSEContributor contributor = new OdooSEContributor(getProject());
         ArrayList<String> resultsAddons = new ArrayList<>();
         contributor.fetchElements("addon1.record", new MockProgressIndicator(), (result) -> resultsAddons.add(result.getName() + ":" + result.getLocationString()));
-        assertOrderedEquals(resultsAddons, Arrays.asList(
+        assertSameElements(resultsAddons, Arrays.asList(
                 "addon1.record16:/src/odoo/addons/addon1/data/inherited3.csv",
                 "addon1.record15:/src/odoo/addons/addon1/data/inherited3.csv",
                 "addon1.record2:/src/odoo/addons/addon1/data/records.xml",
@@ -66,7 +68,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         OdooSEContributor contributor = new OdooSEContributor(getProject());
         ArrayList<String> resultsAddons = new ArrayList<>();
         contributor.fetchElements("addon1.", new MockProgressIndicator(), (result) -> resultsAddons.add(result.getName() + ":" + result.getLocationString()));
-        assertOrderedEquals(resultsAddons, Arrays.asList(
+        assertSameElements(resultsAddons, Arrays.asList(
                 "addon1.record16:/src/odoo/addons/addon1/data/inherited3.csv",
                 "addon1.record15:/src/odoo/addons/addon1/data/inherited3.csv",
                 "addon1.record2:/src/odoo/addons/addon1/data/records.xml",
@@ -80,10 +82,10 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
                 "addon1.record9:/src/odoo/addons/addon1/data/inherited.csv",
                 "addon1.record7:/src/odoo/addons/addon1/data/inherited.csv",
                 "addon1.record3:/src/odoo/addons/addon1/data/records2.xml",
-                "addon1.record4:/src/odoo/addons/addon1/data/records2.xml"
+                "addon1.record4:/src/odoo/addons/addon1/data/records2.xml",
+                "addon1.open_existing_dashboard_kanban:/src/odoo/addons/addon1/views/existing_view.xml",
+                "addon1.existing_kanban_view:/src/odoo/addons/addon1/views/existing_view.xml",
+                "addon1.inherited:/src/odoo/addons/addon1/data/records2.xml"
         ));
     }
-
-    // TODO add test for records
-    // and make sure :UNDETECTED_XML_IDS:... is found as well (with full xml id)
 }
