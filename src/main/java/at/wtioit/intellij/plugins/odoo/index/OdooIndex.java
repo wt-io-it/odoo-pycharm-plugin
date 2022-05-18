@@ -40,24 +40,33 @@ public class OdooIndex extends FileBasedIndexExtension<String, OdooIndexEntry> {
         map.put(OdooIndexSubKeys.ODOO_RECORDS.name(), new OdooRecordFileIndex());
         map.put(OdooIndexSubKeys.ODOO_MODELS.name(), new OdooModelFileIndex());
         map.put(OdooIndexSubKeys.ODOO_MODULES.name(), new OdooModuleFileIndex());
+        map.put(OdooIndexSubKeys.INDEX_KEYS.name(), new OdooIndexKeysIndex());
         return map;
     }
 
     // TODO unify the arguments for those methods
 
-    public static <T extends OdooIndexEntry> List<T> getValues(String key, GlobalSearchScope scope, Class<T> clazz) {
+    public static <T extends OdooIndexEntry> Stream<T> getValues(String key, GlobalSearchScope scope, Class<T> clazz) {
         FileBasedIndex index = FileBasedIndex.getInstance();
         List<OdooIndexEntry> values = index.getValues(OdooIndex.NAME, key, scope);
         return values.stream()
                 .filter(v -> clazz.isAssignableFrom(v.getClass()))
-                .map(clazz::cast)
-                .collect(Collectors.toList());
+                .map(clazz::cast);
     }
 
     public static Stream<String> getAllKeys(OdooIndexSubKeys odooIndexSubKeys, Project project) {
         // TODO this seems very slow (could use an own index ;-) )
         FileBasedIndex index = FileBasedIndex.getInstance();
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+        // TODO if we add all keys under a second key (v.getSubIndexKey) as value
+        // we can fetch all keys for a sub index very fast (i guess)
+        if (true) {
+            return index.getValues(OdooIndex.NAME, odooIndexSubKeys.name(), scope).stream()
+                    .filter(e -> e instanceof OdooKeyIndexEntry)
+                    .map(e -> (OdooKeyIndexEntry) e)
+                    .flatMap(e -> e.getKeys().stream())
+                    .distinct();
+        }
         return index.getAllKeys(OdooIndex.NAME, project).stream()
                 .filter(k -> index.getValues(OdooIndex.NAME, k, scope).stream().anyMatch(v -> v.getSubIndexKey() == odooIndexSubKeys));
     }
@@ -116,7 +125,7 @@ public class OdooIndex extends FileBasedIndexExtension<String, OdooIndexEntry> {
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 
     @Override

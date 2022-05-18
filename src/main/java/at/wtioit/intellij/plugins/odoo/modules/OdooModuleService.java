@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.stream.Stream;
 
 public interface OdooModuleService {
     static OdooModuleService getInstance(@NotNull Project project) {
@@ -37,4 +38,6 @@ public interface OdooModuleService {
                 // when using remote debugging (e.g. with docker) pycharm may have remote sources that duplicate our modules
                 && !path.contains(File.separator + "remote_sources" + File.separator);
     }
+
+    Stream<String> getModuleNames();
 }

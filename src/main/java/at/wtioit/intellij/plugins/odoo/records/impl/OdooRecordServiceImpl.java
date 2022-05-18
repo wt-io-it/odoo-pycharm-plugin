@@ -10,7 +10,6 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecordService;
-import at.wtioit.intellij.plugins.odoo.records.index.OdooRecordFileIndex;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -22,13 +21,13 @@ import com.intellij.psi.impl.source.xml.XmlTagImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OdooRecordServiceImpl implements OdooRecordService {
 
@@ -112,9 +111,9 @@ public class OdooRecordServiceImpl implements OdooRecordService {
                 undetectedXmlId = OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY + "." + xmlId;
             }
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-            @NotNull List<OdooRecord> records = OdooIndex.getValues(undetectedXmlId, scope, OdooRecord.class);
+            @NotNull Stream<OdooRecord> records = OdooIndex.getValues(undetectedXmlId, scope, OdooRecord.class);
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
-            return WithinProject.call(project, () -> records.stream()
+            return WithinProject.call(project, () -> records
                     .map(record -> Pair.create(record.getDefiningElement(), record))
                     .filter(pair -> pair.first != null)
                     .map(pair -> Pair.create(pair.first.getContainingFile(), pair.second))
@@ -169,10 +168,10 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     @NotNull
     private List<OdooRecord> findOdooRecords(String xmlId) {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        List<OdooRecord> records = OdooIndex.getValues(xmlId, scope, OdooRecord.class);
+        List<OdooRecord> records = OdooIndex.getValues(xmlId, scope, OdooRecord.class).collect(Collectors.toList());
         if (records.size() == 0) {
             String undetectedXmlId = xmlId.replaceFirst(".*(?=\\.)", OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY);
-            records = OdooIndex.getValues(undetectedXmlId, scope, OdooRecord.class);
+            records = OdooIndex.getValues(undetectedXmlId, scope, OdooRecord.class).collect(Collectors.toList());
         }
         return records;
     }

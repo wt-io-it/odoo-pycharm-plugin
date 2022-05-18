@@ -58,11 +58,12 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
     public void fetchElements(@NotNull String pattern, @NotNull ProgressIndicator progressIndicator, @NotNull Processor<? super OdooSEResult> consumer) {
         OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
         ApplicationManager.getApplication().runReadAction(() -> {
-            for (OdooModule module : moduleService.getModules()) {
-                if (module != null && module.getName().startsWith(pattern)) {
+            moduleService.getModuleNames().forEach(moduleName -> {
+                if (moduleName.startsWith(pattern)) {
+                    OdooModule module = moduleService.getModule(moduleName);
                     consumer.process(new OdooModulePsiElement(module, project));
                 }
-            }
+            });
         });
 
         // TODO once we switch to indexes this should be runnable also in "dumb" mode

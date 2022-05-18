@@ -39,4 +39,12 @@ public abstract class AbstractDataExternalizer<T> implements DataExternalizer<T>
             out.writeInt(NULL_VALUE_MARKER);
         }
     }
+
+    protected int readInteger(@NotNull DataInput in) throws IOException {
+        return in.readInt();
+    }
+
+    protected void saveInteger(int value, @NotNull DataOutput out) throws IOException {
+        out.writeInt(value);
+    }
 }

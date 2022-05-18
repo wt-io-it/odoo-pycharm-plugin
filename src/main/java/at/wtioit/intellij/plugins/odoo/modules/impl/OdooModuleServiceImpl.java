@@ -4,17 +4,16 @@ import at.wtioit.intellij.plugins.odoo.OdooBundle;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.index.IndexWatcher;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndex;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.modules.index.OdooDeserializedModuleImpl;
-import at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -22,10 +21,11 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.Nullable;
-import sun.nio.cs.IBM737;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OdooModuleServiceImpl implements OdooModuleService {
 
@@ -49,13 +49,18 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         return modules;
     }
 
+    @Override
+    public Stream<String> getModuleNames() {
+        return OdooIndex.getAllKeys(OdooIndexSubKeys.ODOO_MODULES, project);
+    }
+
     @Nullable
     @Override
     public OdooModule getModule(String moduleName) {
         if(!IndexWatcher.isCalledInIndexJob()) {
             return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
                 GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-                List<OdooModule> modulesForName = OdooIndex.getValues(moduleName, scope, OdooModule.class);
+                List<OdooModule> modulesForName = OdooIndex.getValues(moduleName, scope, OdooModule.class).collect(Collectors.toList());
                 if (modulesForName.size() > 1) {
                     showDuplicateModuleWarning(moduleName);
                     return modulesForName.get(0);
