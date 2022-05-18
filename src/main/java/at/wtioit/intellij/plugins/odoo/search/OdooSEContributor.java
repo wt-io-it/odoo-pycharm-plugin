@@ -57,18 +57,20 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
 
     @Override
     public void fetchElements(@NotNull String pattern, @NotNull ProgressIndicator progressIndicator, @NotNull Processor<? super OdooSEResult> consumer) {
-        OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
-        ApplicationManager.getApplication().runReadAction(() -> {
-            moduleService.getModuleNames().forEach(moduleName -> {
-                if (moduleName.startsWith(pattern)) {
-                    OdooModule module = moduleService.getModule(moduleName);
-                    consumer.process(new OdooModulePsiElement(module, project));
-                }
-            });
-        });
-
-        // TODO once we switch to indexes this should be runnable also in "dumb" mode
+        // our suggestions are too complex (require too much index accesses) for running in dumb mode
         if (!DumbService.isDumb(project)) {
+            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            ApplicationManager.getApplication().runReadAction(() -> {
+                moduleService.getModuleNames().forEach(moduleName -> {
+                    if (moduleName.startsWith(pattern)) {
+                        OdooModule module = moduleService.getModule(moduleName);
+                        if (module != null) {
+                            consumer.process(new OdooModulePsiElement(module, project));
+                        }
+                    }
+                });
+            });
+
             OdooModelService modelService = ServiceManager.getService(project, OdooModelService.class);
             ApplicationManager.getApplication().runReadAction(() -> {
                 for (String modelName : modelService.getModelNames()) {
