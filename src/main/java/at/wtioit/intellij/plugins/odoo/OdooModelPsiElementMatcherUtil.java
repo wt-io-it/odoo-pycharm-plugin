@@ -131,8 +131,12 @@ public interface OdooModelPsiElementMatcherUtil {
             if ("self.env".equals(text) && (isOdooModelDefinition(pyClass) || isOdooTest(pyClass) || isOdooApiFunction(function))) {
                 // handle self.env[...]
                 return true;
-            } else if ("request.env".equals(text) && isOdooControllerDefinition(pyClass)) {
+            } else if ("request.env".equals(text) && isOdooControllerDefinition(pyClass) && hasImport(pyClass,"odoo.http.request", "request")) {
                 // handle request.env[...]
+                // TODO this is also possible in Models if http.request is imported
+                return true;
+            } else if ("http.request.env".equals(text) && isOdooControllerDefinition(pyClass) && hasImport(pyClass,"odoo.http.request", "http.request")) {
+                // handle http.request.env[...]
                 // TODO this is also possible in Models if http.request is imported
                 return true;
             }
@@ -149,6 +153,18 @@ public interface OdooModelPsiElementMatcherUtil {
             return true;
         }
 
+        return false;
+    }
+
+    static boolean hasImport(PyClass pyClass, String importName, String importAlias) {
+        PyFile file = findParent(pyClass, PyFile.class);
+        if (file != null) {
+            for (PyFromImportStatement fromImport : file.getFromImports()) {
+                if (definedByImport(fromImport, Collections.singleton(importName), importAlias)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -181,6 +197,14 @@ public interface OdooModelPsiElementMatcherUtil {
             }
         } catch (IndexNotReadyException e) {
             superClasses = new PyClass[0];
+        }
+        // try resolving superclasses by expressions
+        // TODO this could be needed elsewhere as well
+        for (PyExpression superClassExpression : pyClass.getSuperClassExpressions()) {
+            String text = ((PyReferenceExpression) superClassExpression).getText();
+            if (isOdooControllerClassName(text, pyClass)) {
+                return true;
+            }
         }
         return false;
     }
@@ -282,8 +306,9 @@ public interface OdooModelPsiElementMatcherUtil {
     static boolean definedByImport(PyFromImportStatement fromImport, Set<String> possibleQualifiedNames, String currentName) {
         PyReferenceExpression importSource = fromImport.getImportSource();
         if (importSource != null) {
+            int currentNameParts = currentName.split("\\.").length - 1;
             List<String> uniquePackages = possibleQualifiedNames.stream()
-                    .map(possibleImport -> possibleImport.replaceFirst("\\.[^.]*$", ""))
+                    .map(possibleImport -> possibleImport.replaceFirst("(\\.[^.]*){" + currentNameParts + "}$", ""))
                     .distinct()
                     .collect(Collectors.toList());
             for (String packageName : uniquePackages) {

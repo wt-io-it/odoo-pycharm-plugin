@@ -11,6 +11,10 @@ public class OdooModelGoToDeclarationHandlerPythonTest extends AbstractOdooGoToD
         doTest("odoo.addons.addon3.models.inherited.InheritedBase");
     }
 
+    public void testModelNameWithSingleClassImport() {
+        doTest("odoo.addons.addon3.models.inherited.InheritedBase");
+    }
+
     public void testModelNameEnv() {
         doTest("odoo.addons.addon1.models.existing.Existing");
     }
@@ -28,6 +32,10 @@ public class OdooModelGoToDeclarationHandlerPythonTest extends AbstractOdooGoToD
     }
 
     public void testModelNameEnvInController() {
+        doTest("odoo.addons.addon1.models.existing.Existing");
+    }
+
+    public void testModelNameEnvInControllerWithHttpImport() {
         doTest("odoo.addons.addon1.models.existing.Existing");
     }
 

@@ -34,6 +34,7 @@
           <ul>
             <li>enable support for Odoo records</li>
             <li>add goto support for Odoo module names</li>
+            <li>add support for <pre>from odoo import http; ...; http.request.env[...]</pre> resolving</li>
           </ul>
         </li>
         <li>
