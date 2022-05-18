@@ -78,7 +78,8 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         if (xmlId.equals(record.getXmlId()) || xmlId.startsWith(OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY + ".")) {
             return record;
         }
-        return OdooRecordImpl.getFromData(record.getId(), xmlId, record.getModelName(), record.getPath(), record.getDefiningElement());
+        // TODO ensure we have no records with the wrong module here
+        return WithinProject.call(project, () -> OdooRecordImpl.getFromData(record.getId(), xmlId, record.getModelName(), record.getPath(), record.getDefiningElement()));
     }
 
     @Nullable
