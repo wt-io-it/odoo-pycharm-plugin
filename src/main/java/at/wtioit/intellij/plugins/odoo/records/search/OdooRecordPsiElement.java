@@ -6,6 +6,7 @@ import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import at.wtioit.intellij.plugins.odoo.search.AbstractOdooPsiElement;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.LayeredIcon;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +63,11 @@ public class OdooRecordPsiElement extends AbstractOdooPsiElement implements Odoo
     @Override
     public PsiElement getDefiningElement() {
         return WithinProject.call(getProject(), record::getDefiningElement);
+    }
+
+    @Override
+    public @Nullable VirtualFile findVirtualFile() {
+        return getDefiningElement().getContainingFile().getVirtualFile();
     }
 
     @Override

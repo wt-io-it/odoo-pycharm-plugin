@@ -19,7 +19,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -80,7 +79,6 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
             PsiDirectory moduleDirectory = getModuleDirectory(file.getPath());
             if (moduleDirectory != null) {
-                FileBasedIndex index = FileBasedIndex.getInstance();
                 VirtualFile manifest = moduleDirectory.getVirtualFile().findFileByRelativePath("__manifest__.py");
                 if (manifest != null) {
                     Map<String, OdooModule> modules = OdooIndex.getFileData(manifest, project, OdooModule.class);

@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.records.impl;
 
+import at.wtioit.intellij.plugins.odoo.FileUtil;
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
@@ -10,11 +11,11 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecordService;
+import at.wtioit.intellij.plugins.odoo.records.index.OdooRecordImpl;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.xml.XmlTagImpl;
@@ -46,7 +47,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     public OdooRecord getRecord(String xmlId) {
         List<OdooRecord> records = findOdooRecords(xmlId);
         if (records.size() == 1) {
-            return records.get(0);
+            return recordWithCorrectXmlId(records.get(0), xmlId);
         }
         // TODO find base elements
         OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
@@ -63,7 +64,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
                         }
                     }
                     if (!dependsOnOtherRecords) {
-                        return record;
+                        return recordWithCorrectXmlId(record, xmlId);
                     }
                 }
             }
@@ -71,6 +72,13 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         });
         if (baseRecord != null) return baseRecord;
         return getOdooModelRecord(xmlId);
+    }
+
+    private OdooRecord recordWithCorrectXmlId(@NotNull OdooRecord record, @NotNull String xmlId) {
+        if (xmlId.equals(record.getXmlId()) || xmlId.startsWith(OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY + ".")) {
+            return record;
+        }
+        return OdooRecordImpl.getFromData(record.getId(), xmlId, record.getModelName(), record.getPath(), record.getDefiningElement());
     }
 
     @Nullable
@@ -101,7 +109,8 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     @Override
     public boolean hasRecord(String xmlId) {
         // TODO this seems very slow (could use it's own index ;-) )
-        if (OdooIndex.getAllKeys(OdooIndexSubKeys.ODOO_RECORDS, project).anyMatch(k -> k.equals(xmlId))) {
+        //if (OdooIndex.getAllKeys(OdooIndexSubKeys.ODOO_RECORDS, project).anyMatch(k -> k.equals(xmlId))) {
+        if (OdooIndex.getValues(xmlId, GlobalSearchScope.allScope(project), OdooRecord.class).anyMatch(r -> Boolean.TRUE)) {
             return true;
         } else {
             String undetectedXmlId;
@@ -111,13 +120,10 @@ public class OdooRecordServiceImpl implements OdooRecordService {
                 undetectedXmlId = OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY + "." + xmlId;
             }
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-            @NotNull Stream<OdooRecord> records = OdooIndex.getValues(undetectedXmlId, scope, OdooRecord.class);
+            Stream<OdooRecord> records = OdooIndex.getValues(undetectedXmlId, scope, OdooRecord.class);
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
             return WithinProject.call(project, () -> records
-                    .map(record -> Pair.create(record.getDefiningElement(), record))
-                    .filter(pair -> pair.first != null)
-                    .map(pair -> Pair.create(pair.first.getContainingFile(), pair.second))
-                    .map(pair -> Pair.create(pair.first.getVirtualFile(), pair.second))
+                    .map(record -> Pair.create(record.findVirtualFile(), record))
                     .map(pair -> Pair.create(moduleService.getModule(pair.first), pair.second))
                     .anyMatch(pair ->
                             (xmlId.contains(".") && pair.first != null && xmlId.equals(pair.first.getName() + "." + pair.second.getId()))
@@ -177,12 +183,6 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     }
 
     private VirtualFile getVirtualFileForPath(String path) {
-        VirtualFileManager fileManager = VirtualFileManager.getInstance();
-        VirtualFile virtualFile = fileManager.findFileByUrl("file:///" + path);
-        if (virtualFile == null) {
-            // Mostly enable tests where files for the current tests are configured as temp files
-            virtualFile = fileManager.findFileByUrl("temp:///" + path);
-        }
-        return virtualFile;
+        return FileUtil.findFileByPath(path);
     }
 }

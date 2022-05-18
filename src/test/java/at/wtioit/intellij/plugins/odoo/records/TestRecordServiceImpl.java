@@ -16,11 +16,30 @@ public class TestRecordServiceImpl extends BaseOdooPluginTest {
     public void testFindingRecords() {
         OdooRecordService recordService = ServiceManager.getService(getProject(), OdooRecordService.class);
 
-        assertNull("Expected to get a record for an existing record", recordService.getRecord("addon1.not_existing_record"));
+        assertNull("Expected to get no record for a not existing record", recordService.getRecord("addon1.not_existing_record"));
         assertNotNull("Expected to get a record for an existing record", recordService.getRecord("addon1.record1"));
-        // TODO this should work but currently the xmlId is empty if we cannot find it right away (during first index pass)
-        //assertEquals("addon1.record1", recordService.getRecord("addon1.record1").getXmlId());
         assertEquals("record1", recordService.getRecord("addon1.record1").getId());
+        assertEquals("addon1.record1", recordService.getRecord("addon1.record1").getXmlId());
+        assertEquals("record7", recordService.getRecord("addon1.record7").getId());
+        assertEquals("addon1.record7", recordService.getRecord("addon1.record7").getXmlId());
+    }
+
+    public void testHasRecord() {
+        OdooRecordService recordService = ServiceManager.getService(getProject(), OdooRecordService.class);
+        assertTrue(recordService.hasRecord("addon1.record1"));
+        assertFalse(recordService.hasRecord("addon1.not_existing_record"));
+        assertTrue(recordService.hasRecord("addon1.record7"));
+    }
+
+    public void testRecordServiceConsistency() {
+        OdooRecordService recordService = ServiceManager.getService(getProject(), OdooRecordService.class);
+        String[] xmlIds = recordService.getXmlIds();
+        assertContainsElements(Arrays.asList(xmlIds), ":UNDETECTED_XML_ID:.record1", "addon1.record2", ":UNDETECTED_XML_ID:.record7");
+        for (String xmlId : xmlIds) {
+            OdooRecord record = recordService.getRecord(xmlId);
+            assertEquals(xmlId.replace(":UNDETECTED_XML_ID:.", ""), record.getId());
+            assertTrue(recordService.hasRecord(xmlId));
+        }
     }
 
     public void testFindingRecordWithMultipleDefinitions() {

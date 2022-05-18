@@ -3,6 +3,7 @@ package at.wtioit.intellij.plugins.odoo.records.impl;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,5 +43,10 @@ public class OdooModelRecord implements OdooRecord {
     @Override
     public PsiElement getDefiningElement() {
         return model.getDefiningElement();
+    }
+
+    @Override
+    public @Nullable VirtualFile findVirtualFile() {
+        return getDefiningElement().getContainingFile().getVirtualFile();
     }
 }

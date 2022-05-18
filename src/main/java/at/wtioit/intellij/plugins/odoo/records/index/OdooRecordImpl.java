@@ -1,8 +1,11 @@
 package at.wtioit.intellij.plugins.odoo.records.index;
 
+import at.wtioit.intellij.plugins.odoo.FileUtil;
 import at.wtioit.intellij.plugins.odoo.records.AbstractOdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +33,10 @@ public class OdooRecordImpl extends AbstractOdooRecord {
     private OdooRecordImpl(@NotNull String id, @Nullable String xmlId, @NotNull String modelName, @NotNull String path, PsiElement definingElement) {
         super(id, xmlId, modelName, path);
         this.definingElement = definingElement;
+    }
+
+    public static OdooRecord getFromData(@NotNull String id, @Nullable String xmlId, @NotNull String modelName, @NotNull String path, PsiElement definingElement) {
+        return new OdooRecordImpl(id, xmlId, modelName, path, definingElement);
     }
 
     @Nullable
@@ -91,5 +98,15 @@ public class OdooRecordImpl extends AbstractOdooRecord {
     @Override
     public PsiElement getDefiningElement() {
         return definingElement;
+    }
+
+    @Override
+    public @Nullable VirtualFile findVirtualFile() {
+        PsiFile containingFile = getDefiningElement().getContainingFile();
+        VirtualFile virtualFile = containingFile.getVirtualFile();
+        if (virtualFile == null) {
+            virtualFile = FileUtil.findFileByPath(getPath());
+        }
+        return virtualFile;
     }
 }

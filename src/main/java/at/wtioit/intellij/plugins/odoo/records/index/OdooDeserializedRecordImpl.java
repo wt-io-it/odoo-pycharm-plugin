@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -22,12 +23,7 @@ public class OdooDeserializedRecordImpl extends AbstractOdooRecord {
 
     @Override
     public PsiElement getDefiningElement() {
-        VirtualFileManager fileManager = VirtualFileManager.getInstance();
-        VirtualFile virtualFile = fileManager.findFileByUrl("file:///" + getPath());
-        if (virtualFile == null) {
-            // Mostly enable tests where files for the current tests are configured as temp files
-            virtualFile = fileManager.findFileByUrl("temp:///" + getPath());
-        }
+        VirtualFile virtualFile = findVirtualFile();
         if (virtualFile != null) {
             PsiFile file = PsiManager.getInstance(WithinProject.INSTANCE.get()).findFile(virtualFile);
             HashMap<String, OdooRecord> recordsFromFile = getRecordsFromFile(file, (record) ->
@@ -47,5 +43,16 @@ public class OdooDeserializedRecordImpl extends AbstractOdooRecord {
             }
         }
         return null;
+    }
+
+    @Nullable
+    public VirtualFile findVirtualFile() {
+        VirtualFileManager fileManager = VirtualFileManager.getInstance();
+        VirtualFile virtualFile = fileManager.findFileByUrl("file:///" + getPath());
+        if (virtualFile == null) {
+            // Mostly enable tests where files for the current tests are configured as temp files
+            virtualFile = fileManager.findFileByUrl("temp:///" + getPath());
+        }
+        return virtualFile;
     }
 }

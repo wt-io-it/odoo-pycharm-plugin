@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.search;
 
+import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
@@ -77,12 +78,32 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
                 }
             });
 
+            String undetectedXmlId;
+            String undetectedXmlIdExpectedModule;
+            if (pattern.contains(".")) {
+                undetectedXmlId = pattern.replaceFirst(".*(?=\\.)", OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY);
+                undetectedXmlIdExpectedModule = pattern.replaceFirst("\\..*", "");
+            } else {
+                undetectedXmlId = OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY + "." + pattern;
+                undetectedXmlIdExpectedModule = null;
+            }
             OdooRecordService recordService = ServiceManager.getService(project, OdooRecordService.class);
             ApplicationManager.getApplication().runReadAction(() -> {
                 WithinProject.run(project, () -> {
                     for (String xmlId : recordService.getXmlIds()) {
                         if (xmlId != null && xmlId.startsWith(pattern)) {
                             OdooRecord record = recordService.getRecord(xmlId);
+                            if (record != null) {
+                                consumer.process(new OdooRecordPsiElement(record, project));
+                            }
+                        } else if (xmlId != null && xmlId.startsWith(undetectedXmlId)) {
+                            String expectedXmlId;
+                            if (undetectedXmlIdExpectedModule != null) {
+                                 expectedXmlId = xmlId.replaceFirst(OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY, undetectedXmlIdExpectedModule);
+                            } else {
+                                expectedXmlId = xmlId;
+                            }
+                            OdooRecord record = recordService.getRecord(expectedXmlId);
                             if (record != null) {
                                 consumer.process(new OdooRecordPsiElement(record, project));
                             }
