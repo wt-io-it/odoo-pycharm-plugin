@@ -127,6 +127,9 @@ public class OdooModelHierarchyProviderTest extends BaseOdooPluginTest {
         List<HierarchyNodeDescriptor> sortedChildElements = Arrays.stream(childElements)
                 .filter((o) -> o instanceof HierarchyNodeDescriptor)
                 .map(o -> (HierarchyNodeDescriptor) o)
+                .sorted(Comparator.comparing(o -> o.getElement().toString()))
+                .sorted(Comparator.comparing(o -> o.getPsiElement().toString()))
+                .sorted(Comparator.comparing(o -> o.getContainingFile().toString()))
                 .sorted(Comparator.comparing(o -> o.getContainingFile().getContainingDirectory().toString()))
                 .collect(Collectors.toList());
         assertEquals("Expected all children to be a HierarchyNodeDescriptor", childElements.length, sortedChildElements.size());
