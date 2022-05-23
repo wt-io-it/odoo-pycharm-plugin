@@ -2,7 +2,6 @@ package at.wtioit.intellij.plugins.odoo.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
 import at.wtioit.intellij.plugins.odoo.models.index.OdooModelFileIndex;
-import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.index.OdooModuleFileIndex;
 import at.wtioit.intellij.plugins.odoo.records.index.OdooRecordFileIndex;
 import com.intellij.openapi.project.Project;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
