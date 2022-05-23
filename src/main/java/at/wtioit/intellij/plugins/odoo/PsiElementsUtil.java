@@ -123,7 +123,9 @@ public interface PsiElementsUtil {
         } else if (valueChild instanceof PyStringElement) {
             TextRange contentRange = ((PyStringElement) valueChild).getContentRange();
             return valueChild.getText().substring(contentRange.getStartOffset(), contentRange.getEndOffset());
-        } else if (valueChild instanceof PyListLiteralExpression || valueChild instanceof PySetLiteralExpression) {
+        } else if (valueChild instanceof PyListLiteralExpression
+                || valueChild instanceof PySetLiteralExpression
+                || valueChild instanceof PyTupleExpression) {
             //firstChild() somehow returns the bracket
             PsiElement firstChild = valueChild.getChildren()[0];
             return getStringValueForValueChild(firstChild);

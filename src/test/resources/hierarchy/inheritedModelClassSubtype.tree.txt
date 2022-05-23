@@ -5,4 +5,6 @@
 ,PyClass: InheritedInherited,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/models
 ,PyClass: InheritedInheritedParentheses,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/models
 ,PyClass: InheritedInheritedSetExpression,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/models
+,PyClass: InheritedInheritedTuple,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/models
+,PyClass: InheritedInheritedTupleParentheses,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/models
 ,PyClass: InheritedInherited,PyFile:inherited.py,PsiDirectory:/src/odoo/addons/addon3/other_dir

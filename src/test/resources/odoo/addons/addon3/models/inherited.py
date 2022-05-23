@@ -9,5 +9,11 @@ class InheritedInherited(models.Model):
 class InheritedInheritedParentheses(models.Model):
     _inherit = ("inherited")
 
+class InheritedInheritedTuple(models.Model):
+    _inherit = "inherited",
+
+class InheritedInheritedTupleParentheses(models.Model):
+    _inherit = ("inherited",)
+
 class InheritedInheritedSetExpression(models.Model):
     _inherit = {"inherited"}
