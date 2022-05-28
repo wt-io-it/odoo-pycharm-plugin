@@ -59,6 +59,10 @@ public class OdooGoToDeclarationHandlerPythonTest extends AbstractOdooGoToDeclar
         doTest("odoo.addons.addon1.models.existing.Existing");
     }
 
+    public void testModelNameM2NFieldNoNameYet() {
+        doTestExpectNoResult();
+    }
+
     public void testModelNameM2NFieldKeywordArgs() {
         doTest("odoo.addons.addon1.models.existing.Existing");
     }
