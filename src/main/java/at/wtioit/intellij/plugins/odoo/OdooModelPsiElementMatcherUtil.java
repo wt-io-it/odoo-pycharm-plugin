@@ -87,7 +87,7 @@ public interface OdooModelPsiElementMatcherUtil {
             String fieldType = pyCallExpression.getCallee().getText();
             if (OdooModel.ODOO_MODEL_NAME_FIELD_NAMES.contains(fieldType)) {
                 PyArgumentList arguments = findParent(element, PyArgumentList.class, 2);
-                if (arguments != null) {
+                if (arguments != null && arguments.getChildren().length > 0) {
                     PsiElement firstArgument = arguments.getChildren()[0];
                     if (!(firstArgument instanceof PyKeywordArgument) && firstArgument == element.getParent()) {
                         // fields.{N}2{M}(..., ) first argument
