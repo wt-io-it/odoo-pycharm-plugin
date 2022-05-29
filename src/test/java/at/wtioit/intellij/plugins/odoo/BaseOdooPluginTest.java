@@ -25,7 +25,7 @@ public abstract class BaseOdooPluginTest extends BasePlatformTestCase {
         try {
             URL testClassDirectoryUrl = this.getClass().getClassLoader().getResource(".");
             assertNotNull("Directory for the class of the current directory shouldn't be null", testClassDirectoryUrl);
-            return testClassDirectoryUrl.toURI().getPath().replaceAll("/classes/.*", "");
+            return testClassDirectoryUrl.toURI().getPath().replaceAll("/(classes|instrumented)/.*", "");
         } catch (URISyntaxException e) {
             throw new AssertionError("Cannot get resources directory", e);
         }
