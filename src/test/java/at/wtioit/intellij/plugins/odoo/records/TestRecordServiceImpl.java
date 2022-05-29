@@ -22,6 +22,8 @@ public class TestRecordServiceImpl extends BaseOdooPluginTest {
         assertEquals("addon1.record1", recordService.getRecord("addon1.record1").getXmlId());
         assertEquals("record7", recordService.getRecord("addon1.record7").getId());
         assertEquals("addon1.record7", recordService.getRecord("addon1.record7").getXmlId());
+        assertEquals("openerp_record", recordService.getRecord("addon1.openerp_record").getId());
+        assertEquals("addon1.openerp_record", recordService.getRecord("addon1.openerp_record").getXmlId());
     }
 
     public void testHasRecord() {
@@ -29,6 +31,15 @@ public class TestRecordServiceImpl extends BaseOdooPluginTest {
         assertTrue(recordService.hasRecord("addon1.record1"));
         assertFalse(recordService.hasRecord("addon1.not_existing_record"));
         assertTrue(recordService.hasRecord("addon1.record7"));
+        assertTrue(recordService.hasRecord("addon1.openerp_record"));
+    }
+
+    public void testHashRecordNonUniqueNames() {
+        // those records are defined by multiple modules without a leading module name
+        OdooRecordService recordService = ServiceManager.getService(getProject(), OdooRecordService.class);
+        assertTrue(recordService.hasRecord("addon1.my_not_unique_record_name"));
+        assertTrue(recordService.hasRecord("addon1_extension.my_not_unique_record_name"));
+        assertFalse(recordService.hasRecord("addon2.my_not_unique_record_name"));
     }
 
     public void testRecordServiceConsistency() {

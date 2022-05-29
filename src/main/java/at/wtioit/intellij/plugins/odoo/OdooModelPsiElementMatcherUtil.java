@@ -357,7 +357,7 @@ public interface OdooModelPsiElementMatcherUtil {
                     if (tag.getNamespace().contains("http://relaxng.com/ns/")) {
                         // skip investigating relaxng schemas for odoo models
                         return true;
-                    } else if ("odoo".equals(tag.getName())) {
+                    } else if ("odoo".equals(tag.getName()) || "openerp".equals(tag.getName())) {
                         records.putAll(getRecordsFromOdooTag(tag, pathSupplier.get(), matches, limit));
                         return true;
                     } else if ("templates".equals(tag.getName())) {

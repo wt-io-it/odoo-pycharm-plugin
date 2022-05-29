@@ -3,5 +3,8 @@
     <data>
         <record id="record1" model="existing" />
         <record id="addon1.record2" model="existing" />
+        <record id="my_not_unique_record_name" model="existing">
+            <field name="name">Name for addon1.my_not_unique_record_name from addon1</field>
+        </record>
     </data>
 </odoo>

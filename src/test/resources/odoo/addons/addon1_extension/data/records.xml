@@ -4,5 +4,8 @@
         <record id="addon1.record2" model="existing">
             <field name="name">Name for addon1.record2 from addon1_extension</field>
         </record>
+        <record id="my_not_unique_record_name" model="existing">
+            <field name="name">Nam2 for addon1_extension.my_not_unique_record_name from addon1_extension</field>
+        </record>
     </data>
 </odoo>
