@@ -18,6 +18,10 @@ public class OdooModelGoToDeclarationHandlerXMLTest extends AbstractOdooGoToDecl
         doTest("odoo.addons.addon3.models.inherited.InheritedBase");
     }
 
+    public void testModelNameInRefAttribute() {
+        doTest("odoo.addons.addon1.models.existing.Existing");
+    }
+
     @Override
     String getFileExtension() {
         return ".xml";

@@ -71,7 +71,9 @@ public class OdooRecordServiceImpl implements OdooRecordService {
             return null;
         });
         if (baseRecord != null) return baseRecord;
-        return getOdooModelRecord(xmlId);
+        OdooModelRecord odooModelRecord = getOdooModelRecord(xmlId);
+        if (odooModelRecord != null) return odooModelRecord;
+        return getOdooModuleRecord(xmlId);
     }
 
     private OdooRecord recordWithCorrectXmlId(@NotNull OdooRecord record, @NotNull String xmlId) {
@@ -107,6 +109,20 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         return null;
     }
 
+    @Nullable
+    private OdooModuleRecord getOdooModuleRecord(String xmlId) {
+        String[] xmlIdParts = xmlId.split("\\.");
+        if (xmlIdParts.length == 2 && "base".equals(xmlIdParts[0]) && xmlIdParts[1].startsWith("module_")) {
+            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            String moduleName = xmlIdParts[1].substring(7);
+            OdooModule module = moduleService.getModule(moduleName);
+            if (module != null) {
+                return new OdooModuleRecord(module);
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean hasRecord(String xmlId) {
         // TODO this seems very slow (could use it's own index ;-) )
@@ -130,7 +146,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
                             (xmlId.contains(".") && pair.first != null && xmlId.equals(pair.first.getName() + "." + pair.second.getId()))
                                     // TODO the or part should be before resolving the defining elements for resolving the module
                                     || (!xmlId.contains(".") && pair.second.getXmlId() == null && pair.second.getId().equals(xmlId))))
-                    || getOdooModelRecord(xmlId) != null;
+                    || getOdooModelRecord(xmlId) != null || getOdooModuleRecord(xmlId) != null;
         }
     }
 

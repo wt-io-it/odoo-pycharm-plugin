@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+    <problem>
+        <file>data.xml</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/views.xml" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Reference to a missing record defintion (xmlId)</problem_class>
+        <description>Missing record definition for addon1.model_not_existing</description>
+    </problem>
+    <problem>
+        <file>data.xml</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/views.xml" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Reference to a missing record defintion (xmlId)</problem_class>
+        <description>Missing record definition for base.module_not_existing</description>
+    </problem>
+</problems>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="should_have_problems" model="existing">
+        <field name="model_id" ref="addon1.model_not_existing" />
+        <field name="module_id" ref="base.module_not_existing" />
+    </record>
+</odoo>

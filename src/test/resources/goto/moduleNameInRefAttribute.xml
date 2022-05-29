@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="record1" model="existing">
+            <field name="module_id" ref="base.module_<caret>addon1" />
+        </record>
+    </data>
+</odoo>

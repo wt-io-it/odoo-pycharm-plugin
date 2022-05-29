@@ -2,32 +2,33 @@ package at.wtioit.intellij.plugins.odoo.records.impl;
 
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
+import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class OdooModelRecord implements OdooRecord {
-    private final OdooModel model;
+public class OdooModuleRecord implements OdooRecord {
+    private final OdooModule module;
 
-    public OdooModelRecord(OdooModel model) {
-        this.model = model;
+    public OdooModuleRecord(OdooModule module) {
+        this.module = module;
     }
 
     @Override
     public OdooIndexSubKeys getSubIndexKey() {
-        return OdooIndexSubKeys.ODOO_MODELS;
+        return OdooIndexSubKeys.ODOO_MODULES;
     }
 
     @Override
     public @NotNull String getId() {
-        return "model_" + model.getName().replace(".", "_");
+        return "module_" + module.getName();
     }
 
     @Override
     public @Nullable String getXmlId() {
-        return model.getBaseModule().getName() + "." + getId();
+        return "base." + getId();
     }
 
     @Override
@@ -37,16 +38,16 @@ public class OdooModelRecord implements OdooRecord {
 
     @Override
     public @NotNull String getModelName() {
-        return "ir.model";
+        return "ir.module.module";
     }
 
     @Override
     public PsiElement getDefiningElement() {
-        return model.getDefiningElement();
+        return module.getManifestFile();
     }
 
     @Override
     public @Nullable VirtualFile findVirtualFile() {
-        return getDefiningElement().getContainingFile().getVirtualFile();
+        return module.getManifestFile().getVirtualFile();
     }
 }

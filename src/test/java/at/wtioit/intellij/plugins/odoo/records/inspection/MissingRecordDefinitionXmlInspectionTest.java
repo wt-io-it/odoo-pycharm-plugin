@@ -31,6 +31,16 @@ public class MissingRecordDefinitionXmlInspectionTest extends BaseOdooPluginTest
         doTest();
     }
 
+    public void testNoExtraProblemsForExistingModelModuleReferences() {
+        // we test that we can resolve module_ and model_ pseudo xml ids
+        doTest();
+    }
+
+    public void testMissingRecordForNotExistingModuleModelReferences() {
+        // we test that we can resolve module_ and model_ pseudo xml ids
+        doTest();
+    }
+
     private void doTest() {
         LocalInspectionToolWrapper toolWrapper = new LocalInspectionToolWrapper(new MissingRecordDefinitionXmlInspection());
         myFixture.testInspection("inspection/records/" + getTestName(true), toolWrapper);
