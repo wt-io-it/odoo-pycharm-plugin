@@ -14,4 +14,6 @@ public interface OdooRecordService {
     String ensureFullXmlId(PsiFile file, String refName);
 
     boolean hasLocalTemplate(PsiElement element, String id, String xmlId);
+
+    boolean hasGlobalTemplate(String id);
 }

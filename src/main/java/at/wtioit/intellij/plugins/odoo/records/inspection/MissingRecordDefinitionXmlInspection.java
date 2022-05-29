@@ -43,6 +43,7 @@ public class MissingRecordDefinitionXmlInspection extends LocalInspectionTool {
                     String xmlId = recordService.ensureFullXmlId(element.getContainingFile(), id);
                     if (!recordService.hasRecord(xmlId)
                             && !recordService.hasLocalTemplate(element, id, xmlId)
+                            && !recordService.hasGlobalTemplate(id)
                             && !xmlId.contains(".field_") // fields are not yet implemented
                             && !(id.startsWith("{{") && id.endsWith("}}")) // we cannot resolve dynamic refs yet
                             && !(id.startsWith("#{") && id.endsWith("}")) // also not resolvable yet

@@ -360,7 +360,8 @@ public interface OdooModelPsiElementMatcherUtil {
                     } else if ("odoo".equals(tag.getName()) || "openerp".equals(tag.getName())) {
                         records.putAll(getRecordsFromOdooTag(tag, pathSupplier.get(), matches, limit));
                         return true;
-                    } else if ("templates".equals(tag.getName())) {
+                    } else if ("templates".equals(tag.getName()) || "template".equals(tag.getName())) {
+                        // TODO templates should go to a different index (they have no real xmlid)
                         records.putAll(getRecordsFromTemplateTag(tag, pathSupplier.get(), matches, limit));
                     }
                     // investigate children

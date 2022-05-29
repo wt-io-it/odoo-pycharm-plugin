@@ -172,6 +172,12 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         return false;
     }
 
+    @Override
+    public boolean hasGlobalTemplate(String id) {
+        // TODO enable goto handler for those
+        return this.hasRecord("web." + id);
+    }
+
     @NotNull
     private List<OdooRecord> findOdooRecords(String xmlId) {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
