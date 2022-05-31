@@ -63,6 +63,11 @@ if (intellijType == 'PY' || intellijMinorVersion in ['2019.2', '2019.3','2020.1'
     // (2021 JCenter shut down and it seems that JetBrains did not publish/migrate older sources to ivy)
     buildDownloadSources = false
 }
+if (intellijType == 'PY' && intellijMinorVersion in ['2022.1'] ) {
+    // https://youtrack.jetbrains.com/issue/IJSDK-1427/Running-tests-for-PyCharm-Professional-is-not-working
+    // testing with PY since 2022.1 requires to also add com.intellij.platform.images (automatically provided in PC)
+    intellijPlugins.add('com.intellij.platform.images')
+}
 
 repositories {
     mavenCentral()
