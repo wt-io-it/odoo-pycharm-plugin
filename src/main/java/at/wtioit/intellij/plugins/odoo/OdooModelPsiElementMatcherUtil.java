@@ -219,7 +219,7 @@ public interface OdooModelPsiElementMatcherUtil {
             if (!(IndexWatcher.isCalledInIndexJob() && ApplicationInfoHelper.versionGreaterThanEqual(ApplicationInfoHelper.Versions.V_2021))
                     && !DumbService.isDumb(pyline.getProject())) {
                 /*
-                We use a version switch here because starting with 2021 releases JetBrains shows an error to the use if
+                We use a version switch here because starting with 2021 releases JetBrains shows an error to the user if
                 an indexing job opens a file it did not expect it to. Inspecting the super classes may lead to such an
                 error because it may load other python files. So we fall back to our own parsing for 2021+.
                 */
