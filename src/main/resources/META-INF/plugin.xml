@@ -38,6 +38,13 @@
           </ul>
         </li>
         <li>
+          Version 0.5.16:
+          <ul>
+            <li>fix slow operations not allowed exceptions when using hierarchy tree for odoo models in 2021.3</li>
+            <li>fix error during indexing when model name is defined as a conditional expression, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/32, thanks to Levizar for reporting</li>
+          </ul>
+        </li>
+        <li>
           Version 0.5.15:
           <ul>
             <li>fix error in goto for empty m2n field declaration, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/28, thanks to netfxtech for reporting</li>
