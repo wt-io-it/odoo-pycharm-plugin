@@ -100,6 +100,10 @@ allprojects {
     }
 }
 
+// make sure we read java files with utf-8 (on US-ASCII build systems)
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
 tasks {
     // for compatibility with 2019.x
     sourceCompatibility = 1.8
