@@ -103,13 +103,20 @@ public class OdooModelUtil {
                 return getStringValueForValueChild(containedExpression, contextSupplier);
             }
         } else if (valueChild instanceof PyDictLiteralExpression) {
-            //firstChild() somehow returns the bracket
+            // firstChild() somehow returns the bracket
             PsiElement firstChild = valueChild.getChildren()[0];
             if (firstChild instanceof PyKeyValueExpression) {
                 return getStringValueForValueChild(((PyKeyValueExpression) firstChild).getKey(), contextSupplier);
             }
+        } else if (valueChild instanceof PyConditionalExpression) {
+            // ignore conditional expressions for names (we cannot resolve them yet)
+            //   _name = 'value' if condition else 'other_value'
+            // see src/test/resources/odoo/addons/addon1/models/conditional.py
+            // TODO try to resolve conditional expressions
+            return null;
         } else if (valueChild instanceof PsiErrorElement) {
             // ignore PsiErrorElements (used to indicate errors in Editor)
+            return null;
         } else {
             logger.error("Unknown string value class: " + valueChild.getClass());
         }
