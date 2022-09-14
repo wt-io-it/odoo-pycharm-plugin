@@ -51,7 +51,7 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
         String versions = Arrays.stream(events)
                 .map((event) -> ((IdeaReportingEvent) event).getPlugin()).filter(Objects::nonNull)
                 .filter((plugin) -> "at.wtioit.intellij.plugins.odoo".equals(plugin.getPluginId().getIdString()))
-                .map(getGetVersionDependentVersionFunktion())
+                .map(getGetVersionDependentVersionFunction())
                 .collect(Collectors.joining(","));
         String issueTitle = OdooBundle.message("PLUGIN.ERROR.HANDLER.report.new.issue.title");
         String shortenedIssueText = createIssueText(events, additionalInfo, versions);
@@ -72,7 +72,7 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
     }
 
     @NotNull
-    private Function<IdeaPluginDescriptor, String> getGetVersionDependentVersionFunktion() {
+    private Function<IdeaPluginDescriptor, String> getGetVersionDependentVersionFunction() {
         if (ApplicationInfoHelper.versionGreaterThanEqual(ApplicationInfoHelper.Versions.V_2020)) {
             return (pluginDescriptor) -> {
                 try {
@@ -130,7 +130,8 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
         }
         if (versions != null) {
             issueText.append("Plugin Version: " + versions + "\n");
-            issueText.append("IDEA Version: " + ApplicationInfo.getInstance().getFullApplicationName() + "\n");
+            issueText.append("IntelliJ Version: " + ApplicationInfo.getInstance().getFullApplicationName() + "\n");
+            issueText.append("IntelliJ Build: " + ApplicationInfo.getInstance().getBuild() + "\n");
             issueText.append("\n\n");
         }
         for (IdeaLoggingEvent event : events) {
