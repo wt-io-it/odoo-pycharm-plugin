@@ -31,6 +31,7 @@
         <li>
           Version 0.5.17:
           <ul>
+            <li>workaround for indexing bug in getModuleDirectorySlow, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/33, thanks to OksanaYeroshenko, JasminSForgeFlow, m3asmi, mah007, HashiramaTwT, odooddppy, akinrichy, yabiqbal, Minhvmax, SirTakobi for reporting</li>
             <li>fix model name validation in multiline strings seperated by backslash</li>
           </ul>
         </li>
