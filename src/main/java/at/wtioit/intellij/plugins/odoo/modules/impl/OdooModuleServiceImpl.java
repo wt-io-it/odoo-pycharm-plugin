@@ -138,16 +138,18 @@ public class OdooModuleServiceImpl implements OdooModuleService {
         // Windows paths have slashes here as well (we get the from getPath())
         return ApplicationManager.getApplication().runReadAction((Computable<PsiDirectory>) () -> {
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-            for (VirtualFile file : CompatibleFileIndex.getVirtualFilesByName("__manifest__.py", scope)) {
-                VirtualFile directory = file.getParent();
-                if (directory != null) {
-                    String directoryPath = directory.getPath();
-                    if (OdooModuleService.isValidOdooModuleDirectory(directoryPath) && location.equals(directoryPath) || location.startsWith(directoryPath + "/")) {
-                        return PsiManager.getInstance(project).findDirectory(directory);
+            return WithinProject.call(project, () -> {
+                for (VirtualFile file : CompatibleFileIndex.getVirtualFilesByName("__manifest__.py", scope)) {
+                    VirtualFile directory = file.getParent();
+                    if (directory != null) {
+                        String directoryPath = directory.getPath();
+                        if (OdooModuleService.isValidOdooModuleDirectory(directoryPath) && location.equals(directoryPath) || location.startsWith(directoryPath + "/")) {
+                            return PsiManager.getInstance(project).findDirectory(directory);
+                        }
                     }
                 }
-            }
-            return null;
+                return null;
+            });
         });
     }
 
