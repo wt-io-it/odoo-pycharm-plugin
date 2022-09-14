@@ -29,6 +29,12 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.5.17:
+          <ul>
+            <li>fix model name validation in multiline strings seperated by backslash</li>
+          </ul>
+        </li>
+        <li>
           Version 0.5.16:
           <ul>
             <li>fix slow operations not allowed exceptions when using hierarchy tree for odoo models in 2021.3</li>

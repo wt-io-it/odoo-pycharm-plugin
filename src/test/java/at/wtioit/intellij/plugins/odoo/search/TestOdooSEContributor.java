@@ -21,6 +21,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
                 "model_b:(ModelB in odoo.addons.model_names.models)",
                 "model_e:(ModelE in odoo.addons.model_names.models)",
                 "model_c:(ModelC in odoo.addons.model_names.models)",
+                "model_with_name_in_multiple_lines:(ModelWithMultilineName in odoo.addons.addon1.models)",
                 "model_a:(ModelA in odoo.addons.model_names.models)");
     }
 }

@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.*;
+import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
 
 public class MissingModelDefinitionInspection extends LocalInspectionTool {
 
@@ -50,8 +51,18 @@ public class MissingModelDefinitionInspection extends LocalInspectionTool {
                 super.visitElement(element);
                 if (element instanceof PyStringElement) {
                     if (isOdooModelPsiElement(element) && !isPartOfExpression(element) && !isUnresolvableOdooModelNameDefinitionPsiElement(element)) {
-                        TextRange contentRange = ((PyStringElement) element).getContentRange();
-                        String modelName = element.getText().substring(contentRange.getStartOffset(), contentRange.getEndOffset());
+                        PyStringLiteralExpression expression = findParent(element, PyStringLiteralExpression.class,1);
+                        String modelName;
+                        if (expression != null) {
+                            /* prefer getStringValue from parent as it also covers multiline strings like
+                             * _name = "module." \
+                             *         "model"
+                             */
+                            modelName = expression.getStringValue();
+                        } else {
+                            TextRange contentRange = ((PyStringElement) element).getContentRange();
+                            modelName = element.getText().substring(contentRange.getStartOffset(), contentRange.getEndOffset());
+                        }
                         if (!modelService.hasModel(modelName)) {
                             holder.registerProblem(element, OdooBundle.message("INSP.NAME.missing.model.definition.for.$0", modelName), ProblemHighlightType.ERROR);
                             // TODO add possible quick fixes
