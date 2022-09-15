@@ -51,4 +51,7 @@
     <extensions defaultExtensionNs="Pythonid">
         <importResolver implementation="at.wtioit.intellij.plugins.odoo.pycharm.PyCharmOdooAddonsImportResolver" />
     </extensions>
+    <applicationListeners>
+        <listener class="at.wtioit.intellij.plugins.odoo.index.OdooUnindexedFilesUpdaterListener" topic="com.intellij.util.indexing.UnindexedFilesUpdaterListener" />
+    </applicationListeners>
 </idea-plugin>

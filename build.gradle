@@ -40,11 +40,11 @@ def intellijPlugins = Arrays.stream(project.findProperty("platformPlugins").spli
 def buildDownloadSources = project.findProperty("platformDownloadSources").toBoolean()
 
 def intellijMinorVersion = intellijVersion.substring(0, 6)
-if (intellijVersion != '2019.2' && intellijType == 'PC') {
-    // only PyCharm 2019.2 seems to provide com.jetbrains.python.psi itself
+if (intellijType == 'PC') {
+    // PyCharm Community python plugin
     intellijPlugins.add('PythonCore')
     // see https://plugins.jetbrains.com/plugin/7322-python-community-edition/versions
-} else if (intellijVersion != '2019.2' && intellijType == 'PY') {
+} else if (intellijType == 'PY') {
     // PyCharm Professional uses another python plugin
     intellijPlugins.add('Pythonid')
     // see https://plugins.jetbrains.com/plugin/631-python/versions
@@ -57,10 +57,8 @@ if (intellijVersion != '2019.2' && intellijType == 'PC') {
     // https://plugins.jetbrains.com/api/plugins/7322/updates
     intellijPlugins.add('PythonCore:' + findPythonPluginVersion(7322, "IDEA_COMMUNITY", intellijVersion))
 }
-if (intellijType == 'PY' || intellijMinorVersion in ['2019.2', '2019.3','2020.1', '2020.2', '2020.3', '2021.1']) {
+if (intellijType == 'PY') {
     // we can get no sources for pycharm professional
-    // or versions where the source code does not reside in ivy
-    // (2021 JCenter shut down and it seems that JetBrains did not publish/migrate older sources to ivy)
     buildDownloadSources = false
 }
 if (intellijType == 'PY' && intellijMinorVersion in ['2022.1'] ) {
@@ -105,9 +103,10 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
 tasks {
+    // TODO check if we should set this to 11
     // for compatibility with 2019.x
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    //sourceCompatibility = 1.8
+    //targetCompatibility = 1.8
 
     wrapper {
         gradleVersion = project.findProperty("gradleVersion")

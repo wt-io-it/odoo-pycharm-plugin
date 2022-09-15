@@ -19,4 +19,3 @@ class AnotherIncorrectModel(models.Model):
     # and it takes it's name from _name
     _name = 'strangely_inherited'
     _inherit = _inherits = {'inherited': 'inherited_id'}
-

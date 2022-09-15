@@ -38,6 +38,7 @@ public class OdooModelUtil {
                     if (stringValueForChild != null) {
                         name = stringValueForChild;
                     }
+                    // if we get the name from _name it takes precedence over _inherit
                     if ("_name".equals(variableName)) break;
                 }
             }

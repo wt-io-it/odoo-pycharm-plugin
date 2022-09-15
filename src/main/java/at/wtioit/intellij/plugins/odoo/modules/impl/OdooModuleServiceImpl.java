@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.modules.impl;
 
 import at.wtioit.intellij.plugins.odoo.OdooBundle;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
+import at.wtioit.intellij.plugins.odoo.compatibility.CompatibleFileIndex;
 import at.wtioit.intellij.plugins.odoo.index.IndexWatcher;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndex;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
@@ -17,7 +18,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,10 +100,15 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     @Override
     public PsiDirectory getOdooDirectory() {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        for (PsiFile file : FilenameIndex.getFilesByName(project, "odoo-bin", scope)) {
-            return file.getContainingDirectory();
-        }
-        return null;
+        return WithinProject.call(project, () -> {
+            for (VirtualFile file : CompatibleFileIndex.getVirtualFilesByName("odoo-bin", scope)) {
+                PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                if (psiFile != null) {
+                    return psiFile.getContainingDirectory();
+                }
+            }
+            return null;
+        });
     }
 
     @Override
@@ -139,16 +145,18 @@ public class OdooModuleServiceImpl implements OdooModuleService {
             // TODO iterate over known modules first, before accessing FilenameIndex
             // TODO do not acccess FilenameIndex while indexing
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-            for (PsiFile file : FilenameIndex.getFilesByName(project, "__manifest__.py", scope)) {
-                PsiDirectory directory = file.getParent();
-                if (directory != null) {
-                    String directoryPath = directory.getVirtualFile().getPath();
-                    if (OdooModuleService.isValidOdooModuleDirectory(directoryPath) && location.equals(directoryPath) || location.startsWith(directoryPath + "/")) {
-                        return directory;
+            return WithinProject.call(project, () -> {
+                for (VirtualFile file : CompatibleFileIndex.getVirtualFilesByName("__manifest__.py", scope)) {
+                    VirtualFile directory = file.getParent();
+                    if (directory != null) {
+                        String directoryPath = directory.getPath();
+                        if (OdooModuleService.isValidOdooModuleDirectory(directoryPath) && location.equals(directoryPath) || location.startsWith(directoryPath + "/")) {
+                            return PsiManager.getInstance(project).findDirectory(directory);
+                        }
                     }
                 }
-            }
-            return null;
+                return null;
+            });
         });
     }
 
