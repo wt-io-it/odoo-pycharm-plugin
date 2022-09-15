@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.ErrorReportSubmitter;
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
 import com.intellij.openapi.diagnostic.SubmittedReportInfo;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.util.NlsActions;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +52,7 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
         String versions = Arrays.stream(events)
                 .map((event) -> ((IdeaReportingEvent) event).getPlugin()).filter(Objects::nonNull)
                 .filter((plugin) -> "at.wtioit.intellij.plugins.odoo".equals(plugin.getPluginId().getIdString()))
-                .map(getGetVersionDependentVersionFunction())
+                .map(PluginDescriptor::getVersion)
                 .collect(Collectors.joining(","));
         String issueTitle = OdooBundle.message("PLUGIN.ERROR.HANDLER.report.new.issue.title");
         String shortenedIssueText = createIssueText(events, additionalInfo, versions);
@@ -69,35 +70,6 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
         }
         consumer.consume(new SubmittedReportInfo(SubmittedReportInfo.SubmissionStatus.NEW_ISSUE));
         return true;
-    }
-
-    @NotNull
-    private Function<IdeaPluginDescriptor, String> getGetVersionDependentVersionFunction() {
-        if (ApplicationInfoHelper.versionGreaterThanEqual(ApplicationInfoHelper.Versions.V_2020)) {
-            return (pluginDescriptor) -> {
-                try {
-                    // We use reflective access here to maintain compatibility with 2019.2 and 2019.3 API
-                    Method getVersion = pluginDescriptor.getClass().getMethod("getVersion");
-                    return (String) getVersion.invoke(pluginDescriptor);
-                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassCastException e) {
-                    return detectVersionFromLegacyObjects(pluginDescriptor);
-                }
-            };
-        } else {
-            return this::detectVersionFromLegacyObjects;
-        }
-    }
-
-    /**
-     * Detect plugin version for versions 2019.2 and 2019.3
-     * @param pluginDescriptor - descriptor of the plugin to get the version for
-     * @return version as a string
-     */
-    private String detectVersionFromLegacyObjects(IdeaPluginDescriptor pluginDescriptor) {
-        if (pluginDescriptor instanceof IdeaPluginDescriptorImpl) {
-            return ((IdeaPluginDescriptorImpl) pluginDescriptor).getVersion();
-        }
-        return "Undetected Version";
     }
 
     @NotNull

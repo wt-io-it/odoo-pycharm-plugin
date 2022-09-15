@@ -216,12 +216,11 @@ public interface OdooModelPsiElementMatcherUtil {
             TypeEvalContext typeEvalContext = TypeEvalContext.codeAnalysis(pyline.getContainingFile().getProject(), pyline.getContainingFile());
             PyClass pyClass = (PyClass) pyline;
             @NotNull PyClass[] superClasses = new PyClass[0];
-            if (!(IndexWatcher.isCalledInIndexJob() && ApplicationInfoHelper.versionGreaterThanEqual(ApplicationInfoHelper.Versions.V_2021))
-                    && !DumbService.isDumb(pyline.getProject())) {
+            if (!(IndexWatcher.isCalledInIndexJob()) && !DumbService.isDumb(pyline.getProject())) {
                 /*
                 We use a version switch here because starting with 2021 releases JetBrains shows an error to the user if
                 an indexing job opens a file it did not expect it to. Inspecting the super classes may lead to such an
-                error because it may load other python files. So we fall back to our own parsing for 2021+.
+                error because it may load other python files. So we fall back to our own parsing.
                 */
                 try {
                     superClasses = pyClass.getSuperClasses(typeEvalContext);

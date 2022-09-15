@@ -14,6 +14,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.python.PythonLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,252 +84,459 @@ public class OdooModulePsiElement implements OdooModule, PsiElement, OdooSEResul
 
     @Override
     public @NotNull Project getProject() throws PsiInvalidElementAccessException {
-        return getDirectory().getProject();
+        return project;
     }
 
     @Override
     public @NotNull Language getLanguage() {
-        return getDirectory().getLanguage();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getLanguage();
+        }
+        return PythonLanguage.getInstance();
     }
 
     @Override
+    @Nullable
     public PsiManager getManager() {
-        return getDirectory().getManager();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getManager();
+        }
+        return null;
     }
 
     @Override
     public @NotNull PsiElement[] getChildren() {
-        return getDirectory().getChildren();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getChildren();
+        }
+        return new PsiElement[0];
     }
 
     @Override
     public PsiElement getParent() {
-        return getDirectory().getParent();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getParent();
+        }
+        return null;
     }
 
     @Override
     public PsiElement getFirstChild() {
-        return getDirectory().getParent();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getParent();
+        }
+        return null;
     }
 
     @Override
     public PsiElement getLastChild() {
-        return getDirectory().getLastChild();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getLastChild();
+        }
+        return null;
     }
 
     @Override
     public PsiElement getNextSibling() {
-        return getDirectory().getNextSibling();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getNextSibling();
+        }
+        return null;
     }
 
     @Override
+    @Nullable
     public PsiElement getPrevSibling() {
-        return getDirectory().getPrevSibling();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getPrevSibling();
+        }
+        return null;
     }
 
     @Override
+    @Nullable
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
-        return getDirectory().getContainingFile();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return directory.getContainingFile();
+        }
+        return null;
     }
 
     @Override
+    @Nullable
     public TextRange getTextRange() {
-        return getDirectory().getTextRange();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return directory.getTextRange();
+        }
+        return null;
     }
 
     @Override
     public int getStartOffsetInParent() {
-        return getDirectory().getStartOffsetInParent();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return directory.getStartOffsetInParent();
+        }
+        return 0;
     }
 
     @Override
     public int getTextLength() {
-        return getDirectory().getTextLength();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getTextLength();
+        }
+        return 0;
     }
 
     @Override
     public @Nullable PsiElement findElementAt(int offset) {
-        return getDirectory().findElementAt(offset);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().findElementAt(offset);
+        }
+        return null;
     }
 
     @Override
     public @Nullable PsiReference findReferenceAt(int offset) {
-        return getDirectory().findReferenceAt(offset);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().findReferenceAt(offset);
+        }
+        return null;
     }
 
     @Override
     public int getTextOffset() {
-        return getDirectory().getTextOffset();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getTextOffset();
+        }
+        return 0;
     }
 
     @Override
+    @Nullable
     public String getText() {
-        return getDirectory().getText();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getText();
+        }
+        return null;
     }
 
     @Override
     public @NotNull char[] textToCharArray() {
-        return getDirectory().textToCharArray();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().textToCharArray();
+        }
+        return new char[0];
     }
 
     @Override
+    @Nullable
     public PsiElement getNavigationElement() {
-        return getDirectory().getNavigationElement();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getNavigationElement();
+        }
+        return null;
     }
 
     @Override
+    @Nullable
     public PsiElement getOriginalElement() {
-        return getDirectory().getOriginalElement();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getOriginalElement();
+        }
+        return null;
     }
 
     @Override
     public boolean textMatches(@NotNull CharSequence text) {
-        return getDirectory().textMatches(text);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().textMatches(text);
+        }
+        return text.length() == 0;
     }
 
     @Override
     public boolean textMatches(@NotNull PsiElement element) {
-        return getDirectory().textMatches(element);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().textMatches(element);
+        }
+        return false;
     }
 
     @Override
     public boolean textContains(char c) {
-        return getDirectory().textContains(c);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().textContains(c);
+        }
+        return false;
     }
 
     @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
-        getDirectory().accept(visitor);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            getDirectory().accept(visitor);
+        }
     }
 
     @Override
     public void acceptChildren(@NotNull PsiElementVisitor visitor) {
-        getDirectory().acceptChildren(visitor);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            getDirectory().acceptChildren(visitor);
+        }
     }
 
     @Override
+    @Nullable
     public PsiElement copy() {
-        return getDirectory().copy();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().copy();
+        }
+        return null;
     }
 
     @Override
+    @Nullable
     public PsiElement add(@NotNull PsiElement element) throws IncorrectOperationException {
-        return getDirectory().add(element);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().add(element);
+        }
+        return null;
     }
 
     @Override
+    @Nullable
     public PsiElement addBefore(@NotNull PsiElement element, @Nullable PsiElement anchor) throws IncorrectOperationException {
-        return getDirectory().addBefore(element, anchor);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().addBefore(element, anchor);
+        }
+        return null;
     }
 
     @Override
+    @Nullable
     public PsiElement addAfter(@NotNull PsiElement element, @Nullable PsiElement anchor) throws IncorrectOperationException {
-        return getDirectory().addAfter(element, anchor);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().addAfter(element, anchor);
+        }
+        return null;
     }
 
     @Override
     public void checkAdd(@NotNull PsiElement element) throws IncorrectOperationException {
-        getDirectory().checkAdd(element);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            getDirectory().checkAdd(element);
+        }
     }
 
     @Override
+    @Nullable
     public PsiElement addRange(PsiElement first, PsiElement last) throws IncorrectOperationException {
-        return getDirectory().addRange(first, last);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().addRange(first, last);
+        }
+        return null;
     }
 
     @Override
+    @Nullable
     public PsiElement addRangeBefore(@NotNull PsiElement first, @NotNull PsiElement last, PsiElement anchor) throws IncorrectOperationException {
-        return getDirectory().addRangeBefore(first, last, anchor);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().addRangeBefore(first, last, anchor);
+        }
+        return null;
     }
 
     @Override
+    @Nullable
     public PsiElement addRangeAfter(PsiElement first, PsiElement last, PsiElement anchor) throws IncorrectOperationException {
-        return getDirectory().addRangeAfter(first, last, anchor);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().addRangeAfter(first, last, anchor);
+        }
+        return null;
     }
 
     @Override
     public void delete() throws IncorrectOperationException {
-        getDirectory().delete();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            getDirectory().delete();
+        }
+        throw new IncorrectOperationException("No directory found");
     }
 
     @Override
     public void checkDelete() throws IncorrectOperationException {
-        getDirectory().checkDelete();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            getDirectory().checkDelete();
+        }
+        throw new IncorrectOperationException("No directory found");
     }
 
     @Override
     public void deleteChildRange(PsiElement first, PsiElement last) throws IncorrectOperationException {
-        getDirectory().deleteChildRange(first, last);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            getDirectory().deleteChildRange(first, last);
+        }
     }
 
     @Override
+    @Nullable
     public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException {
-        return getDirectory().replace(newElement);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().replace(newElement);
+        }
+        return null;
     }
 
     @Override
     public boolean isValid() {
-        return getDirectory().isValid();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().isValid();
+        }
+        return false;
     }
 
     @Override
     public boolean isWritable() {
-        return getDirectory().isWritable();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().isWritable();
+        }
+        return false;
     }
 
     @Override
     public @Nullable PsiReference getReference() {
-        return getDirectory().getReference();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getReference();
+        }
+        return null;
     }
 
     @Override
     public @NotNull PsiReference[] getReferences() {
-        return getDirectory().getReferences();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getReferences();
+        }
+        return new PsiReference[0];
     }
 
     @Override
-    public <T> @Nullable T getCopyableUserData(Key<T> key) {
-        return getDirectory().getCopyableUserData(key);
+    public <T> @Nullable T getCopyableUserData(@NotNull Key<T> key) {
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getCopyableUserData(key);
+        }
+        return null;
     }
 
     @Override
     public <T> void putCopyableUserData(Key<T> key, @Nullable T value) {
-        getDirectory().putCopyableUserData(key, value);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            getDirectory().putCopyableUserData(key, value);
+        }
     }
 
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        return module.getDirectory().processDeclarations(processor, state, lastParent, place);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().processDeclarations(processor, state, lastParent, place);
+        }
+        return false;
     }
 
     @Override
     public @Nullable PsiElement getContext() {
-        return module.getDirectory().getContext();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getContext();
+        }
+        return null;
     }
 
     @Override
     public boolean isPhysical() {
-        return module.getDirectory().isPhysical();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().isPhysical();
+        }
+        return false;
     }
 
     @Override
     public @NotNull GlobalSearchScope getResolveScope() {
-        return module.getDirectory().getResolveScope();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getResolveScope();
+        }
+        return GlobalSearchScope.allScope(project);
     }
 
     @Override
     public @NotNull SearchScope getUseScope() {
-        return module.getDirectory().getUseScope();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getUseScope();
+        }
+        return GlobalSearchScope.allScope(project);
     }
 
     @Override
+    @Nullable
     public ASTNode getNode() {
-        return module.getDirectory().getNode();
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getNode();
+        }
+        return null;
     }
 
     @Override
     public boolean isEquivalentTo(PsiElement another) {
-        return module.getDirectory().isEquivalentTo(another);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().isEquivalentTo(another);
+        }
+        return false;
     }
 
     @Override
@@ -338,11 +546,18 @@ public class OdooModulePsiElement implements OdooModule, PsiElement, OdooSEResul
 
     @Override
     public <T> @Nullable T getUserData(@NotNull Key<T> key) {
-        return module.getDirectory().getUserData(key);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            return getDirectory().getUserData(key);
+        }
+        return null;
     }
 
     @Override
     public <T> void putUserData(@NotNull Key<T> key, @Nullable T value) {
-        module.getDirectory().putUserData(key, value);
+        PsiElement directory = getDirectory();
+        if (directory != null) {
+            getDirectory().putUserData(key, value);
+        }
     }
 }

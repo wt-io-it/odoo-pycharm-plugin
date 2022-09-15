@@ -39,23 +39,13 @@ public class CompatibleFileIndex {
             // https://youtrack.jetbrains.com/issue/IDEA-291382/Assertion-failed-at-VirtualDirectoryImpldoFindChildById
             // https://youtrack.jetbrains.com/issue/IDEA-289822
             // https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/106
+
+            // mark for cache clear (otherwise our null resolved modules (odoo.adddons....) are cached in
+            // PythonModulePathCache forever
+            IndexWatcher.needsCacheClearWhenFullyIndexed(project);
             return Collections.emptyList();
         }
 
-        try {
-            Method getVirtualFilesByName = FilenameIndex.class.getDeclaredMethod("getVirtualFilesByName", String.class, GlobalSearchScope.class);
-            return (Collection<VirtualFile>) getVirtualFilesByName.invoke(FilenameIndex.class, name, scope);
-        } catch (NoSuchMethodException e) {
-            // if getVirtualFilesByName doesn't exist yet we use getFilesByName bellow
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            Method getFilesByName = FilenameIndex.class.getDeclaredMethod("getFilesByName", Project.class, String.class, GlobalSearchScope.class);
-            PsiFile[] files = (PsiFile[]) getFilesByName.invoke(FilenameIndex.class, project, name, scope);
-            return Arrays.stream(files).map(PsiFile::getVirtualFile).collect(Collectors.toList());
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e2) {
-            throw new RuntimeException(e2);
-        }
+        return FilenameIndex.getVirtualFilesByName(name, scope);
     }
 }

@@ -1,14 +1,20 @@
 package at.wtioit.intellij.plugins.odoo.index;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.indexing.UnindexedFilesUpdater;
+import com.jetbrains.python.psi.resolve.PythonModulePathCache;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 public class IndexWatcher extends ThreadLocal<IndexWatcher.IndexState> {
     public static IndexWatcher INSTANCE = new IndexWatcher();
+
+    public final static Map<Project, AtomicBoolean> projectIndexerRunning = new HashMap<>();
+    public final static Map<Project, AtomicBoolean> projectNeedsCacheClearWhenFullyIndexed = new HashMap<>();
 
     public static <T> T runIndexJob(Supplier<T> supplier) {
         try {
@@ -23,22 +29,48 @@ public class IndexWatcher extends ThreadLocal<IndexWatcher.IndexState> {
     }
 
     public static boolean isFullyIndexed(Project project) {
-        boolean fullyScanned = true;
-        try {
-            Method isProjectContentFullyScanned = UnindexedFilesUpdater.class.getDeclaredMethod("isProjectContentFullyScanned", Project.class);
-            fullyScanned = (boolean) isProjectContentFullyScanned.invoke(UnindexedFilesUpdater.class, project);
-        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-            // we ignore exceptions here because isProjectContentFullyScanned is marked for deletion with 2023.1
-            // we still need it as an indicator, because when switching projects we might be called right aways before
-            // the "official" isIndexUpdateInProgress is returning true
-        }
-        if (!fullyScanned) {
+        if (!project.isInitialized()) {
             return false;
         }
-        if (UnindexedFilesUpdater.isIndexUpdateInProgress(project)) {
-            return false;
+        if (projectIndexerRunning.containsKey(project)) {
+            return !projectIndexerRunning.get(project).get();
         }
         return true;
+    }
+
+    public static void updateStarted(Project project) {
+        if (!projectIndexerRunning.containsKey(project)) {
+            synchronized (projectIndexerRunning) {
+                if (!projectIndexerRunning.containsKey(project)) {
+                    projectIndexerRunning.put(project, new AtomicBoolean(false));
+                }
+            }
+        }
+        projectIndexerRunning.get(project).set(true);
+    }
+
+    public static void updateFinished(Project project) {
+        if (projectIndexerRunning.containsKey(project)) {
+            boolean previousValue = projectIndexerRunning.get(project).getAndSet(false);
+
+            if (previousValue && projectNeedsCacheClearWhenFullyIndexed.containsKey(project) && projectNeedsCacheClearWhenFullyIndexed.get(project).get()) {
+                // Clear PythonModulePathCache to get rid of cached null values for modules in PythonModulePathCache
+                for (Module module : ModuleManager.getInstance(project).getModules()) {
+                    PythonModulePathCache.getInstance(module).clearCache();
+                }
+            }
+        }
+    }
+
+    public static void needsCacheClearWhenFullyIndexed(Project project) {
+        if (!projectNeedsCacheClearWhenFullyIndexed.containsKey(project)) {
+            synchronized (projectNeedsCacheClearWhenFullyIndexed) {
+                if (!projectNeedsCacheClearWhenFullyIndexed.containsKey(project)) {
+                    projectNeedsCacheClearWhenFullyIndexed.put(project, new AtomicBoolean(false));
+                }
+            }
+        }
+        projectNeedsCacheClearWhenFullyIndexed.get(project).set(true);
     }
 
     static class IndexState {
