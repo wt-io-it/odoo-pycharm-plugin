@@ -15,6 +15,8 @@ public interface OdooRecordPsiElementMatcherUtil {
     List<String> ODOO_RECORD_REF_ATTRIBUTES = Collections.unmodifiableList(Arrays.asList(
             "ref",
             "inherit_id",
+            "groups", // TODO handle comma seperated groups
+            "action",
             "t-call",
             "t-call-assets",
             "t-extend"));

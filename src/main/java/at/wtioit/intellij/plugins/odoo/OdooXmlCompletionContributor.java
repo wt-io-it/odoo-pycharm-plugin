@@ -5,7 +5,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import org.jetbrains.annotations.NotNull;
 
-public class OdooAddonsXmlCompletionContributor extends AbstractOdooAddonsCompletionContributor {
+public class OdooXmlCompletionContributor extends AbstractOdooCompletionContributor {
 
     @Override
     public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
@@ -14,6 +14,12 @@ public class OdooAddonsXmlCompletionContributor extends AbstractOdooAddonsComple
                     .replace(CompletionUtilCore.DUMMY_IDENTIFIER, "")
                     .replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "");
             suggestModelName(parameters, result, value);
+        }
+        if (OdooRecordPsiElementMatcherUtil.isOdooRecordPsiElement(parameters.getPosition())) {
+            String value = parameters.getPosition().getText()
+                    .replace(CompletionUtilCore.DUMMY_IDENTIFIER, "")
+                    .replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "");
+            suggestRecordXmlId(parameters, result, value);
         }
     }
 }

@@ -5,9 +5,9 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <completion.contributor language="Python"
-                                implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor" />
+                                implementationClass="at.wtioit.intellij.plugins.odoo.OdooCompletionContributor" />
         <completion.contributor language="XML"
-                                implementationClass="at.wtioit.intellij.plugins.odoo.OdooAddonsXmlCompletionContributor"
+                                implementationClass="at.wtioit.intellij.plugins.odoo.OdooXmlCompletionContributor"
                                 order="first" />
 
         <typeHierarchyProvider language="Python"

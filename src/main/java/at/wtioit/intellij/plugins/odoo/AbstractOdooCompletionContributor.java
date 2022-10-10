@@ -4,6 +4,8 @@ import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
+import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
+import at.wtioit.intellij.plugins.odoo.records.OdooRecordService;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -17,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 
-abstract class AbstractOdooAddonsCompletionContributor extends CompletionContributor {
+abstract class AbstractOdooCompletionContributor extends CompletionContributor {
 
     void suggestModuleName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
         OdooModuleService moduleService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModuleService.class);
@@ -85,6 +87,30 @@ abstract class AbstractOdooAddonsCompletionContributor extends CompletionContrib
                         }
                     });
                 }
+            }
+        }
+    }
+
+    void suggestRecordXmlId(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
+        OdooRecordService recordService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooRecordService.class);
+        for (String xmlId : recordService.getXmlIds()) {
+            if (result.isStopped()) {
+                // cancel further suggestions
+                return;
+            }
+            if (xmlId.startsWith(value)) {
+                // TODO if we can know the model (e.g. field, only suggest records with matching model)
+                OdooRecord record = recordService.getRecord(xmlId);
+                WithinProject.run(parameters.getOriginalFile().getProject(), () -> {
+                    PsiElement definingElement = record.getDefiningElement();
+                    if (definingElement != null) {
+                        LookupElementBuilder element = LookupElementBuilder
+                                .createWithSmartPointer(xmlId, definingElement)
+                                .withIcon(definingElement.getIcon(0))
+                                .withTailText(" " + record.getPath(), true);
+                        result.addElement(element);
+                    }
+                });
             }
         }
     }

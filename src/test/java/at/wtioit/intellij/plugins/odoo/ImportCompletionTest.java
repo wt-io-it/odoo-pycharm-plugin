@@ -15,10 +15,10 @@ public class ImportCompletionTest extends BaseOdooPluginTest {
         // in the normal auto-completion the user would decide for one of them but in the tests it just is empty
         LookupElement[] result = doTest(FileComparisonFailure.class);
         String lookupStrings = Arrays.stream(result)
-                .filter((b) -> b.getUserDataString().contains("=at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor@"))
+                .filter((b) -> b.getUserDataString().contains("=at.wtioit.intellij.plugins.odoo.OdooCompletionContributor@"))
                 .map(LookupElement::getLookupString)
                 .findAny()
-                .orElseThrow(() -> new AssertionError("Expected completion contribution from at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor"));
+                .orElseThrow(() -> new AssertionError("Expected completion contribution from at.wtioit.intellij.plugins.odoo.OdooCompletionContributor"));
         assertEquals("autocomplete", lookupStrings);
     }
 
@@ -62,10 +62,10 @@ public class ImportCompletionTest extends BaseOdooPluginTest {
         // in the normal auto-completion the user would decide for one of them but in the tests it just is empty
         LookupElement[] result = doTest(FileComparisonFailure.class);
         String lookupStrings = Arrays.stream(result)
-                .filter((b) -> b.getUserDataString().contains("=at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor@"))
+                .filter((b) -> b.getUserDataString().contains("=at.wtioit.intellij.plugins.odoo.OdooCompletionContributor@"))
                 .map(LookupElement::getLookupString)
                 .findAny()
-                .orElseThrow(() -> new AssertionError("Expected completion contribution from at.wtioit.intellij.plugins.odoo.OdooAddonsCompletionContributor"));
+                .orElseThrow(() -> new AssertionError("Expected completion contribution from at.wtioit.intellij.plugins.odoo.OdooCompletionContributor"));
         assertEquals("no_dependencies", lookupStrings);
     }
 

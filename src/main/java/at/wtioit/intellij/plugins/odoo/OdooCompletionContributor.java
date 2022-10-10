@@ -13,9 +13,9 @@ import org.jetbrains.annotations.Nullable;
 
 import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
 
-public class OdooAddonsCompletionContributor extends AbstractOdooAddonsCompletionContributor {
+public class OdooCompletionContributor extends AbstractOdooCompletionContributor {
 
-    private final Logger logger = Logger.getInstance(OdooAddonsCompletionContributor.class);
+    private final Logger logger = Logger.getInstance(OdooCompletionContributor.class);
 
     @Override
     public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
