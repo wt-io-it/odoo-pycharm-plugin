@@ -10,7 +10,9 @@ import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class OdooRecordImpl extends AbstractOdooRecord {
@@ -23,6 +25,8 @@ public class OdooRecordImpl extends AbstractOdooRecord {
         MODELS_FOR_TAG_NAMES.put("report", "ir.actions.report");
         MODELS_FOR_TAG_NAMES.put("act_window", "ir.actions.act_window");
     }
+
+    private static final List<String> KNOWN_ODOO_XML_DIRECTORIES = Arrays.asList("views", "data");
 
     private final PsiElement definingElement;
 
@@ -48,12 +52,18 @@ public class OdooRecordImpl extends AbstractOdooRecord {
         }
         if (modelName != null && id != null) {
             if (!id.contains(".")) {
-                String xmlId = null;
-                // TODO maybe make a fast guess for the module name from path
-                return new OdooRecordImpl(id, xmlId, modelName, path, tag);
+                return new OdooRecordImpl(id, guessFromPath(id, path), modelName, path, tag);
             } else {
                 return new OdooRecordImpl(id, id, modelName, path, tag);
             }
+        }
+        return null;
+    }
+
+    private static String guessFromPath(String id, String path) {
+        String[] segments = path.split("/");
+        if (segments[segments.length - 1].endsWith(".xml") && KNOWN_ODOO_XML_DIRECTORIES.contains(segments[segments.length - 2])) {
+            return segments[segments.length - 3] + "." + id;
         }
         return null;
     }
