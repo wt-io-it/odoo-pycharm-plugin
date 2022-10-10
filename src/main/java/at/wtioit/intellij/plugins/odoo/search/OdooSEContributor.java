@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Iterator;
 
 public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResult> {
 
@@ -61,19 +62,27 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
         if (!DumbService.isDumb(project)) {
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
             ApplicationManager.getApplication().runReadAction(() -> {
-                moduleService.getModuleNames().forEach(moduleName -> {
+                for (Iterator<String> iter = moduleService.getModuleNames().iterator(); iter.hasNext(); ) {
+                    if (progressIndicator.isCanceled()) {
+                        break;
+                    }
+                    String moduleName = iter.next();
                     if (moduleName.startsWith(pattern)) {
                         OdooModule module = moduleService.getModule(moduleName);
                         if (module != null) {
                             consumer.process(new OdooModulePsiElement(module, project));
                         }
                     }
-                });
+                }
             });
 
             OdooModelService modelService = ServiceManager.getService(project, OdooModelService.class);
             ApplicationManager.getApplication().runReadAction(() -> {
                 for (String modelName : modelService.getModelNames()) {
+                    if (progressIndicator.isCanceled()) {
+                        // cancel current SE contributions
+                        break;
+                    }
                     if (modelName != null && modelName.startsWith(pattern)) {
                         consumer.process(new OdooModelPsiElement(modelService.getModel(modelName), project));
                     }
@@ -93,6 +102,10 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
             ApplicationManager.getApplication().runReadAction(() -> {
                 WithinProject.run(project, () -> {
                     for (String xmlId : recordService.getXmlIds()) {
+                        if (progressIndicator.isCanceled()) {
+                            // cancel current SE contributions
+                            break;
+                        }
                         if (xmlId != null && xmlId.startsWith(pattern)) {
                             OdooRecord record = recordService.getRecord(xmlId);
                             if (record != null) {
@@ -101,7 +114,7 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
                         } else if (xmlId != null && xmlId.startsWith(undetectedXmlId)) {
                             String expectedXmlId;
                             if (undetectedXmlIdExpectedModule != null) {
-                                 expectedXmlId = xmlId.replaceFirst(OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY, undetectedXmlIdExpectedModule);
+                                expectedXmlId = xmlId.replaceFirst(OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY, undetectedXmlIdExpectedModule);
                             } else {
                                 expectedXmlId = xmlId;
                             }
