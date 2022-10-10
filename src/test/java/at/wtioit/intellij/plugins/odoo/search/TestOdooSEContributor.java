@@ -28,8 +28,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         ArrayList<String> resultsMy = new ArrayList<>();
         contributor.fetchElements("my", new MockProgressIndicator(), (result) -> resultsMy.add(result.getName() + ":" + result.getLocationString()));
         assertSameElements(resultsMy,
-                "my_other_addon:/src/odoo/my_addons/my_other_addon",
-                "addon1.my_not_unique_record_name:/src/odoo/addons/addon1/data/records.xml");
+                "my_other_addon:/src/odoo/my_addons/my_other_addon");
 
     }
     public void testFetchModulesAddon() {
