@@ -45,10 +45,13 @@ public class TestRecordServiceImpl extends BaseOdooPluginTest {
     public void testRecordServiceConsistency() {
         OdooRecordService recordService = ServiceManager.getService(getProject(), OdooRecordService.class);
         String[] xmlIds = recordService.getXmlIds();
-        assertContainsElements(Arrays.asList(xmlIds), ":UNDETECTED_XML_ID:.record1", "addon1.record2", ":UNDETECTED_XML_ID:.record7");
+        assertContainsElements(Arrays.asList(xmlIds), "addon1.record1", "addon1.record2", ":UNDETECTED_XML_ID:.record7");
         for (String xmlId : xmlIds) {
             OdooRecord record = recordService.getRecord(xmlId);
-            assertEquals(xmlId.replace(":UNDETECTED_XML_ID:.", ""), record.getId());
+            String detectedAddonName = xmlId.replaceAll("\\..*$", "");
+            String idWithoutAddonName = record.getId().replace(detectedAddonName + ".", "");
+            String idWithoutAddonNameFromXmlId = xmlId.replace(":UNDETECTED_XML_ID:.", "").replace(detectedAddonName + ".", "");
+            assertEquals(idWithoutAddonNameFromXmlId, idWithoutAddonName);
             assertTrue(recordService.hasRecord(xmlId));
         }
     }

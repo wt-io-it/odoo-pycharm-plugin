@@ -39,8 +39,16 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         assertSameElements(resultsAddons,
                 "addon1_extension:/src/odoo/addons/addon1_extension",
                 "addon1:/src/odoo/addons/addon1",
+                "addon1.record1:/src/odoo/addons/addon1/data/records.xml",
+                "addon1.my_not_unique_record_name:/src/odoo/addons/addon1/data/records.xml",
+                "addon1.openerp_record:/src/odoo/addons/addon1/data/openerp_records.xml",
+                "addon1_extension.my_not_unique_record_name:/src/odoo/addons/addon1_extension/data/records.xml",
+                "addon1.existing_kanban_view:/src/odoo/addons/addon1/views/existing_view.xml",
+                "addon1.open_existing_dashboard_kanban:/src/odoo/addons/addon1/views/existing_view.xml",
+                "addon1.inherited:/src/odoo/addons/addon1/data/records2.xml",
                 "addon1.record2:/src/odoo/addons/addon1/data/records.xml",
-                "addon1.record4:/src/odoo/addons/addon1/data/records2.xml");
+                "addon1.record4:/src/odoo/addons/addon1/data/records2.xml",
+                "addon1.record3:/src/odoo/addons/addon1/data/records2.xml");
     }
 
 
