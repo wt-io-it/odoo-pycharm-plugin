@@ -13,16 +13,21 @@
         </div>
         <p><strong>Features</strong></p>
         <ul>
-          <li>Search Everywhere supports odoo modules and models</li>
+          <li>Search Everywhere supports odoo modules, models and records</li>
           <li>Odoo model inheritance is shown in the type hierarchy view</li>
           <li>Autocompletion and resolving for odoo.addons.... imports</li>
           <li>Autocompletion for model names in _name, _inherit, One2may, Many2One and Many2many fields</li>
+          <li>Autocompletion for records defined in xml and csv files</li>
           <li>Navigate to ... support for Odoo models</li>
+          <li>Navigate to ... support for xml and csv records</li>
         </ul>
         <p><strong>Planned Features</strong></p>
         <ul>
-          <li>Navigate to ... support for xml and csv records</li>
           <li>Handle multiple definitions for the same record / model within one file</li>
+          <li>Handle multiple records in groups attribute</li>
+          <li>Autocompletion for records in the same module (without module. prefix)</li>
+          <li>Support autocompletion and Navigate to ... for Odoo fields</li>
+          <li>Support SearchEverywhere with regular matcher (not just starting with)</li>
         </ul>
       </div>
     ]]>
