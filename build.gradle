@@ -103,10 +103,9 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
 tasks {
-    // TODO check if we should set this to 11
-    // for compatibility with 2019.x
-    //sourceCompatibility = 1.8
-    //targetCompatibility = 1.8
+    // for compatibility with 2021.2.4
+    sourceCompatibility=11
+    targetCompatibility=11
 
     wrapper {
         gradleVersion = project.findProperty("gradleVersion")
