@@ -244,7 +244,7 @@ public abstract class AbstractOdooPsiElement implements OdooSEResult {
 
     @Override
     public @Nullable PsiElement getContext() {
-        return psiElementSupplier.get().getContext();
+        return WithinProject.call(project, () -> psiElementSupplier.get().getContext());
     }
 
     @Override
