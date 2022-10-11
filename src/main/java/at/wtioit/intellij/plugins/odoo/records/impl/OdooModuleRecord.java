@@ -9,6 +9,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+
 public class OdooModuleRecord implements OdooRecord {
     private final OdooModule module;
 
@@ -49,5 +51,10 @@ public class OdooModuleRecord implements OdooRecord {
     @Override
     public @Nullable VirtualFile findVirtualFile() {
         return module.getManifestFile().getVirtualFile();
+    }
+
+    @Override
+    public @Nullable Icon getIcon() {
+        return module.getIcon();
     }
 }

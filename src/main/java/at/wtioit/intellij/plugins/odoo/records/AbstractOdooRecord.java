@@ -1,13 +1,17 @@
 package at.wtioit.intellij.plugins.odoo.records;
 
 import at.wtioit.intellij.plugins.odoo.WithinProject;
+import at.wtioit.intellij.plugins.odoo.icons.OdooPluginIcons;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.ui.LayeredIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.Icon;
 import java.util.Objects;
 
 public abstract class AbstractOdooRecord implements OdooRecord {
@@ -69,6 +73,11 @@ public abstract class AbstractOdooRecord implements OdooRecord {
     @Override
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public @Nullable Icon getIcon() {
+        return OdooPluginIcons.getOdooIconForPsiElement(getDefiningElement());
     }
 
     @Override

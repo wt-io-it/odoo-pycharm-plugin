@@ -106,7 +106,7 @@ abstract class AbstractOdooCompletionContributor extends CompletionContributor {
                     if (definingElement != null) {
                         LookupElementBuilder element = LookupElementBuilder
                                 .createWithSmartPointer(xmlId, definingElement)
-                                .withIcon(definingElement.getIcon(0))
+                                .withIcon(record.getIcon())
                                 .withTailText(" " + record.getPath(), true);
                         result.addElement(element);
                     }

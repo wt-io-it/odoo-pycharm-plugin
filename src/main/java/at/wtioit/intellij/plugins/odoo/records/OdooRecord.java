@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import javax.swing.Icon;
 
 public interface OdooRecord extends OdooIndexEntry {
 
@@ -28,4 +29,7 @@ public interface OdooRecord extends OdooIndexEntry {
 
     @Nullable
     VirtualFile findVirtualFile();
+
+    @Nullable
+    Icon getIcon();
 }

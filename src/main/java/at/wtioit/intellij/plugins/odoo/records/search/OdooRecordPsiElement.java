@@ -33,11 +33,14 @@ public class OdooRecordPsiElement extends AbstractOdooPsiElement implements Odoo
     public Icon getIcon(int flags) {
         if (icon == null) {
             WithinProject.run(getProject(), () -> {
-                Icon baseIcon = record.getDefiningElement().getIcon(flags);
-                icon = new LayeredIcon(baseIcon, OdooPluginIcons.ODOO_OVERLAY_ICON);
+                icon = OdooPluginIcons.getOdooIconForPsiElement(record.getDefiningElement(), flags);
             });
         }
         return icon;
+    }
+
+    public Icon getIcon() {
+        return getIcon(0);
     }
 
     @Override

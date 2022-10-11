@@ -62,10 +62,6 @@ public class OdooModelPsiElement extends AbstractOdooPsiElement implements OdooM
 
     @Override
     public Icon getIcon(int flags) {
-        if (icon == null) {
-            Icon baseIcon = model.getDefiningElement().getIcon(flags);
-            icon = new LayeredIcon(baseIcon, OdooPluginIcons.ODOO_OVERLAY_ICON);
-        }
-        return icon;
+        return OdooPluginIcons.getOdooIconForPsiElement(model.getDefiningElement());
     }
 }

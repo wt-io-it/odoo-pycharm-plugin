@@ -70,7 +70,7 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     public @Nullable Icon getIcon() {
         if (directory != null) {
             if (icon == null) {
-                icon = new LayeredIcon(directory.getIcon(0), OdooPluginIcons.ODOO_OVERLAY_ICON);
+                icon = OdooPluginIcons.getOdooIconForPsiElement(directory);
             }
             return icon;
         } // TODO else check if we can get a directory
