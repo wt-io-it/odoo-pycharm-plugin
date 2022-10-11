@@ -42,16 +42,18 @@ public class IndexingKeysTest extends BaseOdooPluginTest {
                 "addon_with_weird_subdirs.my_test_only_model",
                 "existing",
                 "inherited",
-                "mixed_wildcard.:ANYTHING:",
-                "mixed_wildcard.explicit",
+                "mixed_wildcard.default_:ANYTHING:",
+                "mixed_wildcard.default_explicit",
+                "mixed_wildcard.format_:ANYTHING:",
+                "mixed_wildcard.format_explicit",
                 "model_a",
                 "model_b",
                 "model_c",
                 "model_d",
                 "model_e",
                 "outer_model",
-                "well_described",
-                "wildcard.:ANYTHING:"));
+                "single_wildcard.:ANYTHING:",
+                "well_described"));
     }
 
 

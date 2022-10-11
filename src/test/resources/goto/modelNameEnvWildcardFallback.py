@@ -5,5 +5,5 @@ class MyModel(models.Model):
     _inherit = 'inherited'
 
     def do_action(self):
-        wildcard_obj = self.env['mixed_wild<caret>card.fallback']
+        wildcard_obj = self.env['mixed_wild<caret>card.default_fallback']
         return wildcard_obj

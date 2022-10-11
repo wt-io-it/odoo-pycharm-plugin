@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -115,7 +116,20 @@ public interface PsiElementsUtil {
             // _name = None, see src/test/resources/odoo/addons/module_indexing_special_cases/models/abstract_model.py
             return null;
         } else if (valueChild instanceof PyStringLiteralExpression) {
+            PsiElement[] children = valueChild.getChildren();
+            if (children.length == 1) {
+                return getStringValueForValueChild(children[0], contextSupplier);
+            }
             return ((PyStringLiteralExpression) valueChild).getStringValue();
+        } else if (valueChild instanceof PyFormattedStringElement) {
+            TextRange contentRange = ((PyStringElement) valueChild).getContentRange();
+            String value = valueChild.getText().substring(contentRange.getStartOffset(), contentRange.getEndOffset());
+            List<PyFStringFragment> fragments = ((PyFormattedStringElement) valueChild).getFragments();
+            for (PyFStringFragment fragment : fragments) {
+                // TODO try to resolve value of fragment expression
+                value = value.replace(fragment.getText(), OdooModelUtil.NAME_WILDCARD_MARKER);
+            }
+            return value;
         } else if (valueChild instanceof PyStringElement) {
             TextRange contentRange = ((PyStringElement) valueChild).getContentRange();
             return valueChild.getText().substring(contentRange.getStartOffset(), contentRange.getEndOffset());

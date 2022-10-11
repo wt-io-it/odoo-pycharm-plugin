@@ -7,13 +7,20 @@ class Existing(models.Model):
 
 for name in ["one"]:
     class Wildcard(models.Model):
-        _name = 'wildcard.%s' % name
+        _name = 'single_wildcard.%s' % name
 
 class WildcardDefault(models.Model):
-    _name = 'mixed_wildcard.%s' % name
+    _name = 'mixed_wildcard.default_%s' % name
 
-class NonWildcard(models.Model):
-    _name = 'mixed_wildcard.explicit'
+class NonWildcardDefault(models.Model):
+    _name = 'mixed_wildcard.default_explicit'
+
+class WildcardFormatString(models.Model):
+    _name = f'mixed_wildcard.format_{name}'
+
+class NonWildcardFormatString(models.Model):
+    _name = f'mixed_wildcard.format_explicit'
+
 
 class WellDescribed(models.Model):
     """A model containing a python string description"""

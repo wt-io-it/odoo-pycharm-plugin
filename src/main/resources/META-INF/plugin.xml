@@ -39,6 +39,7 @@
           <ul>
             <li>support loosely matching entries in searches, <pre>self.env["wp"]</pre> matches website.page</li>
             <li>terminate outdated searches faster</li>
+            <li>wildcard match <pre>_name = f"foo_{variable}_bar"</pre></li>
           </ul>
         </li>
         <li>
