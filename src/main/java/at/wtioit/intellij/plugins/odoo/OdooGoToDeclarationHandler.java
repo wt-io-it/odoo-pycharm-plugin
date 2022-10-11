@@ -64,6 +64,8 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
         } else if (OdooRecordPsiElementMatcherUtil.isOdooRecordPsiElement(psiElement)) {
             if (psiElement instanceof XmlToken) {
                 return getOdooRecord((XmlToken) psiElement);
+            } else if (psiElement instanceof PyStringElement) {
+                return getOdooRecord((PyStringElement) psiElement);
             }
         } else if (OdooRecordPsiElementMatcherUtil.holdsOdooRecordReference(psiElement)) {
             if (psiElement instanceof XmlToken) {
@@ -87,6 +89,11 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
         } else {
             refName = psiElement.getText();
         }
+        return getOdooRecord(psiElement.getProject(), psiElement.getContainingFile(), refName);
+    }
+
+    private PsiElement getOdooRecord(@NotNull PyStringElement psiElement) {
+        String refName = getPyStringValue(psiElement);
         return getOdooRecord(psiElement.getProject(), psiElement.getContainingFile(), refName);
     }
 
