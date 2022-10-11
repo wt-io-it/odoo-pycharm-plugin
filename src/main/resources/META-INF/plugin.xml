@@ -35,6 +35,13 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.6.1:
+          <ul>
+            <li>support loosely matching entries in searches, <pre>self.env["wp"]</pre> matches website.page</li>
+            <li>terminate outdated searches faster</li>
+          </ul>
+        </li>
+        <li>
           Version 0.6.0:
           <ul>
             <li>enable support for Odoo records</li>

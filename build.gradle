@@ -134,4 +134,8 @@ tasks {
         token.set(System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_intellijPublishToken"))
     }
 
+    buildSearchableOptions {
+        enabled = false
+    }
+
 }
