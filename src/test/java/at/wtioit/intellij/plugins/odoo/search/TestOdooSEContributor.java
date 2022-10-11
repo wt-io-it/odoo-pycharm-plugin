@@ -38,6 +38,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         assertSameElements(resultsAddons,
                 "addon1_extension:/src/odoo/addons/addon1_extension",
                 "addon1:/src/odoo/addons/addon1",
+                "addon1.autocomplete_target_record:/src/odoo/addons/addon1/data/records.xml",
                 "addon1.record1:/src/odoo/addons/addon1/data/records.xml",
                 "addon1.my_not_unique_record_name:/src/odoo/addons/addon1/data/records.xml",
                 "addon1.openerp_record:/src/odoo/addons/addon1/data/openerp_records.xml",
@@ -96,6 +97,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
                 "addon1.record15:/src/odoo/addons/addon1/data/inherited3.csv",
                 "addon1.record5:/src/odoo/addons/addon1/data/existing.csv",
                 "addon1.record6:/src/odoo/addons/addon1/data/existing.csv",
-                "addon1.openerp_record:/src/odoo/addons/addon1/data/openerp_records.xml");
+                "addon1.openerp_record:/src/odoo/addons/addon1/data/openerp_records.xml",
+                "addon1.autocomplete_target_record:/src/odoo/addons/addon1/data/records.xml");
     }
 }

@@ -22,6 +22,7 @@ public class OdooCompletionContributor extends AbstractOdooCompletionContributor
         String expressionWithDummy = parameters.getPosition().getParent().getText();
         String fqdn = expressionWithDummy.substring(0, expressionWithDummy.length() - CompletionUtilCore.DUMMY_IDENTIFIER.length() + 1);
         if (fqdn.startsWith("odoo.addons.")) {
+            // autocomplete import odoo.addons.*
             PsiElement dot = parameters.getPosition().getPrevSibling();
             if (dot != null) {
                 PsiElement packageName = dot.getPrevSibling();
@@ -43,6 +44,12 @@ public class OdooCompletionContributor extends AbstractOdooCompletionContributor
                 String value = getStringValue(parameters, expressionWithDummy);
                 if (value != null) {
                     suggestModelName(parameters, result, value);
+                }
+            } else if (OdooRecordPsiElementMatcherUtil.isOdooRecordPsiElement(parameters.getPosition())) {
+                // suggest record xml ids
+                String value = getStringValue(parameters, expressionWithDummy);
+                if (value != null) {
+                    suggestRecordXmlId(parameters, result, value);
                 }
             }
         }
