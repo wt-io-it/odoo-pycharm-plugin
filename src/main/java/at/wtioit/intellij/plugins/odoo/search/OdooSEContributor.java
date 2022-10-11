@@ -11,7 +11,8 @@ import at.wtioit.intellij.plugins.odoo.modules.search.OdooModulePsiElement;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecordService;
 import at.wtioit.intellij.plugins.odoo.records.search.OdooRecordPsiElement;
-import com.intellij.ide.actions.searcheverywhere.SearchEverywhereContributor;
+import com.intellij.ide.actions.searcheverywhere.FoundItemDescriptor;
+import com.intellij.ide.actions.searcheverywhere.WeightedSearchEverywhereContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Iterator;
 
-public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResult> {
+public class OdooSEContributor implements WeightedSearchEverywhereContributor<OdooSEResult> {
 
     private final Project project;
 
@@ -46,9 +47,7 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
 
     @Override
     public int getSortWeight() {
-        // need to use the first "free" number in 2020.3 until
-        // see https://youtrack.jetbrains.com/issue/IDEA-255566
-        return -1;
+        return 0;
     }
 
     @Override
@@ -57,7 +56,7 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
     }
 
     @Override
-    public void fetchElements(@NotNull String pattern, @NotNull ProgressIndicator progressIndicator, @NotNull Processor<? super OdooSEResult> consumer) {
+    public void fetchWeightedElements(@NotNull String pattern, @NotNull ProgressIndicator progressIndicator, @NotNull Processor<? super FoundItemDescriptor<OdooSEResult>> consumer) {
         // our suggestions are too complex (require too much index accesses) for running in dumb mode
         if (!DumbService.isDumb(project)) {
             OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
@@ -70,7 +69,7 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
                     if (moduleName.startsWith(pattern)) {
                         OdooModule module = moduleService.getModule(moduleName);
                         if (module != null) {
-                            consumer.process(new OdooModulePsiElement(module, project));
+                            consumer.process(OdooFoundItemDescriptor.weighted(pattern, new OdooModulePsiElement(module, project)));
                         }
                     }
                 }
@@ -84,7 +83,7 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
                         break;
                     }
                     if (modelName != null && modelName.startsWith(pattern)) {
-                        consumer.process(new OdooModelPsiElement(modelService.getModel(modelName), project));
+                        consumer.process(OdooFoundItemDescriptor.weighted(pattern, new OdooModelPsiElement(modelService.getModel(modelName), project)));
                     }
                 }
             });
@@ -109,7 +108,7 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
                         if (xmlId != null && xmlId.startsWith(pattern)) {
                             OdooRecord record = recordService.getRecord(xmlId);
                             if (record != null) {
-                                consumer.process(new OdooRecordPsiElement(record, project));
+                                consumer.process(OdooFoundItemDescriptor.weighted(pattern, new OdooRecordPsiElement(record, project)));
                             }
                         } else if (xmlId != null && xmlId.startsWith(undetectedXmlId)) {
                             String expectedXmlId;
@@ -120,7 +119,7 @@ public class OdooSEContributor implements SearchEverywhereContributor<OdooSEResu
                             }
                             OdooRecord record = recordService.getRecord(expectedXmlId);
                             if (record != null) {
-                                consumer.process(new OdooRecordPsiElement(record, project));
+                                consumer.process(OdooFoundItemDescriptor.weighted(pattern, new OdooRecordPsiElement(record, project)));
                             }
                         }
                     }
