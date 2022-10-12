@@ -40,6 +40,7 @@
             <li>support loosely matching entries in searches, <pre>self.env["wp"]</pre> matches website.page</li>
             <li>terminate outdated searches faster</li>
             <li>wildcard match <pre>_name = f"foo_{variable}_bar"</pre></li>
+            <li>fixed ArrayIndexOutOfBoundsException in CSV parsing, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/55, thanks to BitsReyesSantana for reporting it</li>
           </ul>
         </li>
         <li>

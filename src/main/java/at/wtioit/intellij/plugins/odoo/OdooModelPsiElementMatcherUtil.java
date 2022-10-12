@@ -389,16 +389,18 @@ public interface OdooModelPsiElementMatcherUtil {
         if (firstChild instanceof PsiPlainText) {
             // TODO replace with a proper csv parser
             String[] lines = firstChild.getText().split("\r?\n");
-            String[] columns = csvLine(lines[0]);
-            for (int i = 1; i < lines.length && result.size() < limit; i++) {
-                String line = lines[i];
-                OdooRecord record = OdooRecordImpl.getFromCsvLine(modelName, columns, csvLine(line), path, firstChild);
-                // TODO check module name
-                if (record != null && matches.apply(record)) {
-                    if (record.getXmlId() != null) {
-                        result.put(record.getXmlId(), record);
-                    } else {
-                        result.put(NULL_XML_ID_KEY + "." + record.getId(), record);
+            if (lines.length > 1) {
+                String[] columns = csvLine(lines[0]);
+                for (int i = 1; i < lines.length && result.size() < limit; i++) {
+                    String line = lines[i];
+                    OdooRecord record = OdooRecordImpl.getFromCsvLine(modelName, columns, csvLine(line), path, firstChild);
+                    // TODO check module name
+                    if (record != null && matches.apply(record)) {
+                        if (record.getXmlId() != null) {
+                            result.put(record.getXmlId(), record);
+                        } else {
+                            result.put(NULL_XML_ID_KEY + "." + record.getId(), record);
+                        }
                     }
                 }
             }
