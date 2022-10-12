@@ -123,7 +123,7 @@ public class OdooIndex extends FileBasedIndexExtension<String, OdooIndexEntry> {
 
     @Override
     public int getVersion() {
-        return 4;
+        return 5;
     }
 
     @Override

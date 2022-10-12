@@ -63,7 +63,6 @@ public class IndexingKeysTest extends BaseOdooPluginTest {
         List<String> recordNames = Arrays.asList(service.getXmlIds());
         recordNames = recordNames.stream().sorted().collect(Collectors.toList());
         assertContainsElements(recordNames, Arrays.asList(
-                ":UNDETECTED_XML_ID:.Board1",
                 ":UNDETECTED_XML_ID:.record10",
                 ":UNDETECTED_XML_ID:.record11",
                 ":UNDETECTED_XML_ID:.record14",
@@ -74,7 +73,7 @@ public class IndexingKeysTest extends BaseOdooPluginTest {
                 ":UNDETECTED_XML_ID:.record7",
                 ":UNDETECTED_XML_ID:.record8",
                 ":UNDETECTED_XML_ID:.record9",
-                "Board1.action",
+                "addon1.Board1",
                 "addon1.existing_kanban_view",
                 "addon1.inherited",
                 "addon1.my_not_unique_record_name",
@@ -84,6 +83,7 @@ public class IndexingKeysTest extends BaseOdooPluginTest {
                 "addon1.record2",
                 "addon1.record3",
                 "addon1.record4",
-                "addon1_extension.my_not_unique_record_name"));
+                "addon1_extension.my_not_unique_record_name",
+                "Board1.action"));
     }
 }

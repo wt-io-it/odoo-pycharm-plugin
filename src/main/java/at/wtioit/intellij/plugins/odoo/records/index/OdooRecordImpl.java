@@ -26,7 +26,7 @@ public class OdooRecordImpl extends AbstractOdooRecord {
         MODELS_FOR_TAG_NAMES.put("act_window", "ir.actions.act_window");
     }
 
-    private static final List<String> KNOWN_ODOO_XML_DIRECTORIES = Arrays.asList("views", "data");
+    private static final List<String> KNOWN_ODOO_XML_DIRECTORIES = Arrays.asList("/views/", "/data/", "/static/src/xml/");
 
     private final PsiElement definingElement;
 
@@ -60,10 +60,15 @@ public class OdooRecordImpl extends AbstractOdooRecord {
         return null;
     }
 
-    private static String guessFromPath(String id, String path) {
-        String[] segments = path.split("/");
-        if (segments[segments.length - 1].endsWith(".xml") && KNOWN_ODOO_XML_DIRECTORIES.contains(segments[segments.length - 2])) {
-            return segments[segments.length - 3] + "." + id;
+    public static String guessFromPath(String id, String path) {
+        if (path.endsWith(".xml")) {
+            for (String directory : KNOWN_ODOO_XML_DIRECTORIES) {
+                int endOfAddonName = path.indexOf(directory);
+                if (endOfAddonName != -1) {
+                    String[] segments = path.substring(0, endOfAddonName).split("/");
+                    return segments[segments.length - 1] + "." + id;
+                }
+            }
         }
         return null;
     }
@@ -74,9 +79,7 @@ public class OdooRecordImpl extends AbstractOdooRecord {
         String modelName = "ir.ui.view"; //TODO this is not really an ui view but a javascript template
         if (id != null) {
             if (!id.contains(".")) {
-                String xmlId = null;
-                // TODO maybe make a fast guess for the module name from path
-                return new OdooRecordImpl(id, xmlId, modelName, path, templateTag);
+                return new OdooRecordImpl(id, guessFromPath(id, path), modelName, path, templateTag);
             } else {
                 return new OdooRecordImpl(id, id, modelName, path, templateTag);
             }
