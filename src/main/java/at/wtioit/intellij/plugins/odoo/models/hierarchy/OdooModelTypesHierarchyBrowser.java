@@ -1,14 +1,9 @@
 package at.wtioit.intellij.plugins.odoo.models.hierarchy;
 
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
-import at.wtioit.intellij.plugins.odoo.models.OdooModel;
-import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
-import at.wtioit.intellij.plugins.odoo.models.impl.OdooModelImpl;
 import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.hierarchy.PyTypeHierarchyBrowser;
 import com.jetbrains.python.hierarchy.treestructures.PySubTypesHierarchyTreeStructure;

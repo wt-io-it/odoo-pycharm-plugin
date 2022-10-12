@@ -1,6 +1,9 @@
 package at.wtioit.intellij.plugins.odoo.records.index;
 
 import at.wtioit.intellij.plugins.odoo.WithinProject;
+import at.wtioit.intellij.plugins.odoo.models.OdooModel;
+import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
+import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
 import at.wtioit.intellij.plugins.odoo.records.AbstractOdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -13,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getModelsFromFile;
 import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromFile;
 
 public class OdooDeserializedRecordImpl extends AbstractOdooRecord {
@@ -39,6 +43,16 @@ public class OdooDeserializedRecordImpl extends AbstractOdooRecord {
                     if (Objects.equals(record.getId(), getId())) {
                         return record.getDefiningElement();
                     }
+                }
+            }
+            if (getXmlId().startsWith("base.model_")) {
+                HashMap<String, OdooModelDefinition> modelsFromFile = getModelsFromFile(file, (model) -> {
+                    return Objects.equals(getXmlId(), "base.model_" + model.getName().replace(".", "_"));
+                }, 1);
+                if (modelsFromFile.size() == 1) {
+                    OdooModelDefinition modelDefinition = modelsFromFile.values().iterator().next();
+                    OdooModel model = OdooModelService.getInstance(WithinProject.INSTANCE.get()).getModel(modelDefinition.getName());
+                    return model.getDefiningElement();
                 }
             }
         }

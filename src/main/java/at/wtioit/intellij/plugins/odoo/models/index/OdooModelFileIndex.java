@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getModelsFromFile;
+
 public class OdooModelFileIndex extends OdooIndexExtension<OdooModelDefinition> {
 
     @NonNls public static final ID<String, OdooModelDefinition> NAME = ID.create("OdooModelFileIndex");
@@ -112,21 +114,7 @@ public class OdooModelFileIndex extends OdooIndexExtension<OdooModelDefinition> 
 
         @Override
         public @NotNull Map<String, OdooModelDefinition> mapWatched(@NotNull FileContent inputData) {
-            HashMap<String, OdooModelDefinition> models = new HashMap<>();
-            @NotNull PsiFile file = inputData.getPsiFile();
-            PsiElementsUtil.walkTree(file, (child) -> {
-                if (OdooModelPsiElementMatcherUtil.isOdooModelDefinition(child)) {
-                    logger.debug("Found " + child + " in " + file.getName());
-                    OdooModelDefinition model = new OdooModelDefinition((PyClass) child);
-                    if (model.getName() != null) {
-                        // if we cannot detect a name we do not put the class in the index
-                        models.put(model.getName(), model);
-                    }
-                    return true;
-                }
-                return false;
-            });
-            return models;
+            return getModelsFromFile(inputData.getPsiFile());
         }
     }
 

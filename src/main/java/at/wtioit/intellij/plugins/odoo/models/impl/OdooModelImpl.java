@@ -3,6 +3,7 @@ package at.wtioit.intellij.plugins.odoo.models.impl;
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
@@ -167,5 +168,10 @@ public class OdooModelImpl implements OdooModel {
     @Override
     public int hashCode() {
         return Objects.hash(getDefiningElement(), getName());
+    }
+
+    @Override
+    public OdooIndexSubKeys getSubIndexKey() {
+        return OdooIndexSubKeys.ODOO_MODELS;
     }
 }

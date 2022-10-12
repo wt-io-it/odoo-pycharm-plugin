@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo;
 
 import at.wtioit.intellij.plugins.odoo.index.IndexWatcher;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
+import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.index.OdooRecordImpl;
 import com.intellij.openapi.project.DumbService;
@@ -377,6 +378,31 @@ public interface OdooModelPsiElementMatcherUtil {
         }
         return records;
     }
+
+    static HashMap<String, OdooModelDefinition> getModelsFromFile(@NotNull PsiFile file) {
+        return getModelsFromFile(file, (model) -> true, Integer.MAX_VALUE);
+    }
+
+    static HashMap<String, OdooModelDefinition> getModelsFromFile(@NotNull PsiFile file, Function<OdooModelDefinition, Boolean> matches, int limit){
+        HashMap<String, OdooModelDefinition> models = new HashMap<>();
+        PsiElementsUtil.walkTree(file, (child) -> {
+            if (models.size() >= limit) {
+                // skip if we already found all needed models
+                return true;
+            }
+            if (OdooModelPsiElementMatcherUtil.isOdooModelDefinition(child)) {
+                OdooModelDefinition model = new OdooModelDefinition((PyClass) child);
+                if (model.getName() != null && matches.apply(model)) {
+                    // if we cannot detect a name we do not put the class in the index
+                    models.put(model.getName(), model);
+                }
+                return true;
+            }
+            return false;
+        });
+        return models;
+    }
+
 
     static HashMap<String, OdooRecord> getRecordsFromCsvFile(PsiFile file, String path) {
         return getRecordsFromCsvFile(file, path, (r) -> true, Integer.MAX_VALUE);

@@ -1,5 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.models;
 
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexEntry;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public interface OdooModel {
+public interface OdooModel extends OdooIndexEntry {
 
     Set<String> ODOO_MODEL_NAME_VARIABLE_NAME = new HashSet<>(Arrays.asList("_inherit", "_name"));
     Set<String> ODOO_MODEL_NAME_VARIABLE_NAME_IN_DICT_KEY = new HashSet<>(Collections.singletonList("_inherits"));

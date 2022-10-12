@@ -35,9 +35,8 @@ public interface OdooRecordPsiElementMatcherUtil {
             PyArgumentList argumentList = findParent(psiElement, PyArgumentList.class, 2);
             if (argumentList != null) {
                 PsiElement method = argumentList.getPrevSibling();
-                // TODO use type of self.env (Environment) instead of text
+                // TODO use type of self.env (Environment) instead of text to check if method belongs to Environment
                 String methodName = method.getLastChild().getText();
-                // TODO write a test for all `(?<!(self|cls|request)\.env)\.ref\(` (regex search)
                 if ("ref".equals(methodName)) {
                     return true;
                 }

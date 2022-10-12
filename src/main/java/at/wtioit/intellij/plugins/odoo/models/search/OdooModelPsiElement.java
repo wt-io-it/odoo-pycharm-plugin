@@ -1,6 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.models.search;
 
 import at.wtioit.intellij.plugins.odoo.icons.OdooPluginIcons;
+import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.search.AbstractOdooPsiElement;
@@ -63,5 +64,10 @@ public class OdooModelPsiElement extends AbstractOdooPsiElement implements OdooM
     @Override
     public Icon getIcon(int flags) {
         return OdooPluginIcons.getOdooIconForPsiElement(model.getDefiningElement());
+    }
+
+    @Override
+    public OdooIndexSubKeys getSubIndexKey() {
+        return OdooIndexSubKeys.ODOO_MODELS;
     }
 }
