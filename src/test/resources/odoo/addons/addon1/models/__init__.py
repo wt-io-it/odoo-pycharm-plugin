@@ -4,3 +4,4 @@ from . import incomplete
 from . import umlauts
 from . import conditional
 from . import multiline
+from . import numbers

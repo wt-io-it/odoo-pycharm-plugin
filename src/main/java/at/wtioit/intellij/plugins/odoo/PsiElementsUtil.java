@@ -174,11 +174,13 @@ public interface PsiElementsUtil {
                 return getStringValueForValueChild(containedExpression, contextSupplier);
             }
         } else if (valueChild instanceof PyDictLiteralExpression) {
-                //firstChild() somehow returns the bracket
-                PsiElement firstChild = valueChild.getChildren()[0];
-                if (firstChild instanceof PyKeyValueExpression) {
-                    return getStringValueForValueChild(((PyKeyValueExpression) firstChild).getKey(), contextSupplier);
-                }
+            //firstChild() somehow returns the bracket
+            PsiElement firstChild = valueChild.getChildren()[0];
+            if (firstChild instanceof PyKeyValueExpression) {
+                return getStringValueForValueChild(((PyKeyValueExpression) firstChild).getKey(), contextSupplier);
+            }
+        } else if (valueChild instanceof PyNumericLiteralExpression) {
+            return valueChild.getText();
         } else if (valueChild instanceof PyConditionalExpression) {
             // ignore conditional expressions for names (we cannot resolve them yet)
             //   _name = 'value' if condition else 'other_value'

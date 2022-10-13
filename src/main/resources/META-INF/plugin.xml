@@ -38,6 +38,7 @@
           Version 0.6.2:
           <ul>
             <li>fixed StringIndexOutOfBoundsException when module was directly in base path of project, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/58, thanks to alessiom72 for reporting it</li>
+            <li>fixed using PyNumericLiteralExpressionImpl in model names, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/59, thanks to rgarzonsisinfo for reporting it</li>
           </ul>
         </li>
         <li>
