@@ -35,6 +35,12 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.6.2:
+          <ul>
+            <li>fixed StringIndexOutOfBoundsException when module was directly in base path of project, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/58, thanks to alessiom72 for reporting it</li>
+          </ul>
+        </li>
+        <li>
           Version 0.6.1:
           <ul>
             <li>support loosely matching entries in searches, <pre>self.env["wp"]</pre> matches website.page</li>

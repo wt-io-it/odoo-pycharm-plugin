@@ -41,7 +41,7 @@ public abstract class AbstractOdooModuleImpl implements OdooModule {
         if (project != null) {
             basePath = project.getBasePath();
         }
-        if (basePath != null && locationString.startsWith(basePath)) {
+        if (basePath != null && locationString.startsWith(basePath) && basePath.length() < locationString.length()) {
             return locationString.substring(basePath.length() + 1);
         }
         return locationString;
