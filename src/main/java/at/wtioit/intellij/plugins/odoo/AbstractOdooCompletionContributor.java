@@ -23,7 +23,7 @@ import java.util.Collections;
 abstract class AbstractOdooCompletionContributor extends CompletionContributor {
 
     void suggestModuleName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
-        OdooModuleService moduleService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = parameters.getOriginalFile().getProject().getService(OdooModuleService.class);
         PsiDirectory odooDirectory = moduleService.getOdooDirectory();
         if (odooDirectory != null) {
             PrefixMatcher matcher =  result.getPrefixMatcher();
@@ -77,7 +77,7 @@ abstract class AbstractOdooCompletionContributor extends CompletionContributor {
 
     void suggestModelName(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
         Project project = parameters.getOriginalFile().getProject();
-        OdooModelService modelService = ServiceManager.getService(project, OdooModelService.class);
+        OdooModelService modelService = project.getService(OdooModelService.class);
         PrefixMatcher matcher =  result.getPrefixMatcher();
 
         for (String modelName : modelService.getModelNames()) {
@@ -104,7 +104,7 @@ abstract class AbstractOdooCompletionContributor extends CompletionContributor {
     }
 
     void suggestRecordXmlId(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result, String value) {
-        OdooRecordService recordService = ServiceManager.getService(parameters.getOriginalFile().getProject(), OdooRecordService.class);
+        OdooRecordService recordService = parameters.getOriginalFile().getProject().getService(OdooRecordService.class);
         PrefixMatcher matcher =  result.getPrefixMatcher();
 
         for (String xmlId : recordService.getXmlIds()) {

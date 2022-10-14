@@ -59,7 +59,7 @@ public class OdooSEContributor implements WeightedSearchEverywhereContributor<Od
     public void fetchWeightedElements(@NotNull String pattern, @NotNull ProgressIndicator progressIndicator, @NotNull Processor<? super FoundItemDescriptor<OdooSEResult>> consumer) {
         // our suggestions are too complex (require too much index accesses) for running in dumb mode
         if (!DumbService.isDumb(project)) {
-            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            OdooModuleService moduleService = project.getService(OdooModuleService.class);
             ApplicationManager.getApplication().runReadAction(() -> {
                 for (Iterator<String> iter = moduleService.getModuleNames().iterator(); iter.hasNext(); ) {
                     if (progressIndicator.isCanceled()) {
@@ -75,7 +75,7 @@ public class OdooSEContributor implements WeightedSearchEverywhereContributor<Od
                 }
             });
 
-            OdooModelService modelService = ServiceManager.getService(project, OdooModelService.class);
+            OdooModelService modelService = project.getService(OdooModelService.class);
             ApplicationManager.getApplication().runReadAction(() -> {
                 for (String modelName : modelService.getModelNames()) {
                     if (progressIndicator.isCanceled()) {
@@ -97,7 +97,7 @@ public class OdooSEContributor implements WeightedSearchEverywhereContributor<Od
                 undetectedXmlId = OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY + "." + pattern;
                 undetectedXmlIdExpectedModule = null;
             }
-            OdooRecordService recordService = ServiceManager.getService(project, OdooRecordService.class);
+            OdooRecordService recordService = project.getService(OdooRecordService.class);
             ApplicationManager.getApplication().runReadAction(() -> {
                 WithinProject.run(project, () -> {
                     for (String xmlId : recordService.getXmlIds()) {

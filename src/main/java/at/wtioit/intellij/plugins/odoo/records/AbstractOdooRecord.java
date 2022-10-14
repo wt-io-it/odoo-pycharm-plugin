@@ -52,7 +52,7 @@ public abstract class AbstractOdooRecord implements OdooRecord {
     public String getXmlId() {
         if (xmlId == null) {
             if (WithinProject.INSTANCE.get() != null) {
-                OdooModuleService moduleService = ServiceManager.getService(WithinProject.INSTANCE.get(), OdooModuleService.class);
+                OdooModuleService moduleService = WithinProject.INSTANCE.get().getService(OdooModuleService.class);
                 PsiDirectory moduleDirectory = moduleService.getModuleDirectory(path);
                 if (moduleDirectory != null) {
                     // TODO update index

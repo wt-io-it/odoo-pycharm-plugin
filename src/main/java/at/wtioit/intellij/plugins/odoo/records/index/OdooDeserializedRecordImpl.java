@@ -51,7 +51,7 @@ public class OdooDeserializedRecordImpl extends AbstractOdooRecord {
                 }, 1);
                 if (modelsFromFile.size() == 1) {
                     OdooModelDefinition modelDefinition = modelsFromFile.values().iterator().next();
-                    OdooModel model = OdooModelService.getInstance(WithinProject.INSTANCE.get()).getModel(modelDefinition.getName());
+                    OdooModel model = WithinProject.INSTANCE.get().getService(OdooModelService.class).getModel(modelDefinition.getName());
                     return model.getDefiningElement();
                 }
             }

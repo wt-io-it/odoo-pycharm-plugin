@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 public class TestModelImpl extends BaseOdooPluginTest {
 
     public void testFindingModels() {
-        OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
+        OdooModelService modelService = getProject().getService(OdooModelService.class);
 
         assertContainsElements(StreamSupport.stream(modelService.getModelNames().spliterator(), false).collect(Collectors.toList()),
                 "model_a",
@@ -23,7 +23,7 @@ public class TestModelImpl extends BaseOdooPluginTest {
     }
 
     public void testInheritedDefiningElement() {
-        OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
+        OdooModelService modelService = getProject().getService(OdooModelService.class);
         OdooModel inherited = modelService.getModel("inherited");
         assertNotNull(inherited);
 
@@ -33,7 +33,7 @@ public class TestModelImpl extends BaseOdooPluginTest {
     }
 
     public void testInheritedDefiningElements() {
-        OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
+        OdooModelService modelService = getProject().getService(OdooModelService.class);
         OdooModel inherited = modelService.getModel("inherited");
         assertNotNull(inherited);
 

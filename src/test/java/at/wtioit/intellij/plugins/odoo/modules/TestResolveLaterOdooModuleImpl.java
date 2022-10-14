@@ -24,7 +24,7 @@ public class TestResolveLaterOdooModuleImpl extends BaseOdooPluginTest {
 
 
     public void testResolving() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         ResolveLaterOdooModuleImpl resolveLater = new ResolveLaterOdooModuleImpl("resolve_me_later_too", getProject());
 
         myFixture.addFileToProject("repo2/resolve_me_later_too/__manifest__.py", "" +

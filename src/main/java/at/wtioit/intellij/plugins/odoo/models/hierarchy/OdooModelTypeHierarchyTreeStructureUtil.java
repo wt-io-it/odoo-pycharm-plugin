@@ -27,7 +27,7 @@ class OdooModelTypeHierarchyTreeStructureUtil {
 
             List<PsiElement> definingElements = ((OdooModelImpl) model).getDefiningElements();
             if (project != null) {
-                OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+                OdooModuleService moduleService = project.getService(OdooModuleService.class);
                 OdooModule baseModule = model.getBaseModule();
                 definingElements.sort((e1, e2) -> {
                     OdooModule module1 = moduleService.getModule(e1.getContainingFile().getVirtualFile());
@@ -76,10 +76,13 @@ class OdooModelTypeHierarchyTreeStructureUtil {
 
     public static Object[] buildChildren(@NotNull PsiElement psiElement, @NotNull HierarchyNodeDescriptor hierarchyNodeDescriptor, @NotNull List<Object> children) {
         children = new ArrayList<>(children);
-        OdooModelService modelService = ServiceManager.getService(hierarchyNodeDescriptor.getProject(), OdooModelService.class);
-        OdooModel modelForHierarchy = modelService.getModelForElement(psiElement);
-        if (modelForHierarchy != null) {
-            OdooModelTypeHierarchyTreeStructureUtil.addOdooModelChildren(modelForHierarchy, hierarchyNodeDescriptor, children);
+        Project project = hierarchyNodeDescriptor.getProject();
+        if (project != null) {
+            OdooModelService modelService = project.getService(OdooModelService.class);
+            OdooModel modelForHierarchy = modelService.getModelForElement(psiElement);
+            if (modelForHierarchy != null) {
+                OdooModelTypeHierarchyTreeStructureUtil.addOdooModelChildren(modelForHierarchy, hierarchyNodeDescriptor, children);
+            }
         }
         return children.toArray();
     }

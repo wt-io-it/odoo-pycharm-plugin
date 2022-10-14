@@ -50,7 +50,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
             return recordWithCorrectXmlId(records.get(0), xmlId);
         }
         // TODO find base elements
-        OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+        OdooModuleService moduleService = project.getService(OdooModuleService.class);
         OdooRecord baseRecord = WithinProject.call(project, () -> {
             for (OdooRecord record : records) {
                 boolean dependsOnOtherRecords = false;
@@ -88,7 +88,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     private OdooModelRecord getOdooModelRecord(String xmlId) {
         String[] xmlIdParts = xmlId.split("\\.");
         if (xmlIdParts.length == 2 && xmlIdParts[1].startsWith("model_")) {
-            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            OdooModuleService moduleService = project.getService(OdooModuleService.class);
             String moduleName = xmlIdParts[0];
             String modelNameId = xmlIdParts[1].substring(6);
             OdooModule module = moduleService.getModule(moduleName);
@@ -113,7 +113,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     private OdooModuleRecord getOdooModuleRecord(String xmlId) {
         String[] xmlIdParts = xmlId.split("\\.");
         if (xmlIdParts.length == 2 && "base".equals(xmlIdParts[0]) && xmlIdParts[1].startsWith("module_")) {
-            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            OdooModuleService moduleService = project.getService(OdooModuleService.class);
             String moduleName = xmlIdParts[1].substring(7);
             OdooModule module = moduleService.getModule(moduleName);
             if (module != null) {
@@ -138,7 +138,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
             }
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             Stream<OdooRecord> records = OdooIndex.getValues(undetectedXmlId, scope, OdooRecord.class);
-            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            OdooModuleService moduleService = project.getService(OdooModuleService.class);
             return WithinProject.call(project, () -> records
                     .map(record -> Pair.create(record.findVirtualFile(), record))
                     .map(pair -> Pair.create(moduleService.getModule(pair.first), pair.second))
@@ -153,7 +153,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     @Override
     public String ensureFullXmlId(PsiFile file, String refName) {
         if (!refName.contains(".")) {
-            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            OdooModuleService moduleService = project.getService(OdooModuleService.class);
             OdooModule currentModule = moduleService.getModule(file.getVirtualFile());
             if (currentModule != null) {
                 refName = currentModule.getName() + "." + refName;

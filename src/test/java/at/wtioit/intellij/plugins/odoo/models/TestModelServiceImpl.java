@@ -15,7 +15,7 @@ import java.util.stream.StreamSupport;
 public class TestModelServiceImpl extends BaseOdooPluginTest {
 
     public void testFindingModels() {
-        OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
+        OdooModelService modelService = getProject().getService(OdooModelService.class);
 
         assertNull("Expected to get null for a not existing model", modelService.getModel("notExisting"));
         assertNotNull("Expected to get a model for an existing model", modelService.getModel("existing"));
@@ -23,7 +23,7 @@ public class TestModelServiceImpl extends BaseOdooPluginTest {
     }
 
     public void testModelInheritance() {
-        OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
+        OdooModelService modelService = getProject().getService(OdooModelService.class);
         OdooModel inherited = modelService.getModel("inherited");
         WithinProject.run(getProject(), () -> {
             assertNotNull(inherited.getBaseModule().getDirectory());
@@ -33,7 +33,7 @@ public class TestModelServiceImpl extends BaseOdooPluginTest {
     }
 
     public void testModelNames() {
-        OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
+        OdooModelService modelService = getProject().getService(OdooModelService.class);
         assertContainsElements(StreamSupport.stream(modelService.getModelNames().spliterator(), false).collect(Collectors.toList()), "inherited", "existing");
     }
 
@@ -45,7 +45,7 @@ public class TestModelServiceImpl extends BaseOdooPluginTest {
                 "   _name = 'model_for_element'");
         PsiElement pyClass = Arrays.stream(psiFile.getChildren()).filter(psiElement -> psiElement instanceof PyClass).findFirst().orElseThrow(AssertionError::new);
 
-        OdooModelService modelService = ServiceManager.getService(getProject(), OdooModelService.class);
+        OdooModelService modelService = getProject().getService(OdooModelService.class);
         OdooModel modelForElement = modelService.getModelForElement(pyClass);
         assertNotNull(modelForElement);
         assertEquals("model_for_element", modelForElement.getName());

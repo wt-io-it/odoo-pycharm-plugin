@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class IndexingKeysTest extends BaseOdooPluginTest {
     public void testModuleIndexKeys() {
-        OdooModuleService service = ServiceManager.getService(myFixture.getProject(), OdooModuleService.class);
+        OdooModuleService service = myFixture.getProject().getService(OdooModuleService.class);
         assertNotNull(service);
         ArrayList<OdooModule> modules = new ArrayList<>();
         service.getModules().forEach(modules::add);
@@ -32,7 +32,7 @@ public class IndexingKeysTest extends BaseOdooPluginTest {
     }
 
     public void testModelIndexKeys() {
-        OdooModelService service = ServiceManager.getService(myFixture.getProject(), OdooModelService.class);
+        OdooModelService service = myFixture.getProject().getService(OdooModelService.class);
         assertNotNull(service);
         List<String> modelNames = new ArrayList<>();
         service.getModelNames().forEach(modelNames::add);
@@ -58,7 +58,7 @@ public class IndexingKeysTest extends BaseOdooPluginTest {
 
 
     public void testRecordIndexKeys() {
-        OdooRecordService service = ServiceManager.getService(myFixture.getProject(), OdooRecordService.class);
+        OdooRecordService service = myFixture.getProject().getService(OdooRecordService.class);
         assertNotNull(service);
         List<String> recordNames = Arrays.asList(service.getXmlIds());
         recordNames = recordNames.stream().sorted().collect(Collectors.toList());

@@ -32,7 +32,7 @@ public class MissingRecordDefinitionXmlInspection extends LocalInspectionTool {
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        final OdooRecordService recordService = ServiceManager.getService(holder.getProject(), OdooRecordService.class);
+        final OdooRecordService recordService = holder.getProject().getService(OdooRecordService.class);
         return new XmlElementVisitor() {
 
             @Override

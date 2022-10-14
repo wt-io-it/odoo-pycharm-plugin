@@ -60,7 +60,7 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     @Override
     public @Nullable PsiElement getDirectory() {
         if (directory == null || !directory.isValid()) {
-            OdooModuleService moduleService = ServiceManager.getService(WithinProject.INSTANCE.get(), OdooModuleService.class);
+            OdooModuleService moduleService = WithinProject.INSTANCE.get().getService(OdooModuleService.class);
             directory = moduleService.getModuleDirectory(path);
         }
         return directory;

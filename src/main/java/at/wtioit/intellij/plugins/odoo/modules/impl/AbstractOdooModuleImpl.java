@@ -26,7 +26,7 @@ public abstract class AbstractOdooModuleImpl implements OdooModule {
 
     @Override
     public @NotNull List<OdooModel> getModels() {
-        Iterable<OdooModel> models = ServiceManager.getService(WithinProject.INSTANCE.get(), OdooModelService.class).getModels();
+        Iterable<OdooModel> models = WithinProject.INSTANCE.get().getService(OdooModelService.class).getModels();
         // if we run this in parallel the UI freezes
         return StreamSupport.stream(models.spliterator(), false)
                 .filter(model -> model.getModules().contains(this))

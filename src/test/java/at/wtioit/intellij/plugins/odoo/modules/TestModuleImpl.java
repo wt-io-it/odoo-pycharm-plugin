@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotEquals;
 public class TestModuleImpl extends BaseOdooPluginTest {
 
     public void testFindingModules() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
 
         assertNull("Expected to get null for a not existing model", moduleService.getModule("notExisting"));
         OdooModule addon1 = moduleService.getModule("addon1");
@@ -22,7 +22,7 @@ public class TestModuleImpl extends BaseOdooPluginTest {
     }
 
     public void testFindingOcaModules() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         OdooModule ocaAddon = moduleService.getModule("oca_addon");
         WithinProject.run(getProject(), () -> {
             assertFalse(((PsiDirectory) ocaAddon.getDirectory()).getVirtualFile().getPath().contains(File.separator + "setup" + File.separator));
@@ -30,7 +30,7 @@ public class TestModuleImpl extends BaseOdooPluginTest {
     }
 
     public void testDependencies() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         OdooModule addon1 = moduleService.getModule("addon1");
         WithinProject.run(getProject(), () -> {
             assertContainsElements(addon1.getDependencies().stream().map(OdooModule::getName).collect(Collectors.toList()), "addon2");
@@ -38,7 +38,7 @@ public class TestModuleImpl extends BaseOdooPluginTest {
     }
 
     public void testAddonWithNoDependencies() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         OdooModule noDependencies = moduleService.getModule("no_dependencies");
         WithinProject.run(getProject(), () -> {
             assertEmpty(noDependencies.getDependencies());
@@ -46,7 +46,7 @@ public class TestModuleImpl extends BaseOdooPluginTest {
     }
 
     public void testAddonPathDisplay() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         OdooModule addon1 = moduleService.getModule("addon1");
         assertEquals("/src/odoo/addons/addon1", addon1.getRelativeLocationString());
 
@@ -54,7 +54,7 @@ public class TestModuleImpl extends BaseOdooPluginTest {
     }
 
     public void testDependsOn() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         OdooModule addon1 = moduleService.getModule("addon1");
 
         // TODO remove WithinProject HACK
@@ -74,14 +74,14 @@ public class TestModuleImpl extends BaseOdooPluginTest {
     }
 
     public void testOdooDirectory() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         assertEquals("odoo", moduleService.getOdooDirectory().getName());
 
         // TODO add test for other odoo directories
     }
 
     public void testFindingLaterAddedModule() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         OdooModule addon1 = moduleService.getModule("addon1");
         OdooModule addon1ViaFind = moduleService.findModule("addon1");
 
@@ -94,7 +94,7 @@ public class TestModuleImpl extends BaseOdooPluginTest {
     }
 
     public void testEquality() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         OdooModule addon1 = moduleService.getModule("addon1");
         OdooModule addon1Again = moduleService.getModule("addon1");
         OdooModule addon2 = moduleService.getModule("addon2");
@@ -119,7 +119,7 @@ public class TestModuleImpl extends BaseOdooPluginTest {
     }
 
     public void testStrangeAddonDirs() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         OdooModule addonWithWeirdSubdirs = moduleService.getModule("addon_with_weird_subdirs");
         assertNotNull(addonWithWeirdSubdirs);
         WithinProject.run(getProject(), () -> {

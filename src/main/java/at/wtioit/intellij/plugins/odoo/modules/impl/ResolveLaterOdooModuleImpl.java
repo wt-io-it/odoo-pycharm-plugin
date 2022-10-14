@@ -46,7 +46,7 @@ public class ResolveLaterOdooModuleImpl implements OdooModule {
     }
 
     private void tryResolveOdooModule() throws FileNotFoundException {
-        OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+        OdooModuleService moduleService = project.getService(OdooModuleService.class);
         module = moduleService.getModule(moduleName);
         if (module == null) {
             module = moduleService.findModule(moduleName);

@@ -28,7 +28,7 @@ public class PyCharmOdooAddonsImportResolver implements PyImportResolver {
         }
 
         // resolve addons by their directory
-        OdooModuleService moduleService = ServiceManager.getService(context.getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = context.getProject().getService(OdooModuleService.class);
         if (fqn.startsWith("odoo.addons.")) {
             if (fqn.indexOf('.', 12) == -1) {
                 // we resolve the addon directly, this is triggered when using 'import odoo.addons.addon_name' or 'from odoo.addons.addon_name import models'

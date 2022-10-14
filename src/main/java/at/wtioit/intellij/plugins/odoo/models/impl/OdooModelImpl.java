@@ -51,7 +51,7 @@ public class OdooModelImpl implements OdooModel {
                 return getDefiningElement(psiElements);
             } else {
                 PsiManager psiManager = PsiManager.getInstance(project);
-                OdooModuleService moduleService = OdooModuleService.getInstance(project);
+                OdooModuleService moduleService = project.getService(OdooModuleService.class);
                 List<PsiFile> psiFiles = definingFiles.stream()
                         .map(file -> Pair.create(file, moduleService.getModule(file)))
                         .filter(pair -> pair.first != null && pair.second != null)
@@ -125,7 +125,7 @@ public class OdooModelImpl implements OdooModel {
     @Override
     public OdooModule getBaseModule() {
         if (baseModule == null) {
-            OdooModuleService moduleService = OdooModuleService.getInstance(project);
+            OdooModuleService moduleService = project.getService(OdooModuleService.class);
             List<OdooModule> modules = definingFiles.stream().map(moduleService::getModule)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
@@ -147,7 +147,7 @@ public class OdooModelImpl implements OdooModel {
 
     @Override
     public Set<OdooModule> getModules() {
-        OdooModuleService moduleService = OdooModuleService.getInstance(project);
+        OdooModuleService moduleService = project.getService(OdooModuleService.class);
         return definingFiles.stream().map(moduleService::getModule)
                 .collect(Collectors.toSet());
     }

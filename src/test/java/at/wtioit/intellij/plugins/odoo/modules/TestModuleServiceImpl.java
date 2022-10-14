@@ -8,14 +8,14 @@ import com.intellij.psi.PsiFile;
 public class TestModuleServiceImpl extends BaseOdooPluginTest {
 
     public void testFindingModule() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
 
         OdooModule module = moduleService.getModule("addon1");
         assertNotNull("Expected to get module for existing directory with manifest", module);
     }
 
     public void testFindingModuleWithVirtualFile() {
-        OdooModuleService moduleService = ServiceManager.getService(getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
 
         OdooModule module = moduleService.getModule("addon1");
         WithinProject.run(getProject(), () -> {

@@ -107,7 +107,7 @@ public interface PsiElementsUtil {
     }
 
     static String getStringValueForValueChild(@NotNull PsiElement valueChild) {
-        return getStringValueForValueChild(valueChild, () -> PyResolveContext.defaultContext().withTypeEvalContext(TypeEvalContext.codeAnalysis(valueChild.getContainingFile().getProject(), valueChild.getContainingFile())));
+        return getStringValueForValueChild(valueChild, () -> PyResolveContext.defaultContext(TypeEvalContext.codeAnalysis(valueChild.getContainingFile().getProject(), valueChild.getContainingFile())));
     }
 
 

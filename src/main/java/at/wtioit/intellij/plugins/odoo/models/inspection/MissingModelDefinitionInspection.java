@@ -42,7 +42,7 @@ public class MissingModelDefinitionInspection extends LocalInspectionTool {
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        final OdooModelService modelService = ServiceManager.getService(holder.getProject(), OdooModelService.class);
+        final OdooModelService modelService = holder.getProject().getService(OdooModelService.class);
         return new PyElementVisitor() {
             @Override
             public void visitElement(PsiElement element) {

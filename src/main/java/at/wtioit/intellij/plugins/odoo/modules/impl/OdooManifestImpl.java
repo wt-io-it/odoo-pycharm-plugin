@@ -26,7 +26,7 @@ public class OdooManifestImpl implements OdooManifest {
     public Collection<OdooModule> getDependencies() {
         if (dependencyNames == null) return null;
         if (dependencies == null || dependencyNames.size() != dependencies.size()) {
-            OdooModuleService moduleService = ServiceManager.getService(project, OdooModuleService.class);
+            OdooModuleService moduleService = project.getService(OdooModuleService.class);
             ArrayList<OdooModule> dependencyModules = new ArrayList<>();
             for (String dependencyName : dependencyNames) {
                 OdooModule module = moduleService.getModule(dependencyName);

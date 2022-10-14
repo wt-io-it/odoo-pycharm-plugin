@@ -98,7 +98,7 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
     }
 
     private PsiElement getOdooRecord(Project project, PsiFile file, String refName) {
-        OdooRecordService recordService = ServiceManager.getService(project, OdooRecordService.class);
+        OdooRecordService recordService = project.getService(OdooRecordService.class);
         refName = recordService.ensureFullXmlId(file, refName);
         OdooRecord record = recordService.getRecord(refName);
         if (record != null) {
@@ -109,7 +109,7 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
 
     private PsiElement getOdooModule(PyStringElement pyString) {
         String value = getPyStringValue(pyString);
-        OdooModuleService moduleService = ServiceManager.getService(pyString.getProject(), OdooModuleService.class);
+        OdooModuleService moduleService = pyString.getProject().getService(OdooModuleService.class);
         OdooModule module = moduleService.getModule(value);
         if (module != null) {
             return WithinProject.call(pyString.getProject(), module::getNavigationItem);
@@ -132,7 +132,7 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
 
     @Nullable
     private  PsiElement getOdooModel(@NotNull Project project, @NotNull String value) {
-        OdooModelService modelService = ServiceManager.getService(project, OdooModelService.class);
+        OdooModelService modelService = project.getService(OdooModelService.class);
         OdooModel model = modelService.getModel(value);
         if (model != null) {
             return model.getDefiningElement();
