@@ -131,7 +131,7 @@ public class OdooModelImpl implements OdooModel {
                     .collect(Collectors.toList());
             baseModule = WithinProject.call(project, () ->
                     modules.stream()
-                            // if base module defines the model its the base module
+                            // if base module defines the model it's the base module
                             .filter(module -> "base".equals(module.getName()))
                             .findFirst()
                             .orElse(
