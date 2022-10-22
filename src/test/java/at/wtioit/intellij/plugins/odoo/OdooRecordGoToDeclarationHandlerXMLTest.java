@@ -13,6 +13,22 @@ public class OdooRecordGoToDeclarationHandlerXMLTest extends AbstractOdooGoToDec
         doTest("records.xml record:id=addon1.record2 model=existing ");
     }
 
+    public void testRecordNameInEvalAttributeCursorAtRef() {
+        doTest(null);
+    }
+
+    public void testRecordNameInEvalAttributeCursorBeforeRef() {
+        doTest(null);
+    }
+
+    public void testRecordNameInEvalAttributeCursorAtQuote() {
+        doTest("records.xml record:id=addon1.record2 model=existing ");
+    }
+
+    public void testIncompleteRefExpressionInEvalAttribute() {
+        doTest(null);
+    }
+
     @Override
     String getFileExtension() {
         return ".xml";

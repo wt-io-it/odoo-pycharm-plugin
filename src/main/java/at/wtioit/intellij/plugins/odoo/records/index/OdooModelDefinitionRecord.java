@@ -14,6 +14,7 @@ public class OdooModelDefinitionRecord extends AbstractOdooRecord {
     }
 
     private static String getXmlId(OdooModelDefinition entry) {
+        // TODO not all models are base.model_
         return "base.model_" + entry.getName().replace(".", "_");
     }
 

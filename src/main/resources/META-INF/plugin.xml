@@ -38,7 +38,7 @@
           Version 0.6.3:
           <ul>
             <li>enable referencing models with their xmlId (base.model_...)</li>
-            <li></li>
+            <li>fix goto handler for xml records, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/61, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/62, thanks to zalei, LeVraiDjak and ievgensyn for reporting it</li>
           </ul>
         </li>
         <li>

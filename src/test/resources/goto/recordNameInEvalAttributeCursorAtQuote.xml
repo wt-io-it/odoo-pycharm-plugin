@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="test.record101" model="existing">
+            <field name="attribute_ids" eval="[(4, ref(<caret>'addon1.record2'))]" />
+        </record>
+    </data>
+</odoo>

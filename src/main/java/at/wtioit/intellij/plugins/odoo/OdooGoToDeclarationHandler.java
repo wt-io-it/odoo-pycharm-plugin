@@ -83,9 +83,18 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
             int positionInText = currentOffset.get() - psiElement.getTextOffset();
             String beforeCursor = psiElement.getText().substring(0, positionInText);
             int indexOfRef = beforeCursor.lastIndexOf("ref(");
-            char quote = beforeCursor.charAt(indexOfRef + 4);
-            int indexEndRef = text.indexOf(quote, positionInText);
-            refName = text.substring(indexOfRef + 5, indexEndRef);
+            if (indexOfRef != -1) {
+                // check if we have double or single quote after ref(
+                int positionOfOpeningQuote = indexOfRef + 4;
+                char quote = text.charAt(positionOfOpeningQuote);
+                // find the end quote
+                int positionAfterOpeningQuote = positionOfOpeningQuote + 1;
+                int indexEndRef = text.indexOf(quote, positionAfterOpeningQuote);
+                refName = text.substring(positionAfterOpeningQuote, indexEndRef);
+            } else {
+                // User is not pointing inside an argument for ref()
+                return null;
+            }
         } else {
             refName = psiElement.getText();
         }
