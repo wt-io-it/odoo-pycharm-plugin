@@ -8,7 +8,6 @@ import at.wtioit.intellij.plugins.odoo.search.AbstractOdooPsiElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.ui.LayeredIcon;
 import com.jetbrains.python.psi.PyClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +18,6 @@ import java.util.Set;
 public class OdooModelPsiElement extends AbstractOdooPsiElement implements OdooModel {
 
     private final OdooModel model;
-    private Icon icon;
 
     public OdooModelPsiElement(OdooModel forModel, Project forProject) {
         super(forProject, forModel::getDefiningElement);

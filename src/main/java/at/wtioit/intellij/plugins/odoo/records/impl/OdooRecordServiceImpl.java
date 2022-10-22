@@ -1,7 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.records.impl;
 
 import at.wtioit.intellij.plugins.odoo.FileUtil;
-import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
+import at.wtioit.intellij.plugins.odoo.OdooRecordPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndex;
@@ -12,7 +12,6 @@ import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecordService;
 import at.wtioit.intellij.plugins.odoo.records.index.OdooRecordImpl;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -77,7 +76,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
     }
 
     private OdooRecord recordWithCorrectXmlId(@NotNull OdooRecord record, @NotNull String xmlId) {
-        if (xmlId.equals(record.getXmlId()) || xmlId.startsWith(OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY + ".")) {
+        if (xmlId.equals(record.getXmlId()) || xmlId.startsWith(OdooRecordPsiElementMatcherUtil.NULL_XML_ID_KEY + ".")) {
             return record;
         }
         // TODO ensure we have no records with the wrong module here
@@ -132,9 +131,9 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         } else {
             String undetectedXmlId;
             if (xmlId.contains(".")) {
-                undetectedXmlId = xmlId.replaceFirst(".*(?=\\.)", OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY);
+                undetectedXmlId = xmlId.replaceFirst(".*(?=\\.)", OdooRecordPsiElementMatcherUtil.NULL_XML_ID_KEY);
             } else {
-                undetectedXmlId = OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY + "." + xmlId;
+                undetectedXmlId = OdooRecordPsiElementMatcherUtil.NULL_XML_ID_KEY + "." + xmlId;
             }
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             Stream<OdooRecord> records = OdooIndex.getValues(undetectedXmlId, scope, OdooRecord.class);
@@ -199,7 +198,7 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         List<OdooRecord> records = OdooIndex.getValues(xmlId, scope, OdooRecord.class).collect(Collectors.toList());
         if (records.size() == 0) {
-            String undetectedXmlId = xmlId.replaceFirst(".*(?=\\.)", OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY);
+            String undetectedXmlId = xmlId.replaceFirst(".*(?=\\.)", OdooRecordPsiElementMatcherUtil.NULL_XML_ID_KEY);
             records = OdooIndex.getValues(undetectedXmlId, scope, OdooRecord.class).collect(Collectors.toList());
         }
         return records;

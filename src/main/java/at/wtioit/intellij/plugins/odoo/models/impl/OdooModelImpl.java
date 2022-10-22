@@ -5,7 +5,7 @@ import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
-import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
+import at.wtioit.intellij.plugins.odoo.models.index.OdooModelIE;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
 import com.intellij.openapi.application.ApplicationManager;
@@ -71,7 +71,7 @@ public class OdooModelImpl implements OdooModel {
         for (PsiElement element : psiElements) {
             PyClass pyClass = (PyClass) element;
             PsiElementsUtil.walkTree(pyClass, child -> {
-                if (definingElement.get() != null) return true;
+                if (definingElement.get() != null) return PsiElementsUtil.TREE_WALING_SIGNAL.SKIP_CHILDREN;
                 if (OdooModelPsiElementMatcherUtil.isOdooModelNameDefinitionPsiElement(child)) {
                     PyAssignmentStatement assignmentStatement = PsiElementsUtil.findParent(child, PyAssignmentStatement.class, 4);
                     if (assignmentStatement != null) {
@@ -81,9 +81,9 @@ public class OdooModelImpl implements OdooModel {
                             definingElement.set(pyClass);
                         }
                     }
-                    return true;
+                    return PsiElementsUtil.TREE_WALING_SIGNAL.SKIP_CHILDREN;
                 }
-                return false;
+                return PsiElementsUtil.TREE_WALING_SIGNAL.INVESTIGATE_CHILDREN;
             });
         }
         if (definingElement.get() != null) {
@@ -109,13 +109,13 @@ public class OdooModelImpl implements OdooModel {
             ArrayList<PsiElement> elements = new ArrayList<>();
             PsiElementsUtil.walkTree(psiFile, (child) -> {
                 if (OdooModelPsiElementMatcherUtil.isOdooModelDefinition(child)) {
-                    OdooModelDefinition model = new OdooModelDefinition((PyClass) child);
+                    OdooModelIE model = new OdooModelIE((PyClass) child);
                     if (model.getName() != null && model.getName().equals(this.name)) {
                         elements.add(child);
-                        return true;
+                        return PsiElementsUtil.TREE_WALING_SIGNAL.SKIP_CHILDREN;
                     }
                 }
-                return false;
+                return PsiElementsUtil.TREE_WALING_SIGNAL.INVESTIGATE_CHILDREN;
             });
             return elements;
         }

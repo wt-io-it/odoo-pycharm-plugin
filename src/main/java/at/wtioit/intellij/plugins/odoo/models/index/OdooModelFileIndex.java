@@ -1,8 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.models.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
-import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
-import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.index.OdooDataIndexer;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexEntry;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexError;
@@ -10,7 +8,6 @@ import at.wtioit.intellij.plugins.odoo.index.OdooIndexExtension;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.indexing.DataIndexer;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileContent;
@@ -19,7 +16,6 @@ import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.psi.PyClass;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,24 +23,23 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getModelsFromFile;
 
-public class OdooModelFileIndex extends OdooIndexExtension<OdooModelDefinition> {
+public class OdooModelFileIndex extends OdooIndexExtension<OdooModelIE> {
 
-    @NonNls public static final ID<String, OdooModelDefinition> NAME = ID.create("OdooModelFileIndex");
+    @NonNls public static final ID<String, OdooModelIE> NAME = ID.create("OdooModelFileIndex");
 
     OdooModelFileIndexer indexer = new OdooModelFileIndexer();
 
     @Override
-    public @NotNull ID<String, OdooModelDefinition> getName() {
+    public @NotNull ID<String, OdooModelIE> getName() {
         return NAME;
     }
 
     @Override
-    public @NotNull DataIndexer<String, OdooModelDefinition, FileContent> getIndexer() {
+    public @NotNull DataIndexer<String, OdooModelIE, FileContent> getIndexer() {
         return indexer;
     }
 
@@ -54,10 +49,10 @@ public class OdooModelFileIndex extends OdooIndexExtension<OdooModelDefinition> 
     }
 
     @Override
-    public @NotNull DataExternalizer<OdooModelDefinition> getValueExternalizer() {
-        return new AbstractDataExternalizer<OdooModelDefinition>() {
+    public @NotNull DataExternalizer<OdooModelIE> getValueExternalizer() {
+        return new AbstractDataExternalizer<OdooModelIE>() {
             @Override
-            public void save(@NotNull DataOutput out, OdooModelDefinition model) throws IOException {
+            public void save(@NotNull DataOutput out, OdooModelIE model) throws IOException {
                 if (model != null) {
                     saveString(model.getProject(), out);
                     saveString(model.getFileName(), out);
@@ -67,18 +62,18 @@ public class OdooModelFileIndex extends OdooIndexExtension<OdooModelDefinition> 
             }
 
             @Override
-            public OdooModelDefinition read(@NotNull DataInput in) throws IOException {
+            public OdooModelIE read(@NotNull DataInput in) throws IOException {
                 String projectPresentableUrl = readString(in);
                 String fileName = readString(in);
                 String className = readString(in);
                 String modelName = readString(in);
                 for (Project project : ProjectManager.getInstance().getOpenProjects()) {
                     if (projectPresentableUrl.equals(project.getPresentableUrl())) {
-                        return new OdooModelDefinition(fileName, className, modelName, project);
+                        return new OdooModelIE(fileName, className, modelName, project);
                     }
                 }
                 // this happens when we get index results from projects no longer open
-                return new OdooModelDefinition(fileName, className, modelName, projectPresentableUrl);
+                return new OdooModelIE(fileName, className, modelName, projectPresentableUrl);
             }
 
 
@@ -108,20 +103,20 @@ public class OdooModelFileIndex extends OdooIndexExtension<OdooModelDefinition> 
         return true;
     }
 
-    private static class OdooModelFileIndexer extends OdooDataIndexer<OdooModelDefinition> {
+    private static class OdooModelFileIndexer extends OdooDataIndexer<OdooModelIE> {
 
         private final Logger logger = Logger.getInstance(OdooModelFileIndexer.class);
 
         @Override
-        public @NotNull Map<String, OdooModelDefinition> mapWatched(@NotNull FileContent inputData) {
+        public @NotNull Map<String, OdooModelIE> mapWatched(@NotNull FileContent inputData) {
             return getModelsFromFile(inputData.getPsiFile());
         }
     }
 
     @Override
-    public <E extends OdooIndexEntry> OdooModelDefinition castValue(E entry) {
-        if (entry instanceof OdooModelDefinition) {
-            return (OdooModelDefinition) entry;
+    public <E extends OdooIndexEntry> OdooModelIE castValue(E entry) {
+        if (entry instanceof OdooModelIE) {
+            return (OdooModelIE) entry;
         }
         throw new OdooIndexError("expected entry to be of type OdooModelDefinition");
     }

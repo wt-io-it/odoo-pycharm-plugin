@@ -2,15 +2,13 @@ package at.wtioit.intellij.plugins.odoo;
 
 import at.wtioit.intellij.plugins.odoo.index.IndexWatcher;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
-import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
-import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
-import at.wtioit.intellij.plugins.odoo.records.index.OdooRecordImpl;
+import at.wtioit.intellij.plugins.odoo.models.index.OdooModelIE;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiPlainText;
-import com.intellij.psi.xml.*;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
@@ -44,9 +41,6 @@ public interface OdooModelPsiElementMatcherUtil {
     ));
     List<String> ODOO_MODEL_XML_ATTRIBUTE_NAMES = Arrays.asList("model", "data-oe-model");
     List<String> ODOO_MODEL_XML_FIELD_ATTRIBUTE_NAMES = Arrays.asList("model", "res_model", "src_model");
-    List<String> ODOO_XML_RECORD_TYPES = Arrays.asList("record", "template", "menuitem", "act_window", "report");
-    String NULL_XML_ID_KEY = ":UNDETECTED_XML_ID:";
-
 
     /**
      * @param element element to check
@@ -336,183 +330,28 @@ public interface OdooModelPsiElementMatcherUtil {
         return PsiElementsUtil.findParent(element, PyBinaryExpression.class, 2) != null;
     }
 
-    static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file) {
-        return getRecordsFromFile(file, (record) -> true, Integer.MAX_VALUE, () -> file.getVirtualFile().getPath());
-    }
-
-    static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file, String path) {
-        return getRecordsFromFile(file, (record) -> true, Integer.MAX_VALUE, () -> path);
-    }
-
-    static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file, Function<OdooRecord, Boolean> function, int limit) {
-        return getRecordsFromFile(file, function, limit, () -> file.getVirtualFile().getPath());
-    }
-
-    static HashMap<String, OdooRecord> getRecordsFromFile(PsiFile file, Function<OdooRecord, Boolean> matches, int limit, Supplier<String> pathSupplier) {
-        HashMap<String, OdooRecord> records = new HashMap<>();
-        if (file instanceof XmlFile) {
-            PsiElementsUtil.walkTree(file, (element) -> {
-                if (element instanceof XmlTag) {
-                    XmlTag tag = (XmlTag) element;
-                    if (tag.getNamespace().contains("http://relaxng.com/ns/")) {
-                        // skip investigating relaxng schemas for odoo models
-                        return true;
-                    } else if ("odoo".equals(tag.getName()) || "openerp".equals(tag.getName())) {
-                        records.putAll(getRecordsFromOdooTag(tag, pathSupplier.get(), matches, limit));
-                        return true;
-                    } else if ("templates".equals(tag.getName()) || "template".equals(tag.getName())) {
-                        // TODO templates should go to a different index (they have no real xmlid)
-                        records.putAll(getRecordsFromTemplateTag(tag, pathSupplier.get(), matches, limit));
-                    }
-                    // investigate children
-                    return false;
-                } else if (element instanceof XmlDocument) {
-                    // investigate children
-                    return false;
-                }
-                // skip investigating children
-                return true;
-            }, XmlElement.class, 3);
-        } else if ("csv".equals(file.getVirtualFile().getExtension())) {
-            records.putAll(getRecordsFromCsvFile(file, pathSupplier.get(), matches, limit));
-        }
-        return records;
-    }
-
-    static HashMap<String, OdooModelDefinition> getModelsFromFile(@NotNull PsiFile file) {
+    static HashMap<String, OdooModelIE> getModelsFromFile(@NotNull PsiFile file) {
         return getModelsFromFile(file, (model) -> true, Integer.MAX_VALUE);
     }
 
-    static HashMap<String, OdooModelDefinition> getModelsFromFile(@NotNull PsiFile file, Function<OdooModelDefinition, Boolean> matches, int limit){
-        HashMap<String, OdooModelDefinition> models = new HashMap<>();
+    static HashMap<String, OdooModelIE> getModelsFromFile(@NotNull PsiFile file, Function<OdooModelIE, Boolean> matches, int limit){
+        HashMap<String, OdooModelIE> models = new HashMap<>();
         PsiElementsUtil.walkTree(file, (child) -> {
             if (models.size() >= limit) {
                 // skip if we already found all needed models
-                return true;
+                return PsiElementsUtil.TREE_WALING_SIGNAL.SKIP_CHILDREN;
             }
             if (OdooModelPsiElementMatcherUtil.isOdooModelDefinition(child)) {
-                OdooModelDefinition model = new OdooModelDefinition((PyClass) child);
+                OdooModelIE model = new OdooModelIE((PyClass) child);
                 if (model.getName() != null && matches.apply(model)) {
                     // if we cannot detect a name we do not put the class in the index
                     models.put(model.getName(), model);
                 }
-                return true;
+                // inside an odoo model definition there cannot be any more models
+                return PsiElementsUtil.TREE_WALING_SIGNAL.SKIP_CHILDREN;
             }
-            return false;
+            return PsiElementsUtil.TREE_WALING_SIGNAL.INVESTIGATE_CHILDREN;
         });
         return models;
-    }
-
-
-    static HashMap<String, OdooRecord> getRecordsFromCsvFile(PsiFile file, String path) {
-        return getRecordsFromCsvFile(file, path, (r) -> true, Integer.MAX_VALUE);
-    }
-
-    static HashMap<String, OdooRecord> getRecordsFromCsvFile(PsiFile file, String path, Function<OdooRecord, Boolean> matches, int limit) {
-        String modelName = file.getName().replaceFirst(".csv$", "");
-        HashMap<String, OdooRecord> result = new HashMap<>();
-        PsiElement firstChild = file.getFirstChild();
-        if (firstChild instanceof PsiPlainText) {
-            // TODO replace with a proper csv parser
-            String[] lines = firstChild.getText().split("\r?\n");
-            if (lines.length > 1) {
-                String[] columns = csvLine(lines[0]);
-                for (int i = 1; i < lines.length && result.size() < limit; i++) {
-                    String line = lines[i];
-                    OdooRecord record = OdooRecordImpl.getFromCsvLine(modelName, columns, csvLine(line), path, firstChild);
-                    // TODO check module name
-                    if (record != null && matches.apply(record)) {
-                        if (record.getXmlId() != null) {
-                            result.put(record.getXmlId(), record);
-                        } else {
-                            result.put(NULL_XML_ID_KEY + "." + record.getId(), record);
-                        }
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    static String[] csvLine(String line) {
-        List<Character> quoteCharacters = Arrays.asList('"', '\'');
-        ArrayList<String> elements = new ArrayList<>();
-        char activeQuoteChar = 0;
-        ArrayList<String> pendingElements = new ArrayList<>();
-        for (String possibleElement : line.split(",")) {
-            if (possibleElement.length() == 0) {
-                if (activeQuoteChar != 0) {
-                    pendingElements.add(possibleElement);
-                } else {
-                    elements.add(possibleElement);
-                }
-                continue;
-            }
-            char firstChar = possibleElement.charAt(0);
-            char lastChar = possibleElement.charAt(possibleElement.length() - 1);
-            if (activeQuoteChar != 0) {
-                if (lastChar == activeQuoteChar) {
-                    pendingElements.add(possibleElement.substring(0, possibleElement.length() - 1));
-                    elements.add(String.join(",", pendingElements));
-                    activeQuoteChar = 0;
-                    pendingElements = new ArrayList<>();
-                } else {
-                    pendingElements.add(possibleElement);
-                }
-            } else if (quoteCharacters.contains(firstChar) && firstChar == lastChar && possibleElement.length() > 1) {
-                elements.add(possibleElement.substring(1, possibleElement.length() - 1));
-            } else if (quoteCharacters.contains(firstChar)){
-                pendingElements.add(possibleElement.substring(1));
-                activeQuoteChar = firstChar;
-            } else {
-                elements.add(possibleElement);
-            }
-        }
-        return elements.toArray(new String[0]);
-    }
-
-    static Map<String, OdooRecord> getRecordsFromOdooTag(XmlTag odooTag, @NotNull String path, Function<OdooRecord, Boolean> function, int limit) {
-        HashMap<String, OdooRecord> records = new HashMap<>();
-        PsiElementsUtil.walkTree(odooTag, (tag)-> {
-            String name = tag.getName();
-            // data needs further investigation (can hold records / templates)
-            if ("data".equals(name)) return records.size() >= limit;
-            // function needs no further investigation (cannot hold records / templates)
-            if ("function".equals(name)) return true;
-            if (ODOO_XML_RECORD_TYPES.contains(name)) {
-                OdooRecord record = OdooRecordImpl.getFromXml(tag, path);
-                if (applyRecord(function, records, record)) return true;
-            }
-            return records.size() >= limit;
-        }, XmlTag.class, 2);
-        return records;
-    }
-
-    static Map<String, OdooRecord> getRecordsFromTemplateTag(XmlTag recordsTag, @NotNull String path, Function<OdooRecord, Boolean> function, int limit) {
-        HashMap<String, OdooRecord> records = new HashMap<>();
-        PsiElementsUtil.walkTree(recordsTag, (tag)-> {
-            String name = tag.getAttributeValue("t-name");
-            if (name != null) {
-                OdooRecord record = OdooRecordImpl.getFromXmlTemplate(tag, path);
-                if (applyRecord(function, records, record)) return true;
-            }
-            return records.size() >= limit;
-        }, XmlTag.class, 2);
-        return records;
-    }
-
-    static boolean applyRecord(Function<OdooRecord, Boolean> function, HashMap<String, OdooRecord> records, OdooRecord record) {
-        if (record == null) {
-            return true;
-        }
-        if (function.apply(record)) {
-            if (record.getXmlId() == null) {
-                records.put(NULL_XML_ID_KEY + "." + record.getId(), record);
-            } else {
-                records.put(record.getXmlId(), record);
-            }
-            return true;
-        }
-        return false;
     }
 }

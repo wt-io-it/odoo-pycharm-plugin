@@ -1,7 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.models.hierarchy;
 
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
-import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
+import at.wtioit.intellij.plugins.odoo.models.index.OdooModelIE;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.Disposable;
 import com.intellij.psi.PsiElement;
@@ -22,7 +22,7 @@ public class OdooModelTypesHierarchyBrowser extends PyTypeHierarchyBrowser imple
     protected @Nullable HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String typeName, @NotNull PsiElement psiElement) {
         @Nullable HierarchyTreeStructure treeStructure = super.createHierarchyTreeStructure(typeName, psiElement);
         if (psiElement instanceof PyClass && OdooModelPsiElementMatcherUtil.isOdooModelDefinition(psiElement)) {
-            String modelName = new OdooModelDefinition((PyClass) psiElement).getName();
+            String modelName = new OdooModelIE((PyClass) psiElement).getName();
             if (modelName != null) {
                 if (treeStructure instanceof PyTypeHierarchyTreeStructure) {
                     return new OdooModelTypeHierarchyTreeStructure((PyClass) psiElement);

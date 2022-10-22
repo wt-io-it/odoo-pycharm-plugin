@@ -1,6 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.index;
 
-import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
+import at.wtioit.intellij.plugins.odoo.models.index.OdooModelIE;
 import at.wtioit.intellij.plugins.odoo.records.index.OdooModelDefinitionRecord;
 import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
@@ -16,8 +16,8 @@ public class OdooModelRecordSubIndexMapper implements CrossSubIndexMapper {
     public void mapIndexEntries(@NotNull Map<String, OdooIndexEntry> indexValues, @NotNull FileContent inputData) {
         HashMap<String, OdooIndexEntry> mappedValues = new HashMap<>();
         for (OdooIndexEntry entry : indexValues.values()) {
-            if (entry.getSubIndexKey() == OdooIndexSubKeys.ODOO_MODELS && entry instanceof OdooModelDefinition) {
-                OdooModelDefinitionRecord record = new OdooModelDefinitionRecord((OdooModelDefinition) entry, inputData.getFile().getPath());
+            if (entry.getSubIndexKey() == OdooIndexSubKeys.ODOO_MODELS && entry instanceof OdooModelIE) {
+                OdooModelDefinitionRecord record = new OdooModelDefinitionRecord((OdooModelIE) entry, inputData.getFile().getPath());
                 mappedValues.put(record.getXmlId(), record);
             }
         }

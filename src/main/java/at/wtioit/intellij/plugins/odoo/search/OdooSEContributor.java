@@ -1,6 +1,6 @@
 package at.wtioit.intellij.plugins.odoo.search;
 
-import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
+import at.wtioit.intellij.plugins.odoo.OdooRecordPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
@@ -15,7 +15,6 @@ import com.intellij.ide.actions.searcheverywhere.FoundItemDescriptor;
 import com.intellij.ide.actions.searcheverywhere.WeightedSearchEverywhereContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -91,10 +90,10 @@ public class OdooSEContributor implements WeightedSearchEverywhereContributor<Od
             String undetectedXmlId;
             String undetectedXmlIdExpectedModule;
             if (pattern.contains(".")) {
-                undetectedXmlId = pattern.replaceFirst(".*(?=\\.)", OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY);
+                undetectedXmlId = pattern.replaceFirst(".*(?=\\.)", OdooRecordPsiElementMatcherUtil.NULL_XML_ID_KEY);
                 undetectedXmlIdExpectedModule = pattern.replaceFirst("\\..*", "");
             } else {
-                undetectedXmlId = OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY + "." + pattern;
+                undetectedXmlId = OdooRecordPsiElementMatcherUtil.NULL_XML_ID_KEY + "." + pattern;
                 undetectedXmlIdExpectedModule = null;
             }
             OdooRecordService recordService = project.getService(OdooRecordService.class);
@@ -113,7 +112,7 @@ public class OdooSEContributor implements WeightedSearchEverywhereContributor<Od
                         } else if (xmlId != null && xmlId.startsWith(undetectedXmlId)) {
                             String expectedXmlId;
                             if (undetectedXmlIdExpectedModule != null) {
-                                expectedXmlId = xmlId.replaceFirst(OdooModelPsiElementMatcherUtil.NULL_XML_ID_KEY, undetectedXmlIdExpectedModule);
+                                expectedXmlId = xmlId.replaceFirst(OdooRecordPsiElementMatcherUtil.NULL_XML_ID_KEY, undetectedXmlIdExpectedModule);
                             } else {
                                 expectedXmlId = xmlId;
                             }

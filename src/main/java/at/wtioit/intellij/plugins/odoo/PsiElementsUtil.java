@@ -23,6 +23,19 @@ public interface PsiElementsUtil {
 
     Logger logger = Logger.getInstance(PsiElementsUtil.class);
 
+    enum TREE_WALING_SIGNAL {
+        INVESTIGATE_CHILDREN,
+        SKIP_CHILDREN;
+
+        public static TREE_WALING_SIGNAL should_skip(boolean b) {
+            return b ? SKIP_CHILDREN : INVESTIGATE_CHILDREN;
+        }
+
+        public static TREE_WALING_SIGNAL investigate(boolean b) {
+            return b ? INVESTIGATE_CHILDREN : SKIP_CHILDREN;
+        }
+    }
+
     @Nullable
     static <T extends PsiElement> T findParent(@Nullable PsiElement element, Class<T> parentClass) {
         return findParent(element, parentClass, 100);
@@ -69,7 +82,7 @@ public interface PsiElementsUtil {
      * @param function function to investigate children, should return `true` if element is complete (does not need
      *                walking into) and return `false` if element is not complete (needs walking into)
      */
-    static void walkTree(@Nullable PsiElement element, Function<PsiElement, Boolean> function) {
+    static void walkTree(@Nullable PsiElement element, Function<PsiElement, TREE_WALING_SIGNAL> function) {
         walkTree(element, function, PsiElement.class);
     }
 
@@ -79,7 +92,7 @@ public interface PsiElementsUtil {
      * @param function function to investigate children, should return `true` if element is complete (does not need
      *                walking into) and return `false` if element is not complete (needs walking into)
      */
-    static <T extends PsiElement> void walkTree(@Nullable PsiElement element, Function<T, Boolean> function, Class<T> typeFilter) {
+    static <T extends PsiElement> void walkTree(@Nullable PsiElement element, Function<T, TREE_WALING_SIGNAL> function, Class<T> typeFilter) {
         walkTree(element, function, typeFilter, Integer.MAX_VALUE);
     }
 
@@ -89,16 +102,16 @@ public interface PsiElementsUtil {
      * @param function function to investigate children, should return `true` if element is complete (does not need
      *                walking into) and return `false` if element is not complete (needs walking into)
      */
-    static <T extends PsiElement> void walkTree(@Nullable PsiElement element, Function<T, Boolean> function, Class<T> typeFilter, int maxDepth) {
+    static <T extends PsiElement> void walkTree(@Nullable PsiElement element, Function<T, TREE_WALING_SIGNAL> function, Class<T> typeFilter, int maxDepth) {
         if (element != null && maxDepth > 0) {
             for (PsiElement child : element.getChildren()) {
-                if (typeFilter.isInstance(child) && !function.apply(typeFilter.cast(child))) {
+                if (typeFilter.isInstance(child) && function.apply(typeFilter.cast(child)) == TREE_WALING_SIGNAL.INVESTIGATE_CHILDREN) {
                     walkTree(child, function, typeFilter, maxDepth - 1);
                 }
             }
             if (element instanceof PyStringLiteralExpression) {
                 for (PyStringElement pyStringElement : ((PyStringLiteralExpression) element).getStringElements()) {
-                    if (typeFilter.isInstance(pyStringElement) && !function.apply(typeFilter.cast(pyStringElement))) {
+                    if (typeFilter.isInstance(pyStringElement) && function.apply(typeFilter.cast(pyStringElement)) == TREE_WALING_SIGNAL.INVESTIGATE_CHILDREN) {
                         walkTree(pyStringElement, function, typeFilter, maxDepth - 1);
                     }
                 }

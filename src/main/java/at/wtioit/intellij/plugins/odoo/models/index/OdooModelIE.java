@@ -8,28 +8,22 @@ import com.jetbrains.python.psi.PyClass;
 
 import java.util.Objects;
 
-public class OdooModelDefinition implements OdooIndexEntry {
+public class OdooModelIE implements OdooIndexEntry {
 
     private final String className;
     private final String name;
     private final String project;
     private final String fileName;
 
-    public OdooModelDefinition(PyClass pyClass) {
-        name = OdooModelUtil.detectName(pyClass);
-        project = pyClass.getProject().getPresentableUrl();
-        fileName = pyClass.getContainingFile().getName();
-        className = pyClass.getName();
+    public OdooModelIE(PyClass pyClass) {
+        this(pyClass.getContainingFile().getName(), pyClass.getName(), OdooModelUtil.detectName(pyClass), pyClass.getProject().getPresentableUrl());
     }
 
-    public OdooModelDefinition(String fileName, String className, String modelName, Project project) {
-        this.fileName = fileName;
-        this.className = className;
-        name = modelName;
-        this.project = project.getPresentableUrl();
+    public OdooModelIE(String fileName, String className, String modelName, Project project) {
+        this(fileName, className, modelName, project.getPresentableUrl());
     }
 
-    public OdooModelDefinition(String fileName, String className, String modelName, String projectPresentableUrl) {
+    public OdooModelIE(String fileName, String className, String modelName, String projectPresentableUrl) {
         this.fileName = fileName;
         this.className = className;
         name = modelName;
@@ -62,7 +56,7 @@ public class OdooModelDefinition implements OdooIndexEntry {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OdooModelDefinition that = (OdooModelDefinition) o;
+        OdooModelIE that = (OdooModelIE) o;
 
         if (!Objects.equals(className, that.className)) return false;
         if (!Objects.equals(name, that.name)) return false;

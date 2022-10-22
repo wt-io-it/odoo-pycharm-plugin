@@ -5,7 +5,7 @@ import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelService;
 import at.wtioit.intellij.plugins.odoo.models.OdooModelUtil;
-import at.wtioit.intellij.plugins.odoo.models.index.OdooModelDefinition;
+import at.wtioit.intellij.plugins.odoo.models.index.OdooModelIE;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -41,7 +41,7 @@ public class OdooModelServiceImpl implements OdooModelService {
     public OdooModel getModel(String modelName) {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         FileBasedIndex index = FileBasedIndex.getInstance();
-        OdooModel model = OdooIndex.getValues(modelName, scope, OdooModelDefinition.class)
+        OdooModel model = OdooIndex.getValues(modelName, scope, OdooModelIE.class)
                 .map(m -> new OdooModelImpl(m.getName(), index.getContainingFiles(OdooIndex.NAME, m.getName(), scope), project))
                 .findFirst()
                 .orElse(null);

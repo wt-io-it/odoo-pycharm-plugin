@@ -1,6 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.records.index;
 
 import at.wtioit.intellij.plugins.odoo.AbstractDataExternalizer;
+import at.wtioit.intellij.plugins.odoo.OdooRecordPsiElementMatcherUtil;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexEntry;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexError;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexExtension;
@@ -23,8 +24,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.*;
 
-import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromCsvFile;
-import static at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil.getRecordsFromFile;
+import static at.wtioit.intellij.plugins.odoo.OdooRecordPsiElementMatcherUtil.getRecordsFromCsvFile;
 
 public class OdooRecordFileIndex extends OdooIndexExtension<OdooRecord> {
 
@@ -113,7 +113,7 @@ public class OdooRecordFileIndex extends OdooIndexExtension<OdooRecord> {
             }
             if (fileType == XmlFileType.INSTANCE) {
                 PsiFile file = inputData.getPsiFile();
-                return getRecordsFromFile(file, inputData.getFile().getPath());
+                return OdooRecordPsiElementMatcherUtil.getRecordsFromFile(file, inputData.getFile().getPath());
             } else if (Objects.equals(inputData.getFile().getExtension(), "csv")) {
                 // we use names of classes here, as the presence of the classes wildly differs between versions
                 if (CSV_FILETYPE_CLASS_NAMES.contains(fileType.getClass().getName())) {
