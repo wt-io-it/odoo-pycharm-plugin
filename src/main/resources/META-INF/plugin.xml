@@ -35,6 +35,12 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.6.4:
+          <ul>
+            <li>fix NPE in goto and autocomplete, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/68, thanks to medosobh for reporting it</li>
+          </ul>
+        </li>
+        <li>
           Version 0.6.3:
           <ul>
             <li>enable referencing models with their xmlId (base.model_..., still not fully working (e.g. website.model_website is currently provided as base.model_website)</li>

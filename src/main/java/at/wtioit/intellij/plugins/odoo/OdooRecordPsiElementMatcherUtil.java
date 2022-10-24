@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlToken;
 import com.jetbrains.python.psi.PyArgumentList;
+import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.PyStringElement;
 
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
+import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.getPrevSibling;
 import static com.intellij.psi.xml.XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
 
 public interface OdooRecordPsiElementMatcherUtil {
@@ -34,7 +36,7 @@ public interface OdooRecordPsiElementMatcherUtil {
         if (psiElement instanceof PyStringElement) {
             PyArgumentList argumentList = findParent(psiElement, PyArgumentList.class, 2);
             if (argumentList != null) {
-                PsiElement method = argumentList.getPrevSibling();
+                PyReferenceExpression method = getPrevSibling(argumentList, PyReferenceExpression.class);
                 // TODO use type of self.env (Environment) instead of text to check if method belongs to Environment
                 String methodName = method.getLastChild().getText();
                 if ("ref".equals(methodName)) {

@@ -18,6 +18,10 @@ public class PythonRecordXmlIdCompletionTest extends BaseOdooPluginTest {
         doTest();
     }
 
+    public void testRecordXmlIdInRefWithSpace() {
+        doTest();
+    }
+
     public void testRecordXmlIdInCustomEnvRef() {
         doTest();
     }
