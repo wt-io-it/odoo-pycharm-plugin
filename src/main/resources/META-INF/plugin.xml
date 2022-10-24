@@ -37,7 +37,7 @@
         <li>
           Version 0.6.3:
           <ul>
-            <li>enable referencing models with their xmlId (base.model_...)</li>
+            <li>enable referencing models with their xmlId (base.model_..., still not fully working (e.g. website.model_website is currently provided as base.model_website)</li>
             <li>fix goto handler for xml records, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/61, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/62, thanks to zalei, LeVraiDjak and ievgensyn for reporting it</li>
           </ul>
         </li>
@@ -248,8 +248,8 @@
         <li>may link to the wrong path if more that one odoo project is loaded</li>
         <li>shown addons are not depending on configured addon paths</li>
         <li>model names can only be detected if string literals are used</li>
-        <li>autocompletion only works as startswith (default PyCharm autocompletion also matches in other ways, e.g. "ab" in PyCharm also matches "account_balance" whereas it does not match in our plugin)</li>
         <li>model Classes that are defined by extending another model Class are not yet recognized</li>
+        <li>xmlId for models are generated as base.model_ regardless if model belongs to base module</li>
       </ul>
     ]]>
   </change-notes>
