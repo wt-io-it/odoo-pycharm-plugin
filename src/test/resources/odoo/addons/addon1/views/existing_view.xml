@@ -48,4 +48,14 @@
         </field>
     </record>
 
+    <template id="my_form_template">
+        <!-- normally there whould be a layout call here -->
+        <form action="/my/form/template/controller" method="post">
+            <div class="row">
+                <div class="col-lg-4">label</div>
+                <div class="col-lg-8"><input type="text" name="text"/></div>
+            </div>
+        </form>
+    </template>
+
 </odoo>

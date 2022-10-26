@@ -39,6 +39,7 @@
           <ul>
             <li>fix NullPointerException if super class qualified name cannot be determined, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/70, thanks to SirTakobi for reporting it</li>
             <li>fix typo in missing model definition inspection, where it would state that it's missing a module instead of missing a model</li>
+            <li>fix false positives for missing records in form action attributes</li>
           </ul>
         </li>
         <li>

@@ -30,7 +30,7 @@
 
         <!-- without displayName in XML for localInspections, tests in 2020.2 do not pass -->
         <localInspection implementationClass="at.wtioit.intellij.plugins.odoo.models.inspection.MissingModelDefinitionInspection"
-                         displayName="Reference to a missing module definition"
+                         displayName="Reference to a missing model definition"
                          groupKey="INSP.GROUP.odoo"
                          key="INSP.NAME.missing.model.definition"
                          enabledByDefault="true"

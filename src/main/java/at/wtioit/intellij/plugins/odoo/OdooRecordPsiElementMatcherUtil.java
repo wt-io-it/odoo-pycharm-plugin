@@ -30,6 +30,10 @@ public interface OdooRecordPsiElementMatcherUtil {
             "t-call-assets",
             "t-extend"));
 
+    Map<String, List<String>> ODOO_RECORD_REF_ATTRIBUTES_TAGS_FALSE_POSITIVES = Map.of(
+            "action", Collections.singletonList("form")
+    );
+
     List<String> ODOO_XML_RECORD_TYPES = Arrays.asList("record", "template", "menuitem", "act_window", "report");
     String NULL_XML_ID_KEY = ":UNDETECTED_XML_ID:";
 
@@ -37,9 +41,17 @@ public interface OdooRecordPsiElementMatcherUtil {
     static boolean isOdooRecordPsiElement(PsiElement psiElement) {
         if (psiElement instanceof XmlToken && ((XmlToken) psiElement).getTokenType() == XML_ATTRIBUTE_VALUE_TOKEN) {
             XmlAttribute attribute = PsiElementsUtil.findParent(psiElement, XmlAttribute.class, 2);
-            if (attribute != null && ODOO_RECORD_REF_ATTRIBUTES.contains(attribute.getName())) {
-                return true;
+            if (attribute != null) {
+                String attributeName = attribute.getName();
+                if (ODOO_RECORD_REF_ATTRIBUTES.contains(attributeName)) {
+                    if (ODOO_RECORD_REF_ATTRIBUTES_TAGS_FALSE_POSITIVES.containsKey(attributeName)) {
+                        String tagName = attribute.getParent().getName();
+                        return !ODOO_RECORD_REF_ATTRIBUTES_TAGS_FALSE_POSITIVES.get(attributeName).contains(tagName);
+                    }
+                    return true;
+                }
             }
+
         }
         if (psiElement instanceof PyStringElement) {
             PyArgumentList argumentList = findParent(psiElement, PyArgumentList.class, 2);
