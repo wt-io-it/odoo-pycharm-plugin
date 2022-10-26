@@ -28,7 +28,8 @@ public interface OdooRecordPsiElementMatcherUtil {
             "t-extend"));
 
     Map<String, List<String>> ODOO_RECORD_REF_ATTRIBUTES_TAGS_FALSE_POSITIVES = Map.of(
-            "action", Collections.singletonList("form")
+            // TODO tree and kanban actions need to be available as methods in the model
+            "action", Collections.unmodifiableList(Arrays.asList("form", "tree", "kanban", "widget", "div"))
     );
 
     List<String> ODOO_XML_RECORD_TYPES = Arrays.asList("record", "template", "menuitem", "act_window", "report");

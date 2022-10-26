@@ -4,7 +4,8 @@
         <field name="model">existing</field>
         <field name="arch" type="xml">
             <kanban create="false" class="oe_background_grey o_kanban_dashboard o_account_kanban"
-                    banner_route="/addon1/existing_dashboard" js_class="existing_dashboard_kanban">
+                    banner_route="/addon1/existing_dashboard" js_class="existing_dashboard_kanban"
+                    action="action_kanban">
                 <field name="name"/>
                 <templates>
                     <t t-name="kanban-box">
@@ -30,6 +31,16 @@
                     </t>
                 </templates>
             </kanban>
+        </field>
+    </record>
+
+    <record id="existing_tree_view" model="ir.ui.view">
+        <field name="name">existing.tree</field>
+        <field name="model">existing</field>
+        <field name="arch" type="xml">
+            <tree action="action_tree">
+                <field name="name" />
+            </tree>
         </field>
     </record>
 

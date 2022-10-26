@@ -38,6 +38,7 @@
           Version 0.6.7:
           <ul>
             <li>enable resolving Odoo 15.0+ asset bundles with GoTo in t-call-assets attributes</li>
+            <li>fix false positives for missing records in tree and kanban action attributes</li>
           </ul>
         </li>
         <li>
