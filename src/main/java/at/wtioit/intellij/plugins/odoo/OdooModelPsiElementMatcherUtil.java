@@ -151,7 +151,7 @@ public interface OdooModelPsiElementMatcherUtil {
         return false;
     }
 
-    static boolean hasImport(PyClass pyClass, String importName, String importAlias) {
+    static boolean hasImport(@Nullable PyClass pyClass, @NotNull String importName, @NotNull String importAlias) {
         PyFile file = findParent(pyClass, PyFile.class);
         if (file != null) {
             for (PyFromImportStatement fromImport : file.getFromImports()) {
@@ -186,7 +186,8 @@ public interface OdooModelPsiElementMatcherUtil {
             TypeEvalContext typeEvalContext = TypeEvalContext.codeAnalysis(pyClass.getContainingFile().getProject(), pyClass.getContainingFile());
             superClasses = pyClass.getSuperClasses(typeEvalContext);
             for (PyClass superClass : superClasses) {
-                if (isOdooControllerClassName(superClass.getQualifiedName(), pyClass)) {
+                String qualifiedName = superClass.getQualifiedName();
+                if (qualifiedName != null && isOdooControllerClassName(qualifiedName, pyClass)) {
                     return true;
                 }
             }
@@ -212,7 +213,8 @@ public interface OdooModelPsiElementMatcherUtil {
                 TypeEvalContext typeEvalContext = TypeEvalContext.codeAnalysis(pyClass.getContainingFile().getProject(), pyClass.getContainingFile());
                 superClasses = pyClass.getSuperClasses(typeEvalContext);
                 for (PyClass superClass : superClasses) {
-                    if (isOdooTestClassName(superClass.getQualifiedName(), pyClass)) {
+                    String qualifiedName = superClass.getQualifiedName();
+                    if (qualifiedName != null && isOdooTestClassName(qualifiedName, pyClass)) {
                         return true;
                     }
                 }
@@ -233,7 +235,7 @@ public interface OdooModelPsiElementMatcherUtil {
         return false;
     }
 
-    static boolean isOdooModelDefinition(PsiElement pyline) {
+    static boolean isOdooModelDefinition(@Nullable PsiElement pyline) {
         if (pyline instanceof PyClass) {
             TypeEvalContext typeEvalContext = TypeEvalContext.codeAnalysis(pyline.getContainingFile().getProject(), pyline.getContainingFile());
             PyClass pyClass = (PyClass) pyline;
@@ -247,7 +249,8 @@ public interface OdooModelPsiElementMatcherUtil {
                 try {
                     superClasses = pyClass.getSuperClasses(typeEvalContext);
                     for (PyClass superClass : superClasses) {
-                        if (isOdooModelClassName(superClass.getQualifiedName(), pyClass)) {
+                        String qualifiedName = superClass.getQualifiedName();
+                        if (qualifiedName != null && isOdooModelClassName(qualifiedName, pyClass)) {
                             return true;
                         }
                     }
@@ -270,19 +273,19 @@ public interface OdooModelPsiElementMatcherUtil {
         return false;
     }
 
-    static boolean isOdooModelClassName(String name, PyClass pyClass) {
+    static boolean isOdooModelClassName(@NotNull String name, @NotNull PyClass pyClass) {
         return isOdooClassName(ODOO_MODEL_BASE_CLASS_NAMES, name, pyClass);
     }
 
-    static boolean isOdooTestClassName(String name, PyClass pyClass) {
+    static boolean isOdooTestClassName(@NotNull String name, @NotNull PyClass pyClass) {
        return isOdooClassName(ODOO_TEST_BASE_CLASS_NAMES, name, pyClass);
     }
 
-    static boolean isOdooControllerClassName(String name, PyClass pyClass) {
+    static boolean isOdooControllerClassName(@NotNull String name, @NotNull PyClass pyClass) {
         return isOdooClassName(ODOO_CONTROLLER_BASE_CLASS_NAMES, name, pyClass);
     }
 
-    static boolean isOdooClassName(Set<String> possibleNames, String name, PyClass pyClass) {
+    static boolean isOdooClassName(@NotNull Set<String> possibleNames, @NotNull String name, @NotNull PyClass pyClass) {
         if (possibleNames.contains(name)) {
             return true;
         }
@@ -297,7 +300,7 @@ public interface OdooModelPsiElementMatcherUtil {
         return false;
     }
 
-    static boolean definedByImport(PyFromImportStatement fromImport, Set<String> possibleQualifiedNames, String currentName) {
+    static boolean definedByImport(@NotNull PyFromImportStatement fromImport, @NotNull Set<String> possibleQualifiedNames, @NotNull String currentName) {
         PyReferenceExpression importSource = fromImport.getImportSource();
         if (importSource != null) {
             int currentNameParts = currentName.split("\\.").length - 1;
@@ -312,7 +315,7 @@ public interface OdooModelPsiElementMatcherUtil {
                         if (importSource.getText().equals(checkIfImport.toString())) {
                             checkIfImport.append('.');
                             if (PsiElementsUtil.findChildrenByClassAndName(fromImport, PyImportElement.class, part) != null
-                                && possibleQualifiedNames.contains(checkIfImport.toString() + currentName)) {
+                                && possibleQualifiedNames.contains(checkIfImport + currentName)) {
                                 return true;
                             }
                         } else {
