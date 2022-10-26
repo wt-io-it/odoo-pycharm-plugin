@@ -34,21 +34,24 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         OdooSEContributor contributor = new OdooSEContributor(getProject());
         ArrayList<String> resultsAddons = new ArrayList<>();
         contributor.fetchElements("addon1", new MockProgressIndicator(), (result) -> resultsAddons.add(result.getName() + ":" + result.getLocationString()));
+        resultsAddons.sort(Comparator.naturalOrder());
         assertSameElements(resultsAddons,
-                "addon1_extension:/src/odoo/addons/addon1_extension",
-                "addon1:/src/odoo/addons/addon1",
+                "addon1.Board1:/src/odoo/addons/addon1/static/src/xml/js_plugin.xml",
                 "addon1.autocomplete_target_record:/src/odoo/addons/addon1/data/records.xml",
-                "addon1.record1:/src/odoo/addons/addon1/data/records.xml",
-                "addon1.my_not_unique_record_name:/src/odoo/addons/addon1/data/records.xml",
-                "addon1.openerp_record:/src/odoo/addons/addon1/data/openerp_records.xml",
-                "addon1_extension.my_not_unique_record_name:/src/odoo/addons/addon1_extension/data/records.xml",
                 "addon1.existing_kanban_view:/src/odoo/addons/addon1/views/existing_view.xml",
-                "addon1.open_existing_dashboard_kanban:/src/odoo/addons/addon1/views/existing_view.xml",
                 "addon1.inherited:/src/odoo/addons/addon1/data/records2.xml",
+                "addon1.my_form_template:/src/odoo/addons/addon1/views/existing_view.xml",
+                "addon1.my_not_unique_record_name:/src/odoo/addons/addon1/data/records.xml",
+                "addon1.open_existing_dashboard_kanban:/src/odoo/addons/addon1/views/existing_view.xml",
+                "addon1.openerp_record:/src/odoo/addons/addon1/data/openerp_records.xml",
+                "addon1.record1:/src/odoo/addons/addon1/data/records.xml",
                 "addon1.record2:/src/odoo/addons/addon1/data/records.xml",
-                "addon1.record4:/src/odoo/addons/addon1/data/records2.xml",
                 "addon1.record3:/src/odoo/addons/addon1/data/records2.xml",
-                "addon1.Board1:/src/odoo/addons/addon1/static/src/xml/js_plugin.xml");
+                "addon1.record4:/src/odoo/addons/addon1/data/records2.xml",
+                "addon1:/src/odoo/addons/addon1",
+                "addon1_extension.my_not_unique_record_name:/src/odoo/addons/addon1_extension/data/records.xml",
+                "addon1_extension:/src/odoo/addons/addon1_extension"
+        );
     }
 
 
@@ -77,29 +80,32 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         OdooSEContributor contributor = new OdooSEContributor(getProject());
         ArrayList<String> resultsAddons = new ArrayList<>();
         contributor.fetchElements("addon1.", new MockProgressIndicator(), (result) -> resultsAddons.add(result.getName() + ":" + result.getLocationString()));
+        resultsAddons.sort(Comparator.naturalOrder());
         assertSameElements(resultsAddons,
                 "addon1.Board1:/src/odoo/addons/addon1/static/src/xml/js_plugin.xml",
-                "addon1.record14:/src/odoo/addons/addon1/data/inherited2.csv",
-                "addon1.record11:/src/odoo/addons/addon1/data/inherited2.csv",
-                "addon1.open_existing_dashboard_kanban:/src/odoo/addons/addon1/views/existing_view.xml",
+                "addon1.access_existing_system:/src/odoo/addons/addon1/security/windows_newline.csv",
+                "addon1.autocomplete_target_record:/src/odoo/addons/addon1/data/records.xml",
                 "addon1.existing_kanban_view:/src/odoo/addons/addon1/views/existing_view.xml",
+                "addon1.inherited:/src/odoo/addons/addon1/data/records2.xml",
+                "addon1.my_form_template:/src/odoo/addons/addon1/views/existing_view.xml",
                 "addon1.my_not_unique_record_name:/src/odoo/addons/addon1/data/records.xml",
+                "addon1.open_existing_dashboard_kanban:/src/odoo/addons/addon1/views/existing_view.xml",
+                "addon1.openerp_record:/src/odoo/addons/addon1/data/openerp_records.xml",
+                "addon1.record10:/src/odoo/addons/addon1/data/inherited.csv",
+                "addon1.record11:/src/odoo/addons/addon1/data/inherited2.csv",
+                "addon1.record14:/src/odoo/addons/addon1/data/inherited2.csv",
+                "addon1.record15:/src/odoo/addons/addon1/data/inherited3.csv",
+                "addon1.record16:/src/odoo/addons/addon1/data/inherited3.csv",
                 "addon1.record1:/src/odoo/addons/addon1/data/records.xml",
                 "addon1.record2:/src/odoo/addons/addon1/data/records.xml",
-                "addon1.record8:/src/odoo/addons/addon1/data/inherited.csv",
-                "addon1.record10:/src/odoo/addons/addon1/data/inherited.csv",
-                "addon1.record9:/src/odoo/addons/addon1/data/inherited.csv",
-                "addon1.record7:/src/odoo/addons/addon1/data/inherited.csv",
-                "addon1.inherited:/src/odoo/addons/addon1/data/records2.xml",
                 "addon1.record3:/src/odoo/addons/addon1/data/records2.xml",
                 "addon1.record4:/src/odoo/addons/addon1/data/records2.xml",
-                "addon1.record16:/src/odoo/addons/addon1/data/inherited3.csv",
-                "addon1.record15:/src/odoo/addons/addon1/data/inherited3.csv",
                 "addon1.record5:/src/odoo/addons/addon1/data/existing.csv",
                 "addon1.record6:/src/odoo/addons/addon1/data/existing.csv",
-                "addon1.openerp_record:/src/odoo/addons/addon1/data/openerp_records.xml",
-                "addon1.autocomplete_target_record:/src/odoo/addons/addon1/data/records.xml",
-                "addon1.access_existing_system:/src/odoo/addons/addon1/security/windows_newline.csv");
+                "addon1.record7:/src/odoo/addons/addon1/data/inherited.csv",
+                "addon1.record8:/src/odoo/addons/addon1/data/inherited.csv",
+                "addon1.record9:/src/odoo/addons/addon1/data/inherited.csv"
+        );
     }
 
     public void testFetchModelRecords() {
