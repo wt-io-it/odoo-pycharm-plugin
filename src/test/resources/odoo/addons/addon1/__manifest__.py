@@ -12,5 +12,10 @@
         'data/records2.xml',
 
         'views/existing_view.xml',
-    ]
+    ],
+    'assets': {
+        'addon1.assets_addon1': {
+            'addon1/static/src/scss/variables.scss'
+        }
+    }
 }

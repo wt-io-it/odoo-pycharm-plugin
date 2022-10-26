@@ -6,17 +6,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiPlainText;
 import com.intellij.psi.xml.*;
-import com.jetbrains.python.psi.PyArgumentList;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyStringElement;
+import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.findParent;
-import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.getPrevSibling;
+import static at.wtioit.intellij.plugins.odoo.PsiElementsUtil.*;
 import static com.intellij.psi.xml.XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
 
 public interface OdooRecordPsiElementMatcherUtil {
@@ -105,12 +102,45 @@ public interface OdooRecordPsiElementMatcherUtil {
                         // TODO templates should go to a different index (they have no real xmlid)
                         records.putAll(getRecordsFromTemplateTag(tag, pathSupplier.get(), matches, limit));
                     }
-                    return PsiElementsUtil.TREE_WALING_SIGNAL.INVESTIGATE_CHILDREN;
+                    // investigate children if we need more records
+                    return PsiElementsUtil.TREE_WALING_SIGNAL.investigate(records.size() < limit);
                 } else if (element instanceof XmlDocument) {
-                    return PsiElementsUtil.TREE_WALING_SIGNAL.INVESTIGATE_CHILDREN;
+                    // investigate children if we need more records
+                    return PsiElementsUtil.TREE_WALING_SIGNAL.investigate(records.size() < limit);
                 }
                 return PsiElementsUtil.TREE_WALING_SIGNAL.SKIP_CHILDREN;
             }, XmlElement.class, 3);
+        } else if (file instanceof PyFile && "__manifest__.py".equals(file.getName())) {
+            PsiElementsUtil.walkTree(file, (psiElement) -> {
+                if (psiElement instanceof PyKeyValueExpression) {
+                    PyExpression keyExpression = ((PyKeyValueExpression) psiElement).getKey();
+                    String key = getStringValueForValueChild(keyExpression);
+                    if ("assets".equals(key)) {
+                        // investigate children if we need more records
+                        return PsiElementsUtil.TREE_WALING_SIGNAL.investigate(records.size() < limit);
+                    } else {
+                        // TODO move to isOdooRecord...
+                        PyKeyValueExpression parentKeyValueExpression = findParent(psiElement, PyKeyValueExpression.class, 2);
+                        if (parentKeyValueExpression != null) {
+                            PyExpression parentKeyExpression = parentKeyValueExpression.getKey();
+                            String parentKey = getStringValueForValueChild(parentKeyExpression);
+                            if ("assets".equals(parentKey)) {
+                                OdooRecord assetBundleRecord = getAssetBundleRecord(key, pathSupplier.get(), psiElement);
+                                if (matches.apply(assetBundleRecord)) {
+                                    records.put(key, assetBundleRecord);
+                                }
+                            }
+                        }
+                    }
+                    return TREE_WALING_SIGNAL.SKIP_CHILDREN;
+                } else if (psiElement instanceof PyExpressionStatement || psiElement instanceof PyDictLiteralExpression) {
+                    // continue investigating the main expression
+                    // continue investigating any dict expressions (containing PyKeyValueExpressions)
+                    // investigate children if we need more records
+                    return PsiElementsUtil.TREE_WALING_SIGNAL.investigate(records.size() < limit);
+                }
+                return PsiElementsUtil.TREE_WALING_SIGNAL.SKIP_CHILDREN;
+            }, PsiElement.class, 5);
         } else if ("csv".equals(file.getVirtualFile().getExtension())) {
             records.putAll(getRecordsFromCsvFile(file, pathSupplier.get(), matches, limit));
         }
@@ -214,6 +244,11 @@ public interface OdooRecordPsiElementMatcherUtil {
             return PsiElementsUtil.TREE_WALING_SIGNAL.investigate(records.size() < limit);
         }, XmlTag.class, 2);
         return records;
+    }
+
+    static OdooRecord getAssetBundleRecord(@NotNull String xmlId, String path, @NotNull PsiElement psiElement) {
+        // TODO it seems that those assets bundles have no xmlId in the odoo database, so the model name is not the correct one
+        return OdooRecordImpl.getFromData(xmlId, xmlId, "ir.asset_bundle", path, psiElement);
     }
 
     static boolean applyRecord(Function<OdooRecord, Boolean> function, HashMap<String, OdooRecord> records, OdooRecord record) {

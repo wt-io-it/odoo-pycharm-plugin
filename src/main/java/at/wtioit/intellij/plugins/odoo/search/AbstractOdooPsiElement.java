@@ -67,7 +67,13 @@ public abstract class AbstractOdooPsiElement implements OdooSEResult {
 
     @Override
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
-        return WithinProject.call(project, () -> psiElementSupplier.get().getContainingFile());
+        return WithinProject.call(project, () -> {
+            PsiElement psiElement = psiElementSupplier.get();
+            if (psiElement != null) {
+                return psiElement.getContainingFile();
+            }
+            return null;
+        });
     }
 
     @Override

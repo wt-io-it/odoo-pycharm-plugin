@@ -30,29 +30,30 @@ public class OdooDeserializedRecordImpl extends AbstractOdooRecord {
         VirtualFile virtualFile = findVirtualFile();
         if (virtualFile != null) {
             PsiFile file = PsiManager.getInstance(WithinProject.INSTANCE.get()).findFile(virtualFile);
-            HashMap<String, OdooRecord> recordsFromFile = getRecordsFromFile(file, (record) ->
-            {
-                return Objects.equals(getXmlId(), record.getXmlId());
-            }, 1);
-            if (recordsFromFile.size() == 1) {
-                OdooRecord record = recordsFromFile.values().iterator().next();
-                return record.getDefiningElement();
-            } else if (getXmlId() == null && recordsFromFile.size() > 0) {
-                // find matching ids
-                for (OdooRecord record : recordsFromFile.values()) {
-                    if (Objects.equals(record.getId(), getId())) {
-                        return record.getDefiningElement();
+            if (file != null) {
+                HashMap<String, OdooRecord> recordsFromFile = getRecordsFromFile(file, (record) -> {
+                    return Objects.equals(getXmlId(), record.getXmlId());
+                }, 1);
+                if (recordsFromFile.size() == 1) {
+                    OdooRecord record = recordsFromFile.values().iterator().next();
+                    return record.getDefiningElement();
+                } else if (getXmlId() == null && recordsFromFile.size() > 0) {
+                    // find matching ids
+                    for (OdooRecord record : recordsFromFile.values()) {
+                        if (Objects.equals(record.getId(), getId())) {
+                            return record.getDefiningElement();
+                        }
                     }
                 }
-            }
-            if (getXmlId().startsWith("base.model_")) {
-                HashMap<String, OdooModelIE> modelsFromFile = getModelsFromFile(file, (model) -> {
-                    return Objects.equals(getXmlId(), "base.model_" + model.getName().replace(".", "_"));
-                }, 1);
-                if (modelsFromFile.size() == 1) {
-                    OdooModelIE modelDefinition = modelsFromFile.values().iterator().next();
-                    OdooModel model = WithinProject.INSTANCE.get().getService(OdooModelService.class).getModel(modelDefinition.getName());
-                    return model.getDefiningElement();
+                if (getXmlId().startsWith("base.model_")) {
+                    HashMap<String, OdooModelIE> modelsFromFile = getModelsFromFile(file, (model) -> {
+                        return Objects.equals(getXmlId(), "base.model_" + model.getName().replace(".", "_"));
+                    }, 1);
+                    if (modelsFromFile.size() == 1) {
+                        OdooModelIE modelDefinition = modelsFromFile.values().iterator().next();
+                        OdooModel model = WithinProject.INSTANCE.get().getService(OdooModelService.class).getModel(modelDefinition.getName());
+                        return model.getDefiningElement();
+                    }
                 }
             }
         }

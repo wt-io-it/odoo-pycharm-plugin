@@ -30,6 +30,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
                 "my_other_addon:/src/odoo/my_addons/my_other_addon");
 
     }
+
     public void testFetchModulesAddon() {
         OdooSEContributor contributor = new OdooSEContributor(getProject());
         ArrayList<String> resultsAddons = new ArrayList<>();
@@ -38,6 +39,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         assertSameElements(resultsAddons,
                 "addon1.Board1:/src/odoo/addons/addon1/static/src/xml/js_plugin.xml",
                 "addon1.autocomplete_target_record:/src/odoo/addons/addon1/data/records.xml",
+                "addon1.assets_addon1:/src/odoo/addons/addon1/__manifest__.py",
                 "addon1.existing_kanban_view:/src/odoo/addons/addon1/views/existing_view.xml",
                 "addon1.inherited:/src/odoo/addons/addon1/data/records2.xml",
                 "addon1.my_form_template:/src/odoo/addons/addon1/views/existing_view.xml",
@@ -53,8 +55,6 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
                 "addon1_extension:/src/odoo/addons/addon1_extension"
         );
     }
-
-
 
     public void testFetchModulesAddonRecords() {
         OdooSEContributor contributor = new OdooSEContributor(getProject());
@@ -76,6 +76,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
                 "addon1.record3:/src/odoo/addons/addon1/data/records2.xml",
                 "addon1.record4:/src/odoo/addons/addon1/data/records2.xml");
     }
+
     public void testFetchModulesAddonRecordsWithModulePrefixOnly() {
         OdooSEContributor contributor = new OdooSEContributor(getProject());
         ArrayList<String> resultsAddons = new ArrayList<>();
@@ -84,6 +85,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         assertSameElements(resultsAddons,
                 "addon1.Board1:/src/odoo/addons/addon1/static/src/xml/js_plugin.xml",
                 "addon1.access_existing_system:/src/odoo/addons/addon1/security/windows_newline.csv",
+                "addon1.assets_addon1:/src/odoo/addons/addon1/__manifest__.py",
                 "addon1.autocomplete_target_record:/src/odoo/addons/addon1/data/records.xml",
                 "addon1.existing_kanban_view:/src/odoo/addons/addon1/views/existing_view.xml",
                 "addon1.inherited:/src/odoo/addons/addon1/data/records2.xml",

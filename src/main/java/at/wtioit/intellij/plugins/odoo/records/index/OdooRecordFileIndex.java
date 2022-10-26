@@ -16,6 +16,7 @@ import com.intellij.util.indexing.ID;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
+import com.jetbrains.python.PythonFileType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,7 +86,9 @@ public class OdooRecordFileIndex extends OdooIndexExtension<OdooRecord> {
     @Override
     public @NotNull FileBasedIndex.InputFilter getInputFilter() {
         // records can be inside of xml and csv files
-        return file -> file.getFileType() == XmlFileType.INSTANCE || Objects.equals(file.getExtension(), "csv");
+        return file -> file.getFileType() == XmlFileType.INSTANCE // all xml files
+                || (file.getFileType() == PythonFileType.INSTANCE && "__manifest__.py".equals(file.getName())) // __manifest__.py files for assets
+                || Objects.equals(file.getExtension(), "csv"); // csv files
     }
 
     @Override
@@ -111,7 +114,7 @@ public class OdooRecordFileIndex extends OdooIndexExtension<OdooRecord> {
                 // TODO we should make sure that XML and CSV are treated as text
                 return Collections.emptyMap();
             }
-            if (fileType == XmlFileType.INSTANCE) {
+            if (fileType == XmlFileType.INSTANCE || fileType == PythonFileType.INSTANCE) {
                 PsiFile file = inputData.getPsiFile();
                 return OdooRecordPsiElementMatcherUtil.getRecordsFromFile(file, inputData.getFile().getPath());
             } else if (Objects.equals(inputData.getFile().getExtension(), "csv")) {
