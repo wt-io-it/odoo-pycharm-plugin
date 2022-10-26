@@ -52,6 +52,18 @@ public interface PsiElementsUtil {
     }
 
     @Nullable
+    static <T extends PsiElement> T getPrevSibling(@NotNull PsiElement element, Class<T> siblingClass) {
+        PsiElement prevSibling = element.getPrevSibling();
+        while (prevSibling != null) {
+            if (siblingClass.isAssignableFrom(prevSibling.getClass())) {
+                return siblingClass.cast(prevSibling);
+            }
+            prevSibling = prevSibling.getPrevSibling();
+        }
+        return null;
+    }
+
+    @Nullable
     static <T extends PsiElement> T findParent(@Nullable PsiElement element, Class<T> parentClass, Function<T, Boolean> parentMatch, int inspectionLimit) {
         if (element == null) return null;
         PsiElement parent = element.getParent();

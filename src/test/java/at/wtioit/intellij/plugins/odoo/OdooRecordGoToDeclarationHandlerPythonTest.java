@@ -26,6 +26,10 @@ public class OdooRecordGoToDeclarationHandlerPythonTest extends AbstractOdooGoTo
         doTest("records.xml record:id=record1 model=existing ");
     }
 
+    public void testRecordNameInRefMethodWithSpace() {
+        doTest("records.xml record:id=record1 model=existing ");
+    }
+
     @Override
     String getFileExtension() {
         return ".py";

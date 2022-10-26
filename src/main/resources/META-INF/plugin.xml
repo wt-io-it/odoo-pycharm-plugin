@@ -35,9 +35,21 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.6.5:
+          <ul>
+            <li>fix marketplace compatibility with PyCharm</li>
+          </ul>
+        </li>
+        <li>
+          Version 0.6.4:
+          <ul>
+            <li>fix NPE in goto and autocomplete, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/68, thanks to medosobh for reporting it</li>
+          </ul>
+        </li>
+        <li>
           Version 0.6.3:
           <ul>
-            <li>enable referencing models with their xmlId (base.model_...)</li>
+            <li>enable referencing models with their xmlId (base.model_..., still not fully working (e.g. website.model_website is currently provided as base.model_website)</li>
             <li>fix goto handler for xml records, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/61, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/62, thanks to zalei, LeVraiDjak and ievgensyn for reporting it</li>
           </ul>
         </li>
@@ -248,14 +260,14 @@
         <li>may link to the wrong path if more that one odoo project is loaded</li>
         <li>shown addons are not depending on configured addon paths</li>
         <li>model names can only be detected if string literals are used</li>
-        <li>autocompletion only works as startswith (default PyCharm autocompletion also matches in other ways, e.g. "ab" in PyCharm also matches "account_balance" whereas it does not match in our plugin)</li>
         <li>model Classes that are defined by extending another model Class are not yet recognized</li>
+        <li>xmlId for models are generated as base.model_ regardless if model belongs to base module</li>
       </ul>
     ]]>
   </change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
-  <depends optional="true" config-file="at_wtioit_intellij_plugins_odoo.xml">com.intellij.modules.python</depends>
+  <depends config-file="at_wtioit_intellij_plugins_odoo.xml">com.intellij.modules.python</depends>
 
 </idea-plugin>
