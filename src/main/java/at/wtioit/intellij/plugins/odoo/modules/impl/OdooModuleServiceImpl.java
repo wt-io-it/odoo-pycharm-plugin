@@ -57,7 +57,7 @@ public class OdooModuleServiceImpl implements OdooModuleService {
     @Nullable
     @Override
     public OdooModule getModule(String moduleName) {
-        if(!IndexWatcher.isCalledInIndexJob()) {
+        if (!IndexWatcher.isCalledInIndexJob() && IndexWatcher.isFullyIndexed(project)) {
             return ApplicationManager.getApplication().runReadAction((Computable<OdooModule>) () -> {
                 GlobalSearchScope scope = GlobalSearchScope.allScope(project);
                 List<OdooModule> modulesForName = OdooIndex.getValues(moduleName, scope, OdooModule.class).collect(Collectors.toList());
