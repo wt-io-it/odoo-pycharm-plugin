@@ -35,10 +35,17 @@
   <change-notes><![CDATA[
       <ul>
         <li>
-          Version 0.6.7:
+          Version 0.6.8:
           <ul>
             <li>enable resolving Odoo 15.0+ asset bundles with GoTo in t-call-assets attributes</li>
             <li>fix false positives for missing records in tree and kanban action attributes</li>
+          </ul>
+        </li>
+        <li>
+          Version 0.6.7:
+          <ul>
+            <li>fix IndexNotReadyException when editing code around odoo imports, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/72, thanks to hishamalfoqaha, DieterReinert and
+msteinfeld-sirum for reporting it</li>
           </ul>
         </li>
         <li>

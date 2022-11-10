@@ -35,7 +35,7 @@ public class CompatibleFileIndex {
             // https://youtrack.jetbrains.com/issue/IDEA-289822
             // https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/106
 
-            // mark for cache clear (otherwise our null resolved modules (odoo.adddons....) are cached in
+            // mark for cache clear (otherwise our null resolved modules (odoo.addons....) are cached in
             // PythonModulePathCache forever
             IndexWatcher.needsCacheClearWhenFullyIndexed(project);
             return Collections.emptyList();
