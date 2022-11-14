@@ -26,6 +26,10 @@ public class PythonRecordXmlIdCompletionTest extends BaseOdooPluginTest {
         doTest();
     }
 
+    public void testMethodArgsForFunctionFromDict() {
+        doTest();
+    }
+
     private void doTest() {
         myFixture.configureByFile("completion/pythonRecordXmlId/" + getTestName(true) + ".py");
         myFixture.completeBasic();
