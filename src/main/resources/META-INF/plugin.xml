@@ -37,6 +37,7 @@
         <li>
           Version 0.6.8:
           <ul>
+            <li>fix NullPointerException if method is referenced from dict, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/82, thanks to medosobh for reporting it</li>
             <li>enable resolving Odoo 15.0+ asset bundles with GoTo in t-call-assets attributes</li>
             <li>fix false positives for missing records in tree and kanban action attributes</li>
           </ul>
