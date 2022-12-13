@@ -12,9 +12,9 @@ run_tests:
     matrix:
       - TYPE: "PC" # PyCharm Community
         # we should still be run-time compatible, but are not compile-time compatible
-        VERSION: [ "2021.2.4", "2021.3.3", "2022.1.4", "2022.2.3" ]
+        VERSION: [ "2021.2.4", "2021.3.3", "2022.1.4", "2022.2.4", "2022.3" ]
       - TYPE: "PY" # PyCharm Professional
-        VERSION: [ "2021.2.4", "2021.3.3", "2022.1.4", "2022.2.3" ]
+        VERSION: [ "2021.2.4", "2021.3.3", "2022.1.4", "2022.2.4", "2022.3" ]
   artifacts:
     reports:
       junit: build/test-results/test/TEST-*.xml
