@@ -40,6 +40,7 @@
             <li>fix NullPointerException if method is referenced from dict, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/82, thanks to medosobh for reporting it</li>
             <li>enable resolving Odoo 15.0+ asset bundles with GoTo in t-call-assets attributes</li>
             <li>fix false positives for missing records in tree and kanban action attributes</li>
+            <li>fix NoSuchMethodError for 2022.3, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/99, thanks to soportetierranube for reporting it</li>
           </ul>
         </li>
         <li>

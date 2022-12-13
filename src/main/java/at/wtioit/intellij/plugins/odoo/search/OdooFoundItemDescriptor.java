@@ -6,8 +6,8 @@ public class OdooFoundItemDescriptor extends FoundItemDescriptor<OdooSEResult> {
 
     private static final int MAGIC_FACTOR = 2;
 
-    private OdooFoundItemDescriptor(OdooSEResult item, int weight, double mlWeight) {
-        super(item, weight, mlWeight);
+    private OdooFoundItemDescriptor(OdooSEResult item, int weight) {
+        super(item, weight);
     }
 
     public static FoundItemDescriptor<OdooSEResult> weighted(String pattern, OdooSEResult odooSEResult) {
@@ -20,6 +20,6 @@ public class OdooFoundItemDescriptor extends FoundItemDescriptor<OdooSEResult> {
                 weight += 1;
             }
         }
-        return new OdooFoundItemDescriptor(odooSEResult, weight * MAGIC_FACTOR, 1.0);
+        return new OdooFoundItemDescriptor(odooSEResult, weight * MAGIC_FACTOR);
     }
 }
