@@ -28,6 +28,8 @@
           <li>Autocompletion for records in the same module (without module. prefix)</li>
           <li>Support autocompletion and Navigate to ... for Odoo fields</li>
           <li>Support SearchEverywhere with regular matcher (not just starting with)</li>
+          <li>Add warnings for modules with recursive dependencies</li>
+          <li>Add warnings for modules with missing dependencies (using records / modules / fields without a dependency)</li>
         </ul>
       </div>
     ]]>

@@ -57,9 +57,11 @@ public class OdooRecordServiceImpl implements OdooRecordService {
                 if (module != null) {
                     for (OdooRecord otherRecord : records) {
                         OdooModule otherModule = moduleService.getModule(getVirtualFileForPath(otherRecord.getPath()));
-                        if (otherModule != null && module.dependsOn(otherModule)) {
-                            dependsOnOtherRecords = true;
-                            break;
+                        if (!module.equals(otherModule)) {
+                            if (otherModule != null && module.dependsOn(otherModule)) {
+                                dependsOnOtherRecords = true;
+                                break;
+                            }
                         }
                     }
                     if (!dependsOnOtherRecords) {

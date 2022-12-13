@@ -4,7 +4,7 @@ import at.wtioit.intellij.plugins.odoo.BaseOdooPluginTest;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.modules.OdooModuleService;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 
@@ -58,15 +58,21 @@ public class TestRecordServiceImpl extends BaseOdooPluginTest {
 
     public void testFindingRecordWithMultipleDefinitions() {
         OdooRecordService recordService = getProject().getService(OdooRecordService.class);
-        WithinProject.run(getProject(), () -> {
-            OdooRecord record = recordService.getRecord("addon1.record2");
-            assertNotNull("Expected to get record for record existing in multiple files", record);
+        for (Pair<String, String> recordExpectedModulePair : Arrays.asList(
+                Pair.create("addon1.record2", "addon1"),
+                Pair.create("addon1.assets_addon1", "addon2"))) {
+            WithinProject.run(getProject(), () -> {
+                String recordXmlId = recordExpectedModulePair.first;
+                OdooRecord record = recordService.getRecord(recordXmlId);
+                assertNotNull("Expected to get record for record existing in multiple files", record);
 
-            OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
-            OdooModule module = moduleService.getModule(VirtualFileManager.getInstance().findFileByUrl("temp://" + record.getPath()));
-            assertNotNull("Expected record to be in file that is resolvable to a module", module);
-            assertEquals("Expected xmlId adddon1.record2 to resolve to record in addon1", "addon1", module.getName());
-        });
+                OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
+                OdooModule module = moduleService.getModule(VirtualFileManager.getInstance().findFileByUrl("temp://" + record.getPath()));
+                assertNotNull("Expected record to be in file that is resolvable to a module", module);
+                String expectedModule = recordExpectedModulePair.second;
+                assertEquals("Expected xmlId " + recordXmlId + " to resolve to record in addon1", expectedModule, module.getName());
+            });
+        }
     }
 
     public void testRecordXmlIds() {

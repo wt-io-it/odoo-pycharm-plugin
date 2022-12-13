@@ -39,7 +39,8 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         assertSameElements(resultsAddons,
                 "addon1.Board1:/src/odoo/addons/addon1/static/src/xml/js_plugin.xml",
                 "addon1.autocomplete_target_record:/src/odoo/addons/addon1/data/records.xml",
-                "addon1.assets_addon1:/src/odoo/addons/addon1/__manifest__.py",
+                // this record is named wrong and should be located correctly (in addon2)
+                "addon1.assets_addon1:/src/odoo/addons/addon2/__manifest__.py",
                 "addon1.existing_kanban_view:/src/odoo/addons/addon1/views/existing_view.xml",
                 "addon1.existing_tree_view:/src/odoo/addons/addon1/views/existing_view.xml",
                 "addon1.inherited:/src/odoo/addons/addon1/data/records2.xml",
@@ -86,7 +87,8 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
         assertSameElements(resultsAddons,
                 "addon1.Board1:/src/odoo/addons/addon1/static/src/xml/js_plugin.xml",
                 "addon1.access_existing_system:/src/odoo/addons/addon1/security/windows_newline.csv",
-                "addon1.assets_addon1:/src/odoo/addons/addon1/__manifest__.py",
+                // this record is named wrong and should be located correctly (in addon2)
+                "addon1.assets_addon1:/src/odoo/addons/addon2/__manifest__.py",
                 "addon1.autocomplete_target_record:/src/odoo/addons/addon1/data/records.xml",
                 "addon1.existing_kanban_view:/src/odoo/addons/addon1/views/existing_view.xml",
                 "addon1.existing_tree_view:/src/odoo/addons/addon1/views/existing_view.xml",
@@ -110,6 +112,15 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
                 "addon1.record8:/src/odoo/addons/addon1/data/inherited.csv",
                 "addon1.record9:/src/odoo/addons/addon1/data/inherited.csv"
         );
+    }
+
+    public void testFetchAssetsAddon1Path() {
+        OdooSEContributor contributor = new OdooSEContributor(getProject());
+        ArrayList<String> resultsAddons = new ArrayList<>();
+        contributor.fetchElements("addon1.assets_addon1", new MockProgressIndicator(), (result) -> resultsAddons.add(result.getName() + ":" + result.getLocationString()));
+        resultsAddons.sort(Comparator.naturalOrder());
+        // this record is named wrong and should be located correctly (in addon2)
+        assertSameElements(resultsAddons, "addon1.assets_addon1:/src/odoo/addons/addon2/__manifest__.py");
     }
 
     public void testFetchModelRecords() {
