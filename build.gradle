@@ -61,7 +61,7 @@ if (intellijType == 'PY') {
     // we can get no sources for pycharm professional
     buildDownloadSources = false
 }
-if (intellijType == 'PY' && intellijMinorVersion in ['2022.1', '2022.2']) {
+if (intellijType == 'PY' && intellijMinorVersion in ['2022.1', '2022.2', '2022.3']) {
     // https://youtrack.jetbrains.com/issue/IJSDK-1427/Running-tests-for-PyCharm-Professional-is-not-working
     // testing with PY since 2022.1 requires to also add com.intellij.platform.images (automatically provided in PC)
     intellijPlugins.add('com.intellij.platform.images')
