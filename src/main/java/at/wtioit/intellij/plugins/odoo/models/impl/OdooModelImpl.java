@@ -20,6 +20,7 @@ import com.intellij.psi.PsiManager;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -45,7 +46,7 @@ public class OdooModelImpl implements OdooModel {
     @NotNull
     @Override
     public PsiElement getDefiningElement() {
-        PsiElement psiElement = ApplicationManager.getApplication().runReadAction((Computable<PsiElement>) () -> {
+        return ApplicationManager.getApplication().runReadAction((Computable<PsiElement>) () -> {
             if (definingFiles.size() == 1) {
                 PsiFile psiFile = PsiManager.getInstance(project).findFile(definingFiles.iterator().next());
                 List<PsiElement> psiElements = retrieveDefiningElementsFromFile(psiFile);
@@ -60,11 +61,26 @@ public class OdooModelImpl implements OdooModel {
                         .map(pair -> pair.first)
                         .map(psiManager::findFile)
                         .collect(Collectors.toList());
-                List<PsiElement> psiElements = psiFiles.stream().map(this::retrieveDefiningElementsFromFile).collect(ArrayList::new, List::addAll, List::addAll);
-                return getDefiningElement(psiElements);
+                if (psiFiles.size() > 0) {
+                    List<PsiElement> psiElements = psiFiles.stream().map(this::retrieveDefiningElementsFromFile).collect(ArrayList::new, List::addAll, List::addAll);
+                    return getDefiningElement(psiElements);
+                }
+                // if we cannot determine the base module above, we just pick the first file
+                // there might be a recursive definition of module dependencies that doesn't
+                // allow us to tell which of the files is the base file
+                if (definingFiles.size() > 0) {
+                    return definingFiles.stream()
+                            .map(psiManager::findFile)
+                            .map(this::retrieveDefiningElementsFromFile)
+                            .filter(Objects::nonNull)
+                            .flatMap(Collection::stream)
+                            .findFirst()
+                            .orElseThrow(() -> new OdooPluginError("Cannot find any defining elements for " + name + " with files " + definingFiles));
+                }
+                // If plugin has no definingFiles something else is wrong
+                throw new OdooPluginError("Missing defining files for " + name);
             }
         });
-        return psiElement;
     }
 
     private PsiElement getDefiningElement(List<PsiElement> psiElements) {
@@ -124,6 +140,7 @@ public class OdooModelImpl implements OdooModel {
     }
 
     @Override
+    @Nullable
     public OdooModule getBaseModule() {
         if (baseModule == null) {
             OdooModuleService moduleService = project.getService(OdooModuleService.class);

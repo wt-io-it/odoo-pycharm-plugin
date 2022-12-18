@@ -26,5 +26,6 @@ public interface OdooModel extends OdooIndexEntry {
     @NotNull
     PsiElement getDefiningElement();
 
+    @Nullable
     OdooModule getBaseModule();
 }

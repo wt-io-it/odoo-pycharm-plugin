@@ -3,6 +3,7 @@ package at.wtioit.intellij.plugins.odoo.records.impl;
 import at.wtioit.intellij.plugins.odoo.icons.OdooPluginIcons;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
 import at.wtioit.intellij.plugins.odoo.models.OdooModel;
+import at.wtioit.intellij.plugins.odoo.modules.OdooModule;
 import at.wtioit.intellij.plugins.odoo.records.OdooRecord;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -30,7 +31,11 @@ public class OdooModelRecord implements OdooRecord {
 
     @Override
     public @Nullable String getXmlId() {
-        return model.getBaseModule().getName() + "." + getId();
+        OdooModule baseModule = model.getBaseModule();
+        if (baseModule != null) {
+            return baseModule.getName() + "." + getId();
+        }
+        return null;
     }
 
     @Override

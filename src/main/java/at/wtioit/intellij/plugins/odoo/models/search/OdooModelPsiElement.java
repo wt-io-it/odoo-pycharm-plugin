@@ -55,6 +55,7 @@ public class OdooModelPsiElement extends AbstractOdooPsiElement implements OdooM
     }
 
     @Override
+    @Nullable
     public OdooModule getBaseModule() {
         return model.getBaseModule();
     }
