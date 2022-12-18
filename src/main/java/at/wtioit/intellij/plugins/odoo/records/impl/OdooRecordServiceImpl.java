@@ -74,7 +74,17 @@ public class OdooRecordServiceImpl implements OdooRecordService {
         if (baseRecord != null) return baseRecord;
         OdooModelRecord odooModelRecord = getOdooModelRecord(xmlId);
         if (odooModelRecord != null) return odooModelRecord;
-        return getOdooModuleRecord(xmlId);
+        OdooModuleRecord odooModuleRecord = getOdooModuleRecord(xmlId);
+        if (odooModuleRecord != null) return odooModuleRecord;
+        // when we can get no unique / correct record (e.g. because module dependencies are recursive)
+        // and we have multiple records available we return the first one
+        if (records.size() > 1) {
+            return records.stream()
+                    .map(record -> recordWithCorrectXmlId(record, xmlId))
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
     }
 
     private OdooRecord recordWithCorrectXmlId(@NotNull OdooRecord record, @NotNull String xmlId) {

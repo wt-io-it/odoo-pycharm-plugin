@@ -154,6 +154,7 @@ public class TestOdooSEContributor extends BaseOdooPluginTest {
                 "base.model_model_with_name_in_multiple_lines:/src/odoo/addons/addon1/models/multiline.py",
                 "base.model_odoo_äöü:/src/odoo/addons/addon1/models/umlauts.py",
                 "base.model_outer_model:/src/odoo/my_addons/my_other_addon/models/my_models_with_dynamic_name.py",
+                "base.model_recursion_recursive:/src/odoo/addons/recursion2/models/recursion.py",
                 "base.model_single_wildcard_:ANYTHING::/src/odoo/addons/addon1/models/existing.py",
                 "base.model_strangely_inherited:/src/odoo/addons/addon3/models/incomplete.py",
                 "base.model_testing_conditional_expressions_false:/src/odoo/addons/addon1/models/conditional.py",

@@ -9,9 +9,12 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 
 import java.util.Arrays;
+import com.intellij.openapi.diagnostic.Logger;
 import java.util.stream.Collectors;
 
 public class TestRecordServiceImpl extends BaseOdooPluginTest {
+
+    Logger logger = Logger.getInstance(TestRecordServiceImpl.class);
 
     public void testFindingRecords() {
         OdooRecordService recordService = getProject().getService(OdooRecordService.class);
@@ -47,12 +50,18 @@ public class TestRecordServiceImpl extends BaseOdooPluginTest {
         String[] xmlIds = recordService.getXmlIds();
         assertContainsElements(Arrays.asList(xmlIds), "addon1.record1", "addon1.record2", ":UNDETECTED_XML_ID:.record7");
         for (String xmlId : xmlIds) {
-            OdooRecord record = recordService.getRecord(xmlId);
-            String detectedAddonName = xmlId.replaceAll("\\..*$", "");
-            String idWithoutAddonName = record.getId().replace(detectedAddonName + ".", "");
-            String idWithoutAddonNameFromXmlId = xmlId.replace(":UNDETECTED_XML_ID:.", "").replace(detectedAddonName + ".", "");
-            assertEquals(idWithoutAddonNameFromXmlId, idWithoutAddonName);
-            assertTrue(recordService.hasRecord(xmlId));
+            try {
+                OdooRecord record = recordService.getRecord(xmlId);
+                assertNotNull(record);
+                String detectedAddonName = xmlId.replaceAll("\\..*$", "");
+                String idWithoutAddonName = record.getId().replace(detectedAddonName + ".", "");
+                String idWithoutAddonNameFromXmlId = xmlId.replace(":UNDETECTED_XML_ID:.", "").replace(detectedAddonName + ".", "");
+                assertEquals(idWithoutAddonNameFromXmlId, idWithoutAddonName);
+                assertTrue(recordService.hasRecord(xmlId));
+            } catch (AssertionError e) {
+                logger.warn("Error for XMLID " + xmlId);
+                throw e;
+            }
         }
     }
 
