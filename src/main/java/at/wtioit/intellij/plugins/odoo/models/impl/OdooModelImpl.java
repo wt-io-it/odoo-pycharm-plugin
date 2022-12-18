@@ -1,6 +1,7 @@
 package at.wtioit.intellij.plugins.odoo.models.impl;
 
 import at.wtioit.intellij.plugins.odoo.OdooModelPsiElementMatcherUtil;
+import at.wtioit.intellij.plugins.odoo.OdooPluginError;
 import at.wtioit.intellij.plugins.odoo.PsiElementsUtil;
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.index.OdooIndexSubKeys;
@@ -89,7 +90,7 @@ public class OdooModelImpl implements OdooModel {
         if (definingElement.get() != null) {
             return definingElement.get();
         } else {
-            return psiElements.stream().findFirst().orElseThrow(null);
+            return psiElements.stream().findFirst().orElseThrow(() -> new OdooPluginError("Cannot find defining elements for " + name + " with files " + definingFiles));
         }
     }
 
