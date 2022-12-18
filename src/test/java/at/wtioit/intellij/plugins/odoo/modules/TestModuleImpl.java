@@ -73,6 +73,26 @@ public class TestModuleImpl extends BaseOdooPluginTest {
         }
     }
 
+    public void testDependsOnRecursive() {
+        OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
+        OdooModule addon1 = moduleService.getModule("recursion");
+
+        // TODO remove WithinProject HACK
+        try {
+            WithinProject.INSTANCE.set(getProject());
+            // test a direct dependency
+            assertTrue(addon1.dependsOn(moduleService.getModule("recursion2")));
+
+            // test a non dependency
+            assertFalse(addon1.dependsOn(moduleService.getModule("no_dependencies")));
+
+            // test a transitive dependency
+            assertTrue(addon1.dependsOn(moduleService.getModule("addon1")));
+        } finally {
+            WithinProject.INSTANCE.remove();
+        }
+    }
+
     public void testOdooDirectory() {
         OdooModuleService moduleService = getProject().getService(OdooModuleService.class);
         assertEquals("odoo", moduleService.getOdooDirectory().getName());

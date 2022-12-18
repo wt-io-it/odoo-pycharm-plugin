@@ -13,7 +13,7 @@ import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -49,8 +49,25 @@ public abstract class AbstractOdooModuleImpl implements OdooModule {
 
     @Override
     public boolean dependsOn(@NotNull OdooModule module) {
-        return this.getDependencies().stream()
-                .anyMatch(dependency -> dependency.getName().equals(module.getName()) || dependency.dependsOn(module));
+        String moduleName = module.getName();
+        HashSet<OdooModule> checkedDependencies = new HashSet<>();
+        Stack<OdooModule> dependenciesToCheck = new Stack<>();
+        dependenciesToCheck.addAll(this.getDependencies());
+        while (!dependenciesToCheck.empty()) {
+            OdooModule dependency = dependenciesToCheck.pop();
+            if (moduleName.equals(dependency.getName())) {
+                return true;
+            } else {
+                checkedDependencies.add(dependency);
+                for (OdooModule transistiveDependency: dependency.getDependencies()) {
+                    if (!checkedDependencies.contains(transistiveDependency)) {
+                        dependenciesToCheck.push(transistiveDependency);
+                    }
+                }
+            }
+
+        }
+        return false;
     }
 
     @Override
