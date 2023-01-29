@@ -17,10 +17,10 @@ run_tests:
         VERSION: [ "2021.2.4", "2021.3.3", "2022.1.4", "2022.2.4" ]
       # starting with 2022.3 we need jdk 17
       - TYPE: "PC" # PyCharm Community
-        VERSION: [ "2022.3" ]
+        VERSION: [ "2022.3.2" ]
         SOURCE_SCRIPT: "/bin/use_jdk17" # enables using jdk 17
       - TYPE: "PY" # PyCharm Professional
-        VERSION: [ "2022.3" ]
+        VERSION: [ "2022.3.2" ]
         SOURCE_SCRIPT: "/bin/use_jdk17" # enables using jdk 17
   artifacts:
     reports:
