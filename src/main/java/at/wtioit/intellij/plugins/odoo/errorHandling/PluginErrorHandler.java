@@ -90,6 +90,7 @@ public class PluginErrorHandler extends ErrorReportSubmitter {
     @NotNull
     private String createIssueText(@NotNull IdeaLoggingEvent[] events, @Nullable String additionalInfo, String versions) {
         StringBuilder issueText = new StringBuilder();
+        issueText.append("<-- If you remember any details about how the error can be reproduced please add them -->\n\n");
         if (additionalInfo != null) {
             issueText.append(additionalInfo);
             issueText.append("\n\n");
