@@ -12,10 +12,6 @@ import java.util.Collections;
 
 public class CompatibleFileIndex {
     /**
-     * Depending on availability in the current JVM runs FilenameIndex#getVirtualFilesByName(String, GlobalSearchScope)
-     * for newer versions (>2021.2) or runs FilenameIndex#getFilesByName(Project, String, GlobalSearchScope) and
-     * converts the result to a collection of VirtualFiles
-     * -
      * Holds a workaround for https://youtrack.jetbrains.com/issue/IDEA-291382/Assertion-failed-at-VirtualDirectoryImpldoFindChildById
      * where getVirtualFilesByName might provoke an error when indexing is still to be done
      * @see FilenameIndex#getVirtualFilesByName(String, GlobalSearchScope)

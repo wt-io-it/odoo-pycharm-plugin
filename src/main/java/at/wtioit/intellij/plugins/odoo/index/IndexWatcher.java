@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.index;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.psi.resolve.PythonModulePathCache;
 
@@ -35,6 +36,11 @@ public class IndexWatcher extends ThreadLocal<IndexWatcher.IndexState> {
         if (projectIndexerRunning.containsKey(project)) {
             return !projectIndexerRunning.get(project).get();
         }
+        if (DumbService.isDumb(project)) {
+            // project is marked as fully indexed, but we are still in dumb mode
+            // we return false to avoid IndexNotReadyExceptions
+            return false;
+        }
         return true;
     }
 
@@ -52,13 +58,15 @@ public class IndexWatcher extends ThreadLocal<IndexWatcher.IndexState> {
     public static void updateFinished(Project project) {
         if (projectIndexerRunning.containsKey(project)) {
             boolean previousValue = projectIndexerRunning.get(project).getAndSet(false);
-
-            if (previousValue && projectNeedsCacheClearWhenFullyIndexed.containsKey(project) && projectNeedsCacheClearWhenFullyIndexed.get(project).get()) {
-                // Clear PythonModulePathCache to get rid of cached null values for modules in PythonModulePathCache
-                for (Module module : ModuleManager.getInstance(project).getModules()) {
-                    PythonModulePathCache.getInstance(module).clearCache();
-                }
+            if (previousValue && projectNeedsCacheClear(project)) {
+                clearCaches(project);
             }
+        }
+    }
+
+    private static void clearPythonModuleCache(Project project) {
+        for (Module module : ModuleManager.getInstance(project).getModules()) {
+            PythonModulePathCache.getInstance(module).clearCache();
         }
     }
 
@@ -71,6 +79,33 @@ public class IndexWatcher extends ThreadLocal<IndexWatcher.IndexState> {
             }
         }
         projectNeedsCacheClearWhenFullyIndexed.get(project).set(true);
+    }
+
+    public static void dumbModeLeft(Project project) {
+        // when we are leaving dumb mode in case the UnindexedFilesUpdaterListener is not working (2022.3+)
+        // we trigger the cache clear upon leaving dumb mode
+        if (projectNeedsCacheClear(project)) {
+            if (!projectIndexerRunning.getOrDefault(project, new AtomicBoolean(false)).get()) {
+                clearCaches(project);
+            }
+        }
+    }
+
+    private static boolean projectNeedsCacheClear(Project project) {
+        return projectNeedsCacheClearWhenFullyIndexed.getOrDefault(project, new AtomicBoolean(false)).get();
+    }
+
+    private static void clearCaches(Project project) {
+        if (projectNeedsCacheClear(project)) {
+            synchronized (projectNeedsCacheClearWhenFullyIndexed) {
+                if (projectNeedsCacheClear(project)) {
+                    // Clear PythonModulePathCache to get rid of cached null values for modules in PythonModulePathCache
+                    clearPythonModuleCache(project);
+                    // mark project as no longer needing cache clear
+                    projectNeedsCacheClearWhenFullyIndexed.get(project).set(false);
+                }
+            }
+        }
     }
 
     static class IndexState {

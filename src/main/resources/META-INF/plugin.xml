@@ -37,6 +37,12 @@
   <change-notes><![CDATA[
       <ul>
         <li>
+          Version 0.6.10:
+          <ul>
+            <li>fix IndexNotReadyException when getting OdooModules by Name, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/67, thanks to muhammedashraf9244, DieterReinert, jaumeplanas, maksymkv25, RuminoCursedOneShot, tickernelz, oadiazp and reinaldoramosarxi for reporting it</li>
+          </ul>
+        </li>
+        <li>
           Version 0.6.9:
           <ul>
             <li>fix NullPointerException for model names in recursively defined modules, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/30, thanks to nicobustillos, BanderMansourH and maucoder-ingeint for reporting it</li>
