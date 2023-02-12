@@ -40,6 +40,7 @@
           Version 0.6.11:
           <ul>
             <li>fix StringIndexOutOfBoundsException when CTRL clicking on incomplete record ref in XML eval, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/131, thanks to jaronemo for reporting it</li>
+            <li>fix NullPointerException for missing manifest file, https://github.com/wt-io-it/odoo-pycharm-plugin/issues/115, thanks to muhammedashraf9244 and Putukresna365 for reporting it</li>
           </ul>
         </li>
         <li>

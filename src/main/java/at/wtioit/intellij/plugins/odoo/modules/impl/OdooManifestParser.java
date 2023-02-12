@@ -7,6 +7,7 @@ import com.jetbrains.python.psi.PyExpressionStatement;
 import com.jetbrains.python.psi.PyListLiteralExpression;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +15,19 @@ import java.util.List;
 public class OdooManifestParser {
 
     @Contract(pure = true)
-    public static OdooManifest parse(PsiFile manifestFile){
-        PyListLiteralExpression dependenciesList = getDependenciesList(getManifestExpression(manifestFile));
-        List<String> dependencies = new ArrayList<>();
-        if (dependenciesList != null) {
-            for (PsiElement dependency : dependenciesList.getChildren()) {
-                String cleanName = ((PyStringLiteralExpression) dependency).getStringValue();
-                dependencies.add(cleanName);
+    public static @Nullable OdooManifest parse(@Nullable PsiFile manifestFile){
+        if (manifestFile != null) {
+            PyListLiteralExpression dependenciesList = getDependenciesList(getManifestExpression(manifestFile));
+            List<String> dependencies = new ArrayList<>();
+            if (dependenciesList != null) {
+                for (PsiElement dependency : dependenciesList.getChildren()) {
+                    String cleanName = ((PyStringLiteralExpression) dependency).getStringValue();
+                    dependencies.add(cleanName);
+                }
             }
+            return new OdooManifestImpl(dependencies, manifestFile.getProject());
         }
-        return new OdooManifestImpl(dependencies, manifestFile.getProject());
+        return null;
     }
 
     @Contract(value = "null -> null", pure = true)

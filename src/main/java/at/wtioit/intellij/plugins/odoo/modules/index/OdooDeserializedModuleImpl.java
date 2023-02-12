@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
@@ -81,6 +82,9 @@ public class OdooDeserializedModuleImpl extends AbstractOdooModuleImpl {
     public @NotNull Collection<OdooModule> getDependencies() {
         if (manifest == null) {
             manifest = OdooManifestParser.parse(getManifestFile());
+        }
+        if (manifest == null) {
+            return Collections.emptyList();
         }
         return manifest.getDependencies();
     }
