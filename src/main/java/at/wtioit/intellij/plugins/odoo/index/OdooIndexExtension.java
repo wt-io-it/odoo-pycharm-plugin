@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.index;
 
 import com.intellij.util.indexing.FileBasedIndexExtension;
 import com.intellij.util.indexing.FileContent;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -13,11 +14,11 @@ public abstract class OdooIndexExtension<T extends OdooIndexEntry> extends FileB
 
     public abstract <E extends OdooIndexEntry> T castValue(E entry);
 
-    public void save(DataOutput out, OdooIndexEntry value) throws IOException {
+    public void save(@NotNull DataOutput out, OdooIndexEntry value) throws IOException {
         getValueExternalizer().save(out, castValue(value));
     }
 
-    public T read(DataInput in) throws IOException {
+    public T read(@NotNull DataInput in) throws IOException {
         return getValueExternalizer().read(in);
     }
 
