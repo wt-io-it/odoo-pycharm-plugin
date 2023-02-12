@@ -66,5 +66,6 @@ build:
     - ./gradlew buildPlugin
   artifacts:
     paths:
+      - build/libs/instrumented-odoo_plugin-*.jar
       - build/libs/odoo_plugin-*.jar
       - "build/distributions/Odoo Autocompletion Support-*.jar"
