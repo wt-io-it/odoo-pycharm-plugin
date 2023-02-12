@@ -2,6 +2,19 @@ stages:
   - test
   - build
 
+variables:
+  FF_USE_FASTZIP: "true"
+
+# https://stackoverflow.com/a/36050711/925125
+# enable caching gradle downloads
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
 run_tests:
   stage: test
   script:
