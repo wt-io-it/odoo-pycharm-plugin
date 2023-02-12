@@ -20,7 +20,11 @@ public class OdooCompletionContributor extends AbstractOdooCompletionContributor
     @Override
     public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
         String expressionWithDummy = parameters.getPosition().getParent().getText();
-        String fqdn = expressionWithDummy.substring(0, expressionWithDummy.length() - CompletionUtilCore.DUMMY_IDENTIFIER.length() + 1);
+        String fqdn = expressionWithDummy;
+        int indexOfDummyIdentifier = expressionWithDummy.indexOf(CompletionUtilCore.DUMMY_IDENTIFIER.strip());
+        if (indexOfDummyIdentifier != -1) {
+            fqdn = expressionWithDummy.substring(0, indexOfDummyIdentifier);
+        }
         if (fqdn.startsWith("odoo.addons.")) {
             // autocomplete import odoo.addons.*
             PsiElement dot = parameters.getPosition().getPrevSibling();
