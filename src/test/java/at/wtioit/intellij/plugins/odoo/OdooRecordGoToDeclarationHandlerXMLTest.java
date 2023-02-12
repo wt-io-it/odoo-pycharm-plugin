@@ -29,6 +29,10 @@ public class OdooRecordGoToDeclarationHandlerXMLTest extends AbstractOdooGoToDec
         doTest(null);
     }
 
+    public void testIncompleteRefExpressionInEvalAttributeWithStringStart() {
+        doTest(null);
+    }
+
     @Override
     String getFileExtension() {
         return ".xml";

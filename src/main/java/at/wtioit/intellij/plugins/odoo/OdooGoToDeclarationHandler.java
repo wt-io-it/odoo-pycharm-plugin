@@ -90,7 +90,12 @@ public class OdooGoToDeclarationHandler extends GotoDeclarationHandlerBase {
                 // find the end quote
                 int positionAfterOpeningQuote = positionOfOpeningQuote + 1;
                 int indexEndRef = text.indexOf(quote, positionAfterOpeningQuote);
-                refName = text.substring(positionAfterOpeningQuote, indexEndRef);
+                if (indexEndRef != -1) {
+                    refName = text.substring(positionAfterOpeningQuote, indexEndRef);
+                } else {
+                    // User is pointing to an incomplete ref('....
+                    return null;
+                }
             } else {
                 // User is not pointing inside an argument for ref()
                 return null;
