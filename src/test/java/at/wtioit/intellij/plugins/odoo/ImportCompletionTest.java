@@ -15,7 +15,7 @@ public class ImportCompletionTest extends BaseOdooPluginTest {
         // in the normal auto-completion the user would decide for one of them but in the tests it just is empty
         LookupElement[] result = doTest(FileComparisonFailure.class);
         String lookupStrings = Arrays.stream(result)
-                .filter((b) -> b.getUserDataString().contains("=at.wtioit.intellij.plugins.odoo.OdooCompletionContributor@"))
+                .filter((b) -> b.getUserDataString().contains("=at.wtioit.intellij.plugins.odoo.OdooCompletionContributor@") || b.getUserDataString().contains(" -> at.wtioit.intellij.plugins.odoo.OdooCompletionContributor@"))
                 .map(LookupElement::getLookupString)
                 .findAny()
                 .orElseThrow(() -> new AssertionError("Expected completion contribution from at.wtioit.intellij.plugins.odoo.OdooCompletionContributor"));
@@ -62,7 +62,7 @@ public class ImportCompletionTest extends BaseOdooPluginTest {
         // in the normal auto-completion the user would decide for one of them but in the tests it just is empty
         LookupElement[] result = doTest(FileComparisonFailure.class);
         String lookupStrings = Arrays.stream(result)
-                .filter((b) -> b.getUserDataString().contains("=at.wtioit.intellij.plugins.odoo.OdooCompletionContributor@"))
+                .filter((b) -> b.getUserDataString().contains("=at.wtioit.intellij.plugins.odoo.OdooCompletionContributor@") || b.getUserDataString().contains(" -> at.wtioit.intellij.plugins.odoo.OdooCompletionContributor@"))
                 .map(LookupElement::getLookupString)
                 .findAny()
                 .orElseThrow(() -> new AssertionError("Expected completion contribution from at.wtioit.intellij.plugins.odoo.OdooCompletionContributor"));
