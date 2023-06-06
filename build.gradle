@@ -133,12 +133,4 @@ tasks {
         token.set(System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_intellijPublishToken"))
     }
 
-    runIdeForUiTests {
-        systemProperty "robot-server.port", "8082" // default port 8580
-    }
-
-    downloadRobotServerPlugin {
-        version = "0.11.18"
-    }
-
 }

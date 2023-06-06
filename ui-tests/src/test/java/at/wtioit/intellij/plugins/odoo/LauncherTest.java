@@ -2,16 +2,19 @@ package at.wtioit.intellij.plugins.odoo;
 
 import com.intellij.remoterobot.RemoteRobot;
 import com.intellij.remoterobot.fixtures.JLabelFixture;
+import com.intellij.remoterobot.launcher.Ide;
 import com.intellij.remoterobot.launcher.IdeDownloader;
+import com.intellij.remoterobot.launcher.IdeLauncher;
 import okhttp3.OkHttpClient;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestWatcher;
 
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,14 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.intellij.remoterobot.search.locators.Locators.byXpath;
 import static com.intellij.remoterobot.utils.RepeatUtilsKt.waitFor;
-import static junit.framework.TestCase.assertEquals;
-import com.intellij.remoterobot.launcher.Ide;
-import com.intellij.remoterobot.launcher.IdeLauncher;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.TestWatcher;
-
-import javax.imageio.ImageIO;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(LauncherTest.IdeTestWatcher.class)
 @Timeout(value = 5, unit = TimeUnit.MINUTES)
@@ -48,9 +44,35 @@ public class LauncherTest {
         HashMap<String, Object> additionalProperties = new HashMap<>();
         additionalProperties.put("robot-server.port", 8082);
         tmpDir = Files.createTempDirectory("launcher");
-        List<Path> plugins = Arrays.asList(ideDownloader.downloadRobotPlugin(tmpDir));
+        Path downloadDir = new File("build/launcherDownloads").getAbsoluteFile().toPath();
+        if (!Files.exists(downloadDir)) {
+            Files.createDirectories(downloadDir);
+        }
+        Path robotPluginFile = downloadDir.resolve("robot-server-plugin-0.11.18");
+        if (!Files.exists(robotPluginFile)) {
+            Path tmpRobotPluginFile = ideDownloader.downloadRobotPlugin(tmpDir);
+            Files.move(tmpRobotPluginFile, robotPluginFile);
+        }
+        // TODO make sure the plugin is built
+        Path pycharmPluginFile = new File("../build/libs/odoo_plugin-0.6.12-SNAPSHOT.jar").getAbsoluteFile().toPath();
+        List<Path> plugins = Arrays.asList(robotPluginFile, pycharmPluginFile);
+        String ideFileName;
+        if (getIde().equals(Ide.PYCHARM)) {
+            ideFileName = "pycharm";
+        } else if (getIde().equals(Ide.IDEA_COMMUNITY)) {
+            ideFileName = "ideaIC";
+        } else if (getIde().equals(Ide.IDEA_ULTIMATE)) {
+            ideFileName = "ideaIU";
+        } else {
+            throw new AssertionError("Unknown ideFileName for " + getIde());
+        }
+        Path idePath = downloadDir.resolve(ideFileName + "-" + getVersion());
+        if (!Files.exists(idePath)) {
+            Path tmpIdePath = ideDownloader.downloadAndExtract(getIde(), tmpDir, Ide.BuildType.RELEASE, getVersion());
+            Files.move(tmpIdePath, idePath);
+        }
         ideaProcess = IdeLauncher.INSTANCE.launchIde(
-                ideDownloader.downloadAndExtract(getIde(), tmpDir, Ide.BuildType.RELEASE, getVersion()),
+                idePath,
                 additionalProperties,
                 Collections.emptyList(),
                 plugins,
@@ -114,9 +136,13 @@ public class LauncherTest {
     }
 
     @Test
-    public void test() {
+    public void testIdeCanBeStarted() {
         JLabelFixture welcome = remoteRobot.find(JLabelFixture.class, byXpath("//div[@text.key='label.welcome.to.0']"));
-        assertEquals(welcome.getValue(), "Hello");
+        assertEquals("Welcome to PyCharm", welcome.getValue());
+    }
+
+    public void testPluginIsListedAsInstalled() {
+
     }
 
     public static class IdeTestWatcher implements TestWatcher {
@@ -124,7 +150,7 @@ public class LauncherTest {
         public void testFailed(ExtensionContext context, Throwable cause) {
             TestWatcher.super.testFailed(context, cause);
             try {
-                ImageIO.write(remoteRobot.getScreenshot(), "png", new File("build/reports", "${context.displayName}.png"));
+                ImageIO.write(remoteRobot.getScreenshot(), "png", new File("build/reports", context.getDisplayName().replaceAll("[()]", "") + ".png"));
             } catch (IOException ex) {
                 throw new AssertionError(ex);
             }
