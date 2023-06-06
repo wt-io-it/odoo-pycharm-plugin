@@ -1,3 +1,5 @@
+import java.util.stream.Collectors
+
 buildscript {
     repositories {
         mavenCentral()
@@ -15,6 +17,9 @@ repositories {
 
 
 def remoteRobotVersion = "0.11.18"
+def intellijVersion = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testVersion") ?: project.findProperty("platformVersion")
+def intellijType = System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_testType") ?: project.findProperty("platformType")
+def intellijPlugins = Arrays.stream(project.findProperty("platformPlugins").split(',')).map(String::trim).filter((s) -> s.length() > 0).collect(Collectors.toList())
 
 //kotlin {
 //    jvmToolchain(17)
@@ -38,7 +43,9 @@ dependencies {
 
 
 intellij {
-    version.set('LATEST-EAP-SNAPSHOT')
+    version.set(intellijVersion)
+    type.set(intellijType)
+    plugins.set(intellijPlugins)
 }
 
 downloadRobotServerPlugin {
@@ -62,6 +69,7 @@ runIdeForUiTests {
     systemProperty "idea.trust.all.projects", "true"
     systemProperty "ide.show.tips.on.startup.default.value", "false"
 //    systemProperty "eap.require.license", "true"
+
 }
 
 test {

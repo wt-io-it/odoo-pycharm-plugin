@@ -1,7 +1,9 @@
 package at.wtioit.intellij.plugins.odoo;
 
 import com.intellij.remoterobot.RemoteRobot;
+import com.intellij.remoterobot.fixtures.ComponentFixture;
 import com.intellij.remoterobot.fixtures.JLabelFixture;
+import com.intellij.remoterobot.fixtures.dataExtractor.RemoteText;
 import com.intellij.remoterobot.launcher.Ide;
 import com.intellij.remoterobot.launcher.IdeDownloader;
 import com.intellij.remoterobot.launcher.IdeLauncher;
@@ -9,7 +11,10 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
@@ -27,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import static com.intellij.remoterobot.search.locators.Locators.byXpath;
 import static com.intellij.remoterobot.utils.RepeatUtilsKt.waitFor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(LauncherTest.IdeTestWatcher.class)
 @Timeout(value = 5, unit = TimeUnit.MINUTES)
@@ -127,6 +133,7 @@ public class LauncherTest {
 
     @AfterAll
     public static void after() throws IOException {
+        // TODO close
         if (ideaProcess != null) {
             ideaProcess.destroy();
         }
@@ -141,8 +148,21 @@ public class LauncherTest {
         assertEquals("Welcome to PyCharm", welcome.getValue());
     }
 
+    @Test
     public void testPluginIsListedAsInstalled() {
+        // In the left panel click on Plugins
+        ComponentFixture leftPanel = remoteRobot.find(ComponentFixture.class, byXpath("//div[@class='JBList']"));
+        List<RemoteText> leftPanelPluginTexts = leftPanel.findAllText("Plugins");
+        assertEquals(1, leftPanelPluginTexts.size());
+        leftPanelPluginTexts.get(0).click();
 
+        // Select the "installed" plugins tab
+        JLabelFixture installedPluginsTab = remoteRobot.find(JLabelFixture.class, byXpath("//div[contains(@text.key, 'plugin.manager.tab.installed')]"));
+        installedPluginsTab.click();
+
+        // Verify that Odoo Autocompletion Plugin is listed in installed tab
+        JLabelFixture odooAutocompletionSupportPlugin = remoteRobot.find(JLabelFixture.class, byXpath("//div[@text='Odoo Autocompletion Support']"));
+        assertNotNull(odooAutocompletionSupportPlugin);
     }
 
     public static class IdeTestWatcher implements TestWatcher {

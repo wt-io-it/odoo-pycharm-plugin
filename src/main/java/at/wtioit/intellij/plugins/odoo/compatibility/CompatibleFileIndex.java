@@ -2,6 +2,7 @@ package at.wtioit.intellij.plugins.odoo.compatibility;
 
 import at.wtioit.intellij.plugins.odoo.WithinProject;
 import at.wtioit.intellij.plugins.odoo.index.IndexWatcher;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
@@ -37,6 +38,13 @@ public class CompatibleFileIndex {
             return Collections.emptyList();
         }
 
-        return FilenameIndex.getVirtualFilesByName(name, scope);
+        try {
+            return FilenameIndex.getVirtualFilesByName(name, scope);
+        } catch (ProcessCanceledException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw e;
+        }
+
     }
 }
