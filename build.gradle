@@ -61,7 +61,7 @@ if (intellijType == 'PY') {
     // we can get no sources for pycharm professional
     buildDownloadSources = false
 }
-if (intellijType == 'PY' && intellijMinorVersion in ['2022.1', '2022.2', '2022.3']) {
+if (intellijType == 'PY' && intellijMinorVersion in ['2022.1', '2022.2', '2022.3', '2023.1']) {
     // https://youtrack.jetbrains.com/issue/IJSDK-1427/Running-tests-for-PyCharm-Professional-is-not-working
     // testing with PY since 2022.1 requires to also add com.intellij.platform.images (automatically provided in PC)
     intellijPlugins.add('com.intellij.platform.images')
@@ -131,6 +131,14 @@ tasks {
 
     publishPlugin {
         token.set(System.getenv("AT_WTIOIT_PYCHARM_PLUGIN_intellijPublishToken"))
+    }
+
+    runIdeForUiTests {
+        systemProperty "robot-server.port", "8082" // default port 8580
+    }
+
+    downloadRobotServerPlugin {
+        version = "0.11.18"
     }
 
 }
