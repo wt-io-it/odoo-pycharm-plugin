@@ -16,11 +16,8 @@ cache:
     - .gradle/caches
     - ui-tests/build/launcherDownloads
 
-run_tests:
+.test_matrix:
   stage: test
-  script:
-    - if [[ $SOURCE_SCRIPT ]] ; then source "$SOURCE_SCRIPT"; fi
-    - AT_WTIOIT_PYCHARM_PLUGIN_testVersion="$VERSION" AT_WTIOIT_PYCHARM_PLUGIN_testType="$TYPE" ./gradlew :test
   after_script:
     - java -version
   parallel:
@@ -37,38 +34,28 @@ run_tests:
         VERSION: [ "2022.3.2", "2023.1.2" ]
         SOURCE_SCRIPT: "/bin/use_jdk17" # enables using jdk 17
       # TODO add LATEST-EAP-SNAPSHOT to tested versions
+
+run_tests:
+  extends: .test_matrix
+  script:
+    - if [[ $SOURCE_SCRIPT ]] ; then source "$SOURCE_SCRIPT"; fi
+    - AT_WTIOIT_PYCHARM_PLUGIN_testVersion="$VERSION" AT_WTIOIT_PYCHARM_PLUGIN_testType="$TYPE" ./gradlew :test
   artifacts:
     reports:
-      # TODO add junit reports for robotframework UI tests
       junit: build/test-results/test/TEST-*.xml
     paths:
       - build/reports
-      - ui-tests/build/reports
     when: always
 
 run_ui_tests:
-  stage: test
+  extends: .test_matrix
   script:
     - if [[ $SOURCE_SCRIPT ]] ; then source "$SOURCE_SCRIPT"; fi
     - ./gradlew :buildPlugin
     - AT_WTIOIT_PYCHARM_PLUGIN_testVersion="$VERSION" AT_WTIOIT_PYCHARM_PLUGIN_testType="$TYPE" ./gradlew ui-test:test
-  after_script:
-    - java -version
-  parallel:
-    matrix:
-      - TYPE: "PC" # PyCharm Community
-        VERSION: [ "2021.2.4", "2021.3.3", "2022.1.4", "2022.2.4" ]
-      - TYPE: "PY" # PyCharm Professional
-        VERSION: [ "2021.2.4", "2021.3.3", "2022.1.4", "2022.2.4" ]
-      # starting with 2022.3 we need jdk 17
-      - TYPE: "PC" # PyCharm Community
-        VERSION: [ "2022.3.2", "2023.1.2" ]
-        SOURCE_SCRIPT: "/bin/use_jdk17" # enables using jdk 17
-      - TYPE: "PY" # PyCharm Professional
-        VERSION: [ "2022.3.2", "2023.1.2" ]
-        SOURCE_SCRIPT: "/bin/use_jdk17" # enables using jdk 17
   artifacts:
     reports:
+      # TODO add junit reports for robotframework UI tests
       junit: build/test-results/test/TEST-*.xml
     paths:
       - build/reports
