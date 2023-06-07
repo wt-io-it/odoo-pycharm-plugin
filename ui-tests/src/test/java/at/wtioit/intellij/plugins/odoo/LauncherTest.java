@@ -1,5 +1,8 @@
 package at.wtioit.intellij.plugins.odoo;
 
+import at.wtioit.intellij.plugins.odoo.fixtures.WelcomeFrameFixture;
+import com.google.common.collect.Lists;
+import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame;
 import com.intellij.remoterobot.RemoteRobot;
 import com.intellij.remoterobot.fixtures.ComponentFixture;
 import com.intellij.remoterobot.fixtures.JLabelFixture;
@@ -28,6 +31,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static com.intellij.remoterobot.search.locators.Locators.byXpath;
 import static com.intellij.remoterobot.utils.RepeatUtilsKt.waitFor;
@@ -133,9 +137,25 @@ public class LauncherTest {
 
     @AfterAll
     public static void after() throws IOException {
-        // TODO close
         if (ideaProcess != null) {
-            ideaProcess.destroy();
+            Long[] pids = Stream.concat(
+                    Stream.of(ideaProcess.pid()),
+                    ideaProcess.children().map(ProcessHandle::pid)
+            ).toArray(Long[]::new);
+            if (ideaProcess.isAlive()) {
+                ideaProcess.destroy();
+            }
+            ideaProcess.children().filter(ProcessHandle::isAlive).forEach(ProcessHandle::destroy);
+            if (ideaProcess.isAlive()) {
+                ideaProcess.destroyForcibly();
+            }
+            for (Long pid : pids) {
+                // check all pids again and if they are still alive kill them
+                if (new File("/proc/" + pid).exists()) {
+                    Runtime.getRuntime().exec("kill " + pid);
+                }
+            }
+
         }
         if (tmpDir != null) {
             FileUtils.cleanDirectory(tmpDir.toFile());
