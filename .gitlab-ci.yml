@@ -52,9 +52,7 @@ run_ui_tests:
   script:
     - if [[ $TYPE == "PC" ]] ; then echo "Skipping ui tests for PyCharm Community until it is supported"; exit 0 ; fi
     - if [[ $SOURCE_SCRIPT ]] ; then source "$SOURCE_SCRIPT"; fi
-    - ./gradlew :buildPlugin
-    - ls -al build/libs/
-    - AT_WTIOIT_PYCHARM_PLUGIN_testVersion="$VERSION" AT_WTIOIT_PYCHARM_PLUGIN_testType="$TYPE" ./gradlew ui-test:test
+    - AT_WTIOIT_PYCHARM_PLUGIN_testVersion="$VERSION" AT_WTIOIT_PYCHARM_PLUGIN_testType="$TYPE" xvfb ./gradlew ui-test:test
   artifacts:
     reports:
       # TODO add junit reports for robotframework UI tests
