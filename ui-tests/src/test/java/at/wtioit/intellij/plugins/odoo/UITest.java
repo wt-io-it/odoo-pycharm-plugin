@@ -7,6 +7,7 @@ import com.intellij.remoterobot.fixtures.JLabelFixture;
 import com.intellij.remoterobot.launcher.Ide;
 import com.intellij.remoterobot.launcher.IdeDownloader;
 import com.intellij.remoterobot.launcher.IdeLauncher;
+import com.jetbrains.qodana.sarif.model.Run;
 import okhttp3.OkHttpClient;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,7 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -47,7 +49,7 @@ public class UITest {
     private static Process ideaProcess;
 
     @BeforeAll
-    public static void before() throws IOException {
+    public static void before() throws IOException, InterruptedException {
         OkHttpClient client = new OkHttpClient();
         remoteRobot = new RemoteRobot("http://localhost:8082", client);
         HashMap<String, Object> additionalProperties = new HashMap<>();
@@ -64,7 +66,7 @@ public class UITest {
         waitFor(Duration.ofSeconds(90), Duration.ofSeconds(5), () -> isAvailable(remoteRobot));
     }
 
-    private static Pair<Path, List<Path>> prepareIdeAndPluginFiles(OkHttpClient client) throws IOException {
+    private static Pair<Path, List<Path>> prepareIdeAndPluginFiles(OkHttpClient client) throws IOException, InterruptedException {
         IdeDownloader ideDownloader = new IdeDownloader(client);
         Path downloadDir = new File("build/launcherDownloads").getAbsoluteFile().toPath();
         if (!Files.exists(downloadDir)) {
@@ -74,7 +76,7 @@ public class UITest {
         Path robotPluginFile = downloadDir.resolve("robot-server-plugin-0.11.18");
         if (!Files.exists(robotPluginFile)) {
             Path tmpRobotPluginFile = ideDownloader.downloadRobotPlugin(tmpDir);
-            LOGGER.info("Moving robot plugin from tmpPath (" + tmpRobotPluginFile + ") to idePath ( " + robotPluginFile + " )");
+            LOGGER.info("Moving robot plugin from tmpPath (" + tmpRobotPluginFile + ") to idePath (" + robotPluginFile + ")");
             Files.move(tmpRobotPluginFile, robotPluginFile);
         }
 
@@ -91,8 +93,14 @@ public class UITest {
         Path idePath = downloadDir.resolve(ideFileName + "-" + getVersion());
         if (!Files.exists(idePath)) {
             Path tmpIdePath = ideDownloader.downloadAndExtract(getIde(), tmpDir, Ide.BuildType.RELEASE, getVersion());
-            LOGGER.info("Moving IDE from tmpPath (" + tmpIdePath + ") to idePath ( " + idePath + " )");
-            Files.move(tmpIdePath, idePath);
+            LOGGER.info("Moving IDE from tmpPath (" + tmpIdePath + ") to idePath (" + idePath + ")");
+            try {
+                Files.move(tmpIdePath, idePath);
+            } catch (DirectoryNotEmptyException e) {
+                // File.move might not succeed for directories that cannot be "moved"
+                // so we move it with mv instead
+                Runtime.getRuntime().exec("mv " + tmpIdePath + " " + idePath).waitFor();
+            }
         }
 
         Path pycharmPluginFile = new File("../build/libs/odoo_plugin-0.6.12-SNAPSHOT.jar").getAbsoluteFile().toPath();
