@@ -14,6 +14,7 @@ cache:
   paths:
     - .gradle/wrapper
     - .gradle/caches
+    - ui-tests/build/launcherDownloads
 
 run_tests:
   stage: test
