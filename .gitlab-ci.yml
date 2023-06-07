@@ -53,10 +53,7 @@ run_ui_tests:
     - if [[ $TYPE == "PC" ]] ; then echo "Skipping ui tests for PyCharm Community until it is supported"; exit 0 ; fi
     - if [[ $SOURCE_SCRIPT ]] ; then source "$SOURCE_SCRIPT"; fi
     - ./gradlew :buildPlugin
-    - pwd
     - ls -al build/libs/
-    - ls -al build/libs/odoo_plugin-0.6.12-SNAPSHOT.jar
-    - ls -al /builds/odoo_tools/pycharm-plugin/ui-tests/../build/libs/odoo_plugin-0.6.12-SNAPSHOT.jar
     - AT_WTIOIT_PYCHARM_PLUGIN_testVersion="$VERSION" AT_WTIOIT_PYCHARM_PLUGIN_testType="$TYPE" ./gradlew ui-test:test
   artifacts:
     reports:

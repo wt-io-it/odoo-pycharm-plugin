@@ -35,8 +35,7 @@ import java.util.stream.Stream;
 
 import static com.intellij.remoterobot.search.locators.Locators.byXpath;
 import static com.intellij.remoterobot.utils.RepeatUtilsKt.waitFor;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(UITest.IdeTestWatcher.class)
 @Timeout(value = 5, unit = TimeUnit.MINUTES)
@@ -103,8 +102,13 @@ public class UITest {
             }
         }
 
-        Path pycharmPluginFile = new File("../build/libs/odoo_plugin-0.6.12-SNAPSHOT.jar").getAbsoluteFile().toPath();
-        List<Path> plugins = Arrays.asList(robotPluginFile, pycharmPluginFile);
+        File pyCharmPluginFile = new File("../build/libs/odoo_plugin-0.6.12-SNAPSHOT.jar");
+        if (!pyCharmPluginFile.exists()) {
+            pyCharmPluginFile = new File("../build/libs/instrumented-odoo_plugin-0.6.12-SNAPSHOT.jar");
+            assertTrue(pyCharmPluginFile.exists(), "Cannot find odoo_plugin jar file, please run :buildPluging before running ui-tests");
+        }
+        Path pycharmPluginFilePath = pyCharmPluginFile.getAbsoluteFile().toPath();
+        List<Path> plugins = Arrays.asList(robotPluginFile, pycharmPluginFilePath);
 
         return Pair.create(idePath, plugins);
     }
