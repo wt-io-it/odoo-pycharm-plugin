@@ -54,6 +54,7 @@ run_ui_tests:
     - if [[ $SOURCE_SCRIPT ]] ; then source "$SOURCE_SCRIPT"; fi
     - export DISPLAY=:99.0
     - Xvfb -ac :99 -screen 0 1920x1080x24 &
+    - ./gradlew :buildPlugin
     - AT_WTIOIT_PYCHARM_PLUGIN_testVersion="$VERSION" AT_WTIOIT_PYCHARM_PLUGIN_testType="$TYPE" ./gradlew ui-test:test
   artifacts:
     reports:
