@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static com.intellij.remoterobot.search.locators.Locators.byXpath;
@@ -38,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(UITest.IdeTestWatcher.class)
 @Timeout(value = 5, unit = TimeUnit.MINUTES)
 public class UITest {
+
+    private static final Logger LOGGER = Logger.getLogger(UITest.class.getName());
 
     private static RemoteRobot remoteRobot;
     private static Path tmpDir = null;
@@ -57,6 +60,7 @@ public class UITest {
                 Collections.emptyList(),
                 files.second,
                 tmpDir);
+        LOGGER.info("Waiting for startup (info)");
         waitFor(Duration.ofSeconds(90), Duration.ofSeconds(5), () -> isAvailable(remoteRobot));
     }
 
@@ -70,6 +74,7 @@ public class UITest {
         Path robotPluginFile = downloadDir.resolve("robot-server-plugin-0.11.18");
         if (!Files.exists(robotPluginFile)) {
             Path tmpRobotPluginFile = ideDownloader.downloadRobotPlugin(tmpDir);
+            LOGGER.info("Moving robot plugin from tmpPath (" + tmpRobotPluginFile + ") to idePath ( " + robotPluginFile + " )");
             Files.move(tmpRobotPluginFile, robotPluginFile);
         }
 
@@ -86,6 +91,7 @@ public class UITest {
         Path idePath = downloadDir.resolve(ideFileName + "-" + getVersion());
         if (!Files.exists(idePath)) {
             Path tmpIdePath = ideDownloader.downloadAndExtract(getIde(), tmpDir, Ide.BuildType.RELEASE, getVersion());
+            LOGGER.info("Moving IDE from tmpPath (" + tmpIdePath + ") to idePath ( " + idePath + " )");
             Files.move(tmpIdePath, idePath);
         }
 
