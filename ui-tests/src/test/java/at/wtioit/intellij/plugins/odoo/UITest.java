@@ -1,8 +1,6 @@
 package at.wtioit.intellij.plugins.odoo;
 
 import at.wtioit.intellij.plugins.odoo.fixtures.WelcomeFrameFixture;
-import com.google.common.collect.Lists;
-import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame;
 import com.intellij.remoterobot.RemoteRobot;
 import com.intellij.remoterobot.fixtures.ComponentFixture;
 import com.intellij.remoterobot.fixtures.JLabelFixture;
@@ -38,9 +36,9 @@ import static com.intellij.remoterobot.utils.RepeatUtilsKt.waitFor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(LauncherTest.IdeTestWatcher.class)
+@ExtendWith(UITest.IdeTestWatcher.class)
 @Timeout(value = 5, unit = TimeUnit.MINUTES)
-public class LauncherTest {
+public class UITest {
 
     private static RemoteRobot remoteRobot;
     private static Path tmpDir = null;
@@ -179,17 +177,14 @@ public class LauncherTest {
 
     @Test
     public void testIdeCanBeStarted() {
-        JLabelFixture welcome = remoteRobot.find(JLabelFixture.class, byXpath("//div[@text.key='label.welcome.to.0']"));
+        JLabelFixture welcome = remoteRobot.find(WelcomeFrameFixture.class).findWelcomeLabel();
+        // TODO also check for IDEA
         assertEquals("Welcome to PyCharm", welcome.getValue());
     }
 
     @Test
     public void testPluginIsListedAsInstalled() {
-        // In the left panel click on Plugins
-        ComponentFixture leftPanel = remoteRobot.find(ComponentFixture.class, byXpath("//div[@class='JBList']"));
-        List<RemoteText> leftPanelPluginTexts = leftPanel.findAllText("Plugins");
-        assertEquals(1, leftPanelPluginTexts.size());
-        leftPanelPluginTexts.get(0).click();
+        remoteRobot.find(WelcomeFrameFixture.class).findLeftPanelText("Plugins").click();
 
         // Select the "installed" plugins tab
         JLabelFixture installedPluginsTab = remoteRobot.find(JLabelFixture.class, byXpath("//div[contains(@text.key, 'plugin.manager.tab.installed')]"));

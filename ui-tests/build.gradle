@@ -48,6 +48,11 @@ intellij {
     plugins.set(intellijPlugins)
 }
 
+tasks {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
 downloadRobotServerPlugin {
     version.set(remoteRobotVersion)
 }
