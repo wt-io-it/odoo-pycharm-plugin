@@ -50,6 +50,7 @@ run_ui_tests:
   stage: test
   script:
     - if [[ $SOURCE_SCRIPT ]] ; then source "$SOURCE_SCRIPT"; fi
+    - ./gradlew :buildPlugin
     - AT_WTIOIT_PYCHARM_PLUGIN_testVersion="$VERSION" AT_WTIOIT_PYCHARM_PLUGIN_testType="$TYPE" ./gradlew ui-test:test
   after_script:
     - java -version
@@ -95,7 +96,7 @@ plugin_verifier:
 build:
   stage: build
   script:
-    - ./gradlew buildPlugin
+    - ./gradlew :buildPlugin
   artifacts:
     paths:
       - build/libs/instrumented-odoo_plugin-*.jar
