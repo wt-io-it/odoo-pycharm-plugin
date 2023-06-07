@@ -158,6 +158,21 @@ public class LauncherTest {
 
         }
         if (tmpDir != null) {
+            // wait until no processes are using the tmpDir anymore
+            waitFor(Duration.ofSeconds(90), Duration.ofSeconds(1), () -> {
+                try {
+                    Process lsof = Runtime.getRuntime().exec("lsof " + tmpDir.toAbsolutePath());
+                    lsof.waitFor();
+                    return lsof.exitValue() != 0;
+                } catch (IOException e) {
+                    // cannot check if any processes are accessing the tmp directory (with lsof)
+                    // we continue and try to delete the directory anyway
+                    return true;
+                } catch (InterruptedException e) {
+                    // we got interrupted while waiting for lsof to finish
+                    return true;
+                }
+            });
             FileUtils.cleanDirectory(tmpDir.toFile());
         }
     }
