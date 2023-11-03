@@ -28,10 +28,10 @@ cache:
         VERSION: [ "2021.2.4", "2021.3.3", "2022.1.4", "2022.2.5" ]
       # starting with 2022.3 we need jdk 17
       - TYPE: "PC" # PyCharm Community
-        VERSION: [ "2022.3.3", "2023.1.2" ]
+        VERSION: [ "2022.3.3", "2023.1.4", "2023.2.3" ]
         SOURCE_SCRIPT: "/bin/use_jdk17" # enables using jdk 17
       - TYPE: "PY" # PyCharm Professional
-        VERSION: [ "2022.3.3", "2023.1.2" ]
+        VERSION: [ "2022.3.3", "2023.1.4", "2023.2.3" ]
         SOURCE_SCRIPT: "/bin/use_jdk17" # enables using jdk 17
       # TODO add LATEST-EAP-SNAPSHOT to tested versions
 
