@@ -237,8 +237,6 @@ public class UITest {
             // open existing project
             remoteRobot.find(WelcomeFrameFixture.class).find(JButtonFixture.class, byXpath("//div[@defaulticon='open.svg']")).click();
             remoteRobot.find(OpenProjectDialogFixture.class).open(odooPath);
-            // TODO check that project is not trusted yet
-            remoteRobot.find(TrustProjectDialogFixture.class).trust();
         } else {
             // clone project from odoo
             remoteRobot.find(WelcomeFrameFixture.class).find(JButtonFixture.class, byXpath("//div[@accessiblename.key='action.Vcs.VcsClone.text']")).click();
@@ -264,6 +262,7 @@ public class UITest {
                 }
             }
         }
+        remoteRobot.find(TrustProjectDialogFixture.class).trust();
         // wait for "File" menu
         remoteRobot.find(ComponentFixture.class, byXpath("//div[contains(@text.key, 'group.FileMenu.text')]"), Duration.ofSeconds(10));
         // wait for indexing to finish
