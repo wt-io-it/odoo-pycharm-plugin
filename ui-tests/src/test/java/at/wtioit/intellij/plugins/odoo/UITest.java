@@ -229,9 +229,10 @@ public class UITest {
         assertNotNull(odooAutocompletionSupportPlugin);
     }
 
-    @Test
-    public void testOpenOdoo() {
-        String odooPath = "/tmp/odoo";
+
+
+    public void testOpenOdoo(String projectUrl) {
+        String odooPath = "/tmp/" + projectUrl.replaceAll("\\.git$", "").replaceAll("^.*/", "");
         if (new File(odooPath).exists()) {
             // open existing project
             remoteRobot.find(WelcomeFrameFixture.class).find(JButtonFixture.class, byXpath("//div[@defaulticon='open.svg']")).click();
@@ -241,11 +242,20 @@ public class UITest {
         } else {
             // clone project from odoo
             remoteRobot.find(WelcomeFrameFixture.class).find(JButtonFixture.class, byXpath("//div[@accessiblename.key='action.Vcs.VcsClone.text']")).click();
-            remoteRobot.find(JTextFieldFixture.class, byXpath("//div[@class='BorderlessTextField']")).setText("https://github.com/odoo/odoo.git");
+            remoteRobot.find(JTextFieldFixture.class, byXpath("//div[@class='BorderlessTextField']")).setText(projectUrl);
+            remoteRobot.find(JTextFieldFixture.class, byXpath("//div[@class='ExtendableTextField']")).setText(odooPath);
             remoteRobot.find(JButtonFixture.class, byXpath("//div[@text.key='clone.dialog.clone.button']")).click();
-            // TODO check if project already exists
+            // TODO 2021.2.4 has a pop up, 2023.2.3 has in dialog progress bar
             while (!remoteRobot.getFinder().findMany(byXpath("//div[@visible_text_keys='clone.repository']")).isEmpty()) {
                 // we are still cloning the repo
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new AssertionError("Interrupted while cloning repository: " + e);
+                }
+            }
+            // 2021.2.4 pop up progress bar
+            while (!remoteRobot.getFinder().findMany(byXpath("//div[@class='EngravedLabel']")).isEmpty()) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -258,6 +268,17 @@ public class UITest {
         // wait for indexing to finish
         remoteRobot.find(ProgressBarFixture.class).waitUntilReady();
     }
+
+    @Test
+    public void testOpenOdoo() {
+        this.testOpenOdoo("https://github.com/odoo/odoo.git");
+    }
+
+    @Test
+    public void testOpenOCB() {
+        this.testOpenOdoo("https://github.com/OCA/OCB.git");
+    }
+
 
     public static class IdeTestWatcher implements TestWatcher {
         @Override
