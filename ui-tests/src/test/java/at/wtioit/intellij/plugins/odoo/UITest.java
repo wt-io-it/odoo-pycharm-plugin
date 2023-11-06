@@ -1,15 +1,21 @@
 package at.wtioit.intellij.plugins.odoo;
 
+import at.wtioit.intellij.plugins.odoo.fixtures.OpenProjectDialogFixture;
+import at.wtioit.intellij.plugins.odoo.fixtures.ProgressBarFixture;
+import at.wtioit.intellij.plugins.odoo.fixtures.TrustProjectDialogFixture;
 import at.wtioit.intellij.plugins.odoo.fixtures.WelcomeFrameFixture;
 import com.intellij.openapi.util.Pair;
 import com.intellij.remoterobot.RemoteRobot;
-import com.intellij.remoterobot.fixtures.JLabelFixture;
+import com.intellij.remoterobot.client.IdeaSideException;
+import com.intellij.remoterobot.data.RemoteComponent;
+import com.intellij.remoterobot.fixtures.*;
+import com.intellij.remoterobot.fixtures.dataExtractor.RemoteText;
 import com.intellij.remoterobot.launcher.Ide;
 import com.intellij.remoterobot.launcher.IdeDownloader;
 import com.intellij.remoterobot.launcher.IdeLauncher;
-import com.jetbrains.qodana.sarif.model.Run;
 import okhttp3.OkHttpClient;
 import org.apache.commons.io.FileUtils;
+import org.assertj.swing.fixture.JProgressBarFixture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterAll;
@@ -19,6 +25,7 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
+import org.junit.platform.commons.util.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -30,7 +37,9 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.intellij.remoterobot.search.locators.Locators.byXpath;
@@ -218,6 +227,36 @@ public class UITest {
         // Verify that Odoo Autocompletion Plugin is listed in installed tab
         JLabelFixture odooAutocompletionSupportPlugin = remoteRobot.find(JLabelFixture.class, byXpath("//div[@text='Odoo Autocompletion Support']"));
         assertNotNull(odooAutocompletionSupportPlugin);
+    }
+
+    @Test
+    public void testOpenOdoo() {
+        String odooPath = "/tmp/odoo";
+        if (new File(odooPath).exists()) {
+            // open existing project
+            remoteRobot.find(WelcomeFrameFixture.class).find(JButtonFixture.class, byXpath("//div[@defaulticon='open.svg']")).click();
+            remoteRobot.find(OpenProjectDialogFixture.class).open(odooPath);
+            // TODO check that project is not trusted yet
+            remoteRobot.find(TrustProjectDialogFixture.class).trust();
+        } else {
+            // clone project from odoo
+            remoteRobot.find(WelcomeFrameFixture.class).find(JButtonFixture.class, byXpath("//div[@accessiblename.key='action.Vcs.VcsClone.text']")).click();
+            remoteRobot.find(JTextFieldFixture.class, byXpath("//div[@class='BorderlessTextField']")).setText("https://github.com/odoo/odoo.git");
+            remoteRobot.find(JButtonFixture.class, byXpath("//div[@text.key='clone.dialog.clone.button']")).click();
+            // TODO check if project already exists
+            while (!remoteRobot.getFinder().findMany(byXpath("//div[@visible_text_keys='clone.repository']")).isEmpty()) {
+                // we are still cloning the repo
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new AssertionError("Interrupted while cloning repository: " + e);
+                }
+            }
+        }
+        // wait for "File" menu
+        remoteRobot.find(ComponentFixture.class, byXpath("//div[contains(@text.key, 'group.FileMenu.text')]"), Duration.ofSeconds(10));
+        // wait for indexing to finish
+        remoteRobot.find(ProgressBarFixture.class).waitUntilReady();
     }
 
     public static class IdeTestWatcher implements TestWatcher {
