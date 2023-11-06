@@ -245,7 +245,8 @@ public class UITest {
             remoteRobot.find(JTextFieldFixture.class, byXpath("//div[@class='BorderlessTextField']")).setText(projectUrl);
             remoteRobot.find(JTextFieldFixture.class, byXpath("//div[@class='ExtendableTextField']")).setText(odooPath);
             remoteRobot.find(JButtonFixture.class, byXpath("//div[@text.key='clone.dialog.clone.button']")).click();
-            // TODO 2021.2.4 has a pop up, 2023.2.3 has in dialog progress bar
+            remoteRobot.find(ComponentFixture.class, byXpath("(//div[@class='EngravedLabel']|//div[@visible_text_keys='clone.repository'])"), Duration.ofSeconds(10));
+            // 2023.2.3 in dialog progress bar
             while (!remoteRobot.getFinder().findMany(byXpath("//div[@visible_text_keys='clone.repository']")).isEmpty()) {
                 // we are still cloning the repo
                 try {
@@ -267,6 +268,8 @@ public class UITest {
         remoteRobot.find(ComponentFixture.class, byXpath("//div[contains(@text.key, 'group.FileMenu.text')]"), Duration.ofSeconds(10));
         // wait for indexing to finish
         remoteRobot.find(ProgressBarFixture.class).waitUntilReady();
+
+        // TODO test all branches
     }
 
     @Test
@@ -277,6 +280,11 @@ public class UITest {
     @Test
     public void testOpenOCB() {
         this.testOpenOdoo("https://github.com/OCA/OCB.git");
+    }
+
+    @Test
+    public void testOpenServerTools() {
+        this.testOpenOdoo("https://github.com/OCA/server-tools.git");
     }
 
 
