@@ -6,26 +6,22 @@ import at.wtioit.intellij.plugins.odoo.fixtures.TrustProjectDialogFixture;
 import at.wtioit.intellij.plugins.odoo.fixtures.WelcomeFrameFixture;
 import com.intellij.openapi.util.Pair;
 import com.intellij.remoterobot.RemoteRobot;
-import com.intellij.remoterobot.client.IdeaSideException;
-import com.intellij.remoterobot.data.RemoteComponent;
-import com.intellij.remoterobot.fixtures.*;
-import com.intellij.remoterobot.fixtures.dataExtractor.RemoteText;
+import com.intellij.remoterobot.fixtures.ComponentFixture;
+import com.intellij.remoterobot.fixtures.JButtonFixture;
+import com.intellij.remoterobot.fixtures.JLabelFixture;
+import com.intellij.remoterobot.fixtures.JTextFieldFixture;
 import com.intellij.remoterobot.launcher.Ide;
 import com.intellij.remoterobot.launcher.IdeDownloader;
 import com.intellij.remoterobot.launcher.IdeLauncher;
 import okhttp3.OkHttpClient;
 import org.apache.commons.io.FileUtils;
-import org.assertj.swing.fixture.JProgressBarFixture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
+import org.junit.After;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
-import org.junit.platform.commons.util.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -37,9 +33,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.intellij.remoterobot.search.locators.Locators.byXpath;
@@ -56,8 +50,8 @@ public class UITest {
     private static Path tmpDir = null;
     private static Process ideaProcess;
 
-    @BeforeAll
-    public static void before() throws IOException, InterruptedException {
+    @BeforeEach
+    public void before() throws IOException, InterruptedException {
         OkHttpClient client = new OkHttpClient();
         remoteRobot = new RemoteRobot("http://localhost:8082", client);
         HashMap<String, Object> additionalProperties = new HashMap<>();
@@ -114,7 +108,7 @@ public class UITest {
         File pyCharmPluginFile = new File("../build/libs/odoo_plugin-0.6.12-SNAPSHOT.jar");
         if (!pyCharmPluginFile.exists()) {
             pyCharmPluginFile = new File("../build/libs/instrumented-odoo_plugin-0.6.12-SNAPSHOT.jar");
-            assertTrue(pyCharmPluginFile.exists(), "Cannot find odoo_plugin jar file, please run :buildPluging before running ui-tests");
+            assertTrue(pyCharmPluginFile.exists(), "Cannot find odoo_plugin jar file, please run :buildPlugin before running ui-tests");
         }
         Path pycharmPluginFilePath = pyCharmPluginFile.getAbsoluteFile().toPath();
         List<Path> plugins = Arrays.asList(robotPluginFile, pycharmPluginFilePath);
@@ -175,8 +169,8 @@ public class UITest {
         }
     }
 
-    @AfterAll
-    public static void after() throws IOException {
+    @AfterEach
+    public void killIdea() throws IOException {
         if (ideaProcess != null) {
             Long[] pids = Stream.concat(
                     Stream.of(ideaProcess.pid()),
@@ -286,6 +280,8 @@ public class UITest {
         }
         // wait for indexing to finish
         remoteRobot.find(ProgressBarFixture.class).waitUntilReady();
+
+        // TODO create venv with pycharm (multiple python versions?)
 
         // TODO test all branches
     }
