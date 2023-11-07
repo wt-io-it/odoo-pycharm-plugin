@@ -271,7 +271,7 @@ public class UITest {
         remoteRobot.find(TrustProjectDialogFixture.class).trust();
         // wait for Project to be opened
         // wait for "File" menu
-        remoteRobot.find(ComponentFixture.class, byXpath("//div[contains(@text.key, 'group.FileMenu.text')]"), Duration.ofSeconds(10));
+        remoteRobot.find(ComponentFixture.class, byXpath("//div[@text='File']"), Duration.ofSeconds(10));
         if (matchesVersion("2021.2.")) {
             // in 2021.2. wait for progress bar pop up
             while (!remoteRobot.findAll(ComponentFixture.class, byXpath("//div[@class='JLabel'][@name='LOADING_LABEL']")).isEmpty()) {
