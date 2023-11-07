@@ -75,7 +75,7 @@ public class UITest {
             Files.createDirectories(downloadDir);
         }
 
-        Path robotPluginFile = downloadDir.resolve("robot-server-plugin-0.11.18");
+        Path robotPluginFile = downloadDir.resolve("robot-server-plugin-0.11.20");
         if (!Files.exists(robotPluginFile)) {
             Path tmpRobotPluginFile = ideDownloader.downloadRobotPlugin(tmpDir);
             LOGGER.info("Moving robot plugin from tmpPath (" + tmpRobotPluginFile + ") to idePath (" + robotPluginFile + ")");
