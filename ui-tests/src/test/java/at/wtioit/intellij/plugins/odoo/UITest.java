@@ -215,7 +215,11 @@ public class UITest {
     public void testIdeCanBeStarted() {
         JLabelFixture welcome = remoteRobot.find(WelcomeFrameFixture.class).findWelcomeLabel();
         // TODO also check for IDEA
-        assertEquals("Welcome to PyCharm", welcome.getValue());
+        String expectedMessage = "Welcome to PyCharm";
+        if (System.getProperty("user.name").equals("root")) {
+            expectedMessage = "Welcome to PyCharm (ROOT)";
+        }
+        assertEquals(expectedMessage, welcome.getValue());
     }
 
     @Test

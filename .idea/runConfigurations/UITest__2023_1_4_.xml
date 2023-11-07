@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="UITest (2023.1.2)" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="UITest (2023.1.4)" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="env">
         <map>
-          <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testVersion" value="2023.1.2" />
+          <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testVersion" value="2023.1.4" />
         </map>
       </option>
       <option name="executionName" />
@@ -25,7 +25,7 @@
     <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
-    <ForceTestExec>true</ForceTestExec>
+    <RunAsTest>true</RunAsTest>
     <method v="2" />
   </configuration>
 </component>
