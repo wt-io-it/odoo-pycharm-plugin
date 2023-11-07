@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="UITest (2023.2.3)" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="UITest (2023.2.4)" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="env">
         <map>
-          <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testVersion" value="2023.2.3" />
+          <entry key="AT_WTIOIT_PYCHARM_PLUGIN_testVersion" value="2023.2.4" />
         </map>
       </option>
       <option name="executionName" />
