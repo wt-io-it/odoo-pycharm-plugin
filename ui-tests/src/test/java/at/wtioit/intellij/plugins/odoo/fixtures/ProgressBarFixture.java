@@ -32,5 +32,6 @@ public class ProgressBarFixture extends ContainerFixture {
                 throw new AssertionError(e);
             }
         }
+        this.waitForIndexing();
     }
 }

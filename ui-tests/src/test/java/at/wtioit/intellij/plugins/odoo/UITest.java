@@ -237,7 +237,7 @@ public class UITest {
         String odooPath = new File("./build/odooTestProjects").getAbsolutePath() + "/" + projectUrl.replaceAll("\\.git$", "").replaceAll("^.*/", "");
         if (new File(odooPath).exists()) {
             // open existing project
-            remoteRobot.find(WelcomeFrameFixture.class).find(JButtonFixture.class, byXpath("//div[@defaulticon='open.svg']")).click();
+            remoteRobot.find(WelcomeFrameFixture.class, Duration.ofSeconds(10)).find(JButtonFixture.class, byXpath("//div[@defaulticon='open.svg']")).click();
             remoteRobot.find(OpenProjectDialogFixture.class).open(odooPath);
         } else {
             // clone project from odoo

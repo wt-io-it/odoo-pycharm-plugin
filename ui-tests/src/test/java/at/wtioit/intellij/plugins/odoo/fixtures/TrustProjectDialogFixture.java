@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.remoterobot.search.locators.Locators.byXpath;
 
-@DefaultXpath(by = "MyDialog type", xpath = "//*[@title.key='untrusted.project.open.dialog.title']")
+@DefaultXpath(by = "MyDialog type", xpath = "(//*[@title.key='untrusted.project.open.dialog.title']|//div[@class='MyDialog'][.//div[contains(@visible_text, 'trust the source')]])")
 @FixtureName(name = "TrustProjectDialog")
 public class TrustProjectDialogFixture extends ContainerFixture {
     public TrustProjectDialogFixture(@NotNull RemoteRobot remoteRobot, @NotNull RemoteComponent remoteComponent) {
