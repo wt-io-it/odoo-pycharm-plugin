@@ -148,6 +148,14 @@ public class UITest {
         return version;
     }
 
+    private static boolean matchesVersion(String versionPrefix) {
+        String version = getVersion();
+        if (version != null) {
+            return version.startsWith(versionPrefix);
+        }
+        return false;
+    }
+
     private static String getGradleProperty(String propertyName) {
         Properties properties = new Properties();
         try {
@@ -232,7 +240,7 @@ public class UITest {
 
 
     public void testOpenOdoo(String projectUrl) {
-        String odooPath = "/tmp/" + projectUrl.replaceAll("\\.git$", "").replaceAll("^.*/", "");
+        String odooPath = new File("./build/odooTestProjects").getAbsolutePath() + "/" + projectUrl.replaceAll("\\.git$", "").replaceAll("^.*/", "");
         if (new File(odooPath).exists()) {
             // open existing project
             remoteRobot.find(WelcomeFrameFixture.class).find(JButtonFixture.class, byXpath("//div[@defaulticon='open.svg']")).click();
@@ -263,8 +271,19 @@ public class UITest {
             }
         }
         remoteRobot.find(TrustProjectDialogFixture.class).trust();
+        // wait for Project to be opened
         // wait for "File" menu
         remoteRobot.find(ComponentFixture.class, byXpath("//div[contains(@text.key, 'group.FileMenu.text')]"), Duration.ofSeconds(10));
+        if (matchesVersion("2021.2.")) {
+            // in 2021.2. wait for progress bar pop up
+            while (!remoteRobot.findAll(ComponentFixture.class, byXpath("//div[@class='JLabel'][@name='LOADING_LABEL']")).isEmpty()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new AssertionError("Interrupted while opening project: " + e);
+                }
+            }
+        }
         // wait for indexing to finish
         remoteRobot.find(ProgressBarFixture.class).waitUntilReady();
 

@@ -1,5 +1,7 @@
-.gradle
-build
-.DS_Store
-.idea/shelf
-java_pid*.hprof
+/.gradle
+/build
+/.DS_Store
+/ui-tests/build
+!/ui-tests/ui-tests/build/.gitkeep
+/.idea/shelf
+/java_pid*.hprof
